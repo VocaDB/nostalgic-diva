@@ -8,42 +8,56 @@ export class PVPlayerFile implements PVPlayer {
 	private readonly id: number;
 	private player?: HTMLAudioElement;
 
+	toString = (): string => `PVPlayerFile#${this.id}`;
+
+	private assert = (
+		condition?: boolean | undefined,
+		message?: any,
+		...optionalParams: any
+	): void => {
+		PVPlayerConsole.assert(condition, this, message, ...optionalParams);
+	};
+
+	private debug = (message?: any, ...optionalParams: any): void => {
+		PVPlayerConsole.debug(this, message, ...optionalParams);
+	};
+
 	constructor(
 		private readonly playerElementRef: React.MutableRefObject<HTMLAudioElement>,
 		private readonly options: PVPlayerOptions,
 	) {
 		this.id = PVPlayerFile.nextId++;
 
-		PVPlayerConsole.debug(`PVPlayerFile#${this.id}.ctor`);
+		this.debug(`ctor`);
 	}
 
 	attach = async (): Promise<void> => {
-		PVPlayerConsole.debug(`PVPlayerFile#${this.id}.attach`);
+		this.debug(`attach`);
 
 		if (this.player) {
-			PVPlayerConsole.debug('File player is already attached');
+			this.debug(`player is already attached`);
 			return;
 		}
 
 		this.player = this.playerElementRef.current;
 
-		PVPlayerConsole.debug('File player attached');
+		this.debug(`player attached`);
 	};
 
 	detach = async (): Promise<void> => {
-		PVPlayerConsole.debug(`PVPlayerFile#${this.id}.detach`);
+		this.debug(`detach`);
 
 		this.player = undefined;
 	};
 
 	private assertPlayerAttached = (): void => {
-		PVPlayerConsole.assert(!!this.player, 'File player is not attached');
+		this.assert(!!this.player, `player is not attached`);
 	};
 
 	load = async (pvId: string): Promise<void> => {
-		PVPlayerConsole.debug(`PVPlayerFile#${this.id}.load`, pvId);
+		this.debug(`load`, pvId);
 
-		PVPlayerConsole.assert(!!pvId, 'pvId is not defined');
+		this.assert(!!pvId, 'pvId is not defined');
 		if (!pvId) return;
 
 		this.assertPlayerAttached();
@@ -58,7 +72,7 @@ export class PVPlayerFile implements PVPlayer {
 	};
 
 	play = (): void => {
-		PVPlayerConsole.debug(`PVPlayerFile#${this.id}.play`);
+		this.debug(`play`);
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
@@ -67,7 +81,7 @@ export class PVPlayerFile implements PVPlayer {
 	};
 
 	pause = (): void => {
-		PVPlayerConsole.debug(`PVPlayerFile#${this.id}.pause`);
+		this.debug(`pause`);
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
@@ -76,7 +90,7 @@ export class PVPlayerFile implements PVPlayer {
 	};
 
 	seekTo = (seconds: number): void => {
-		PVPlayerConsole.debug(`PVPlayerFile#${this.id}.seekTo`, seconds);
+		this.debug(`seekTo`, seconds);
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
@@ -85,7 +99,7 @@ export class PVPlayerFile implements PVPlayer {
 	};
 
 	setVolume = (fraction: number): void => {
-		PVPlayerConsole.debug(`PVPlayerFile#${this.id}.setVolume`);
+		this.debug(`setVolume`);
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
@@ -94,7 +108,7 @@ export class PVPlayerFile implements PVPlayer {
 	};
 
 	mute = (): void => {
-		PVPlayerConsole.debug(`PVPlayerFile#${this.id}.mute`);
+		this.debug(`mute`);
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
@@ -103,7 +117,7 @@ export class PVPlayerFile implements PVPlayer {
 	};
 
 	unmute = (): void => {
-		PVPlayerConsole.debug(`PVPlayerFile#${this.id}.unmute`);
+		this.debug(`unmute`);
 
 		this.assertPlayerAttached();
 		if (!this.player) return;

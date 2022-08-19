@@ -15,16 +15,31 @@ export class PVPlayerYouTube implements PVPlayer {
 	private readonly id: number;
 	private player?: YT.Player;
 
+	toString = (): string => `PVPlayerYouTube#${this.id}`;
+
+	private assert = (
+		condition?: boolean | undefined,
+		message?: any,
+		...optionalParams: any
+	): void => {
+		PVPlayerConsole.assert(condition, this, message, ...optionalParams);
+	};
+
+	private debug = (message?: any, ...optionalParams: any): void => {
+		PVPlayerConsole.debug(this, message, ...optionalParams);
+	};
+
+	private error = (message?: any, ...optionalParams: any): void => {
+		PVPlayerConsole.error(this, message, ...optionalParams);
+	};
+
 	constructor(
 		private readonly playerElementRef: React.MutableRefObject<HTMLDivElement>,
 		private readonly options: PVPlayerOptions,
 	) {
 		this.id = PVPlayerYouTube.nextId++;
 
-		PVPlayerConsole.debug(
-			`PVPlayerYouTube#${this.id}.ctor`,
-			playerElementRef.current,
-		);
+		this.debug(`ctor`, playerElementRef.current);
 	}
 
 	private static scriptLoaded = false;
@@ -32,7 +47,7 @@ export class PVPlayerYouTube implements PVPlayer {
 	private loadScript = (): Promise<void> => {
 		return new Promise(async (resolve, reject) => {
 			if (PVPlayerYouTube.scriptLoaded) {
-				PVPlayerConsole.debug('YouTube script is already loaded');
+				this.debug('script is already loaded');
 
 				resolve();
 				return;
@@ -40,21 +55,21 @@ export class PVPlayerYouTube implements PVPlayer {
 
 			// Code from: https://stackoverflow.com/a/18154942.
 			window.onYouTubeIframeAPIReady = (): void => {
-				PVPlayerConsole.debug('YouTube iframe API ready');
+				this.debug('iframe API ready');
 
 				resolve();
 			};
 
 			try {
-				PVPlayerConsole.debug('Loading YouTube script...');
+				this.debug('Loading script...');
 
 				await getScript('https://www.youtube.com/iframe_api');
 
 				PVPlayerYouTube.scriptLoaded = true;
 
-				PVPlayerConsole.debug('YouTube script loaded');
+				this.debug('script loaded');
 			} catch {
-				PVPlayerConsole.error('Failed to load YouTube script');
+				this.error('Failed to load script');
 
 				reject();
 			}
@@ -62,15 +77,15 @@ export class PVPlayerYouTube implements PVPlayer {
 	};
 
 	private assertPlayerAttached = (): void => {
-		PVPlayerConsole.assert(!!this.player, 'YouTube player is not attached');
+		this.assert(!!this.player, 'player is not attached');
 	};
 
 	attach = (): Promise<void> => {
 		return new Promise(async (resolve, reject /* TODO: Reject. */) => {
-			PVPlayerConsole.debug(`PVPlayerYouTube#${this.id}.attach`);
+			this.debug(`attach`);
 
 			if (this.player) {
-				PVPlayerConsole.debug('YouTube player is already attached');
+				this.debug('player is already attached');
 
 				resolve();
 				return;
@@ -78,7 +93,7 @@ export class PVPlayerYouTube implements PVPlayer {
 
 			await this.loadScript();
 
-			PVPlayerConsole.debug('Attaching YouTube player...');
+			this.debug('Attaching player...');
 
 			this.player = new YT.Player(this.playerElementRef.current, {
 				host: 'https://www.youtube-nocookie.com',
@@ -86,7 +101,7 @@ export class PVPlayerYouTube implements PVPlayer {
 				height: '100%',
 				events: {
 					onReady: (): void => {
-						PVPlayerConsole.debug('YouTube player attached');
+						this.debug('player attached');
 
 						resolve();
 					},
@@ -97,25 +112,19 @@ export class PVPlayerYouTube implements PVPlayer {
 
 						switch (e.data) {
 							case YT.PlayerState.PLAYING:
-								PVPlayerConsole.debug(
-									'YouTube state changed: PLAYING',
-								);
+								this.debug('state changed: PLAYING');
 
 								this.options.onPlay?.();
 								break;
 
 							case YT.PlayerState.PAUSED:
-								PVPlayerConsole.debug(
-									'YouTube state changed: PAUSED',
-								);
+								this.debug('state changed: PAUSED');
 
 								this.options.onPause?.();
 								break;
 
 							case YT.PlayerState.ENDED:
-								PVPlayerConsole.debug(
-									'YouTube state changed: ENDED',
-								);
+								this.debug('state changed: ENDED');
 
 								this.options.onEnded?.();
 								break;
@@ -127,24 +136,24 @@ export class PVPlayerYouTube implements PVPlayer {
 	};
 
 	detach = async (): Promise<void> => {
-		PVPlayerConsole.debug(`PVPlayerYouTube#${this.id}.detach`);
+		this.debug(`detach`);
 
 		this.player = undefined;
 	};
 
 	load = async (pvId: string): Promise<void> => {
-		PVPlayerConsole.debug(`PVPlayerYouTube#${this.id}.load`, pvId);
+		this.debug(`load`, pvId);
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
 
-		PVPlayerConsole.debug('Loading YouTube video...');
+		this.debug('Loading video...');
 
 		this.player.loadVideoById(pvId);
 	};
 
 	play = (): void => {
-		PVPlayerConsole.debug(`PVPlayerYouTube#${this.id}.play`);
+		this.debug(`play`);
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
@@ -153,7 +162,7 @@ export class PVPlayerYouTube implements PVPlayer {
 	};
 
 	pause = (): void => {
-		PVPlayerConsole.debug(`PVPlayerYouTube#${this.id}.pause`);
+		this.debug(`pause`);
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
@@ -162,7 +171,7 @@ export class PVPlayerYouTube implements PVPlayer {
 	};
 
 	seekTo = (seconds: number): void => {
-		PVPlayerConsole.debug(`PVPlayerYouTube#${this.id}.seekTo`, seconds);
+		this.debug(`seekTo`, seconds);
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
@@ -171,7 +180,7 @@ export class PVPlayerYouTube implements PVPlayer {
 	};
 
 	setVolume = (fraction: number): void => {
-		PVPlayerConsole.debug(`PVPlayerYouTube#${this.id}.setVolume`);
+		this.debug(`setVolume`);
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
@@ -180,7 +189,7 @@ export class PVPlayerYouTube implements PVPlayer {
 	};
 
 	mute = (): void => {
-		PVPlayerConsole.debug(`PVPlayerYouTube#${this.id}.mute`);
+		this.debug(`mute`);
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
@@ -189,7 +198,7 @@ export class PVPlayerYouTube implements PVPlayer {
 	};
 
 	unmute = (): void => {
-		PVPlayerConsole.debug(`PVPlayerYouTube#${this.id}.unmute`);
+		this.debug(`unmute`);
 
 		this.assertPlayerAttached();
 		if (!this.player) return;

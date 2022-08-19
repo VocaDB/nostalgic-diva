@@ -24,13 +24,31 @@ export class PVPlayerNiconico implements PVPlayer {
 	private readonly id: number;
 	private player?: HTMLIFrameElement;
 
+	toString = (): string => `PVPlayerNiconico#${this.id}`;
+
+	private assert = (
+		condition?: boolean | undefined,
+		message?: any,
+		...optionalParams: any
+	): void => {
+		PVPlayerConsole.assert(condition, this, message, ...optionalParams);
+	};
+
+	private debug = (message?: any, ...optionalParams: any): void => {
+		PVPlayerConsole.debug(this, message, ...optionalParams);
+	};
+
+	private warn = (message?: any, ...optionalParams: any): void => {
+		PVPlayerConsole.warn(this, message, ...optionalParams);
+	};
+
 	constructor(
 		private readonly playerElementRef: React.MutableRefObject<HTMLIFrameElement>,
 		private readonly options: PVPlayerOptions,
 	) {
 		this.id = PVPlayerNiconico.nextId++;
 
-		PVPlayerConsole.debug(`PVPlayerNiconico#${this.id}.ctor`);
+		this.debug(`ctor`);
 	}
 
 	private handleMessage = (e: nico.PlayerEvent): void => {
@@ -40,8 +58,8 @@ export class PVPlayerNiconico implements PVPlayer {
 
 		switch (data.eventName) {
 			case 'playerStatusChange':
-				PVPlayerConsole.debug(
-					`Niconico player status changed: ${
+				this.debug(
+					`player status changed: ${
 						PlayerStatus[data.data.playerStatus] ??
 						data.data.playerStatus
 					}`,
@@ -63,8 +81,8 @@ export class PVPlayerNiconico implements PVPlayer {
 				break;
 
 			case 'statusChange':
-				PVPlayerConsole.debug(
-					`Niconico status changed: ${
+				this.debug(
+					`status changed: ${
 						PlayerStatus[data.data.playerStatus] ??
 						data.data.playerStatus
 					}`,
@@ -75,7 +93,7 @@ export class PVPlayerNiconico implements PVPlayer {
 				break;
 
 			case 'loadComplete':
-				PVPlayerConsole.debug('Niconico load completed');
+				this.debug(`load completed`);
 
 				// TODO: Implement.
 				break;
@@ -92,8 +110,8 @@ export class PVPlayerNiconico implements PVPlayer {
 				break;
 
 			default:
-				PVPlayerConsole.warn(
-					'Niconico message',
+				this.warn(
+					`message`,
 					(data as any).eventName,
 					(data as any).data,
 				);
@@ -103,10 +121,10 @@ export class PVPlayerNiconico implements PVPlayer {
 
 	attach = (): Promise<void> => {
 		return new Promise((resolve, reject /* TODO: Reject. */) => {
-			PVPlayerConsole.debug(`PVPlayerNiconico#${this.id}.attach`);
+			this.debug(`attach`);
 
 			if (this.player) {
-				PVPlayerConsole.debug('Niconico player is already attached');
+				this.debug(`player is already attached`);
 
 				resolve();
 				return;
@@ -116,14 +134,14 @@ export class PVPlayerNiconico implements PVPlayer {
 
 			window.addEventListener('message', this.handleMessage);
 
-			PVPlayerConsole.debug('Niconico player attached');
+			this.debug(`player attached`);
 
 			resolve();
 		});
 	};
 
 	detach = async (): Promise<void> => {
-		PVPlayerConsole.debug(`PVPlayerNiconico#${this.id}.detach`);
+		this.debug(`detach`);
 
 		this.player = undefined;
 
@@ -131,15 +149,12 @@ export class PVPlayerNiconico implements PVPlayer {
 	};
 
 	private assertPlayerAttached = (): void => {
-		PVPlayerConsole.assert(
-			!!this.player,
-			'Niconico player is not attached',
-		);
+		this.assert(!!this.player, `player is not attached`);
 	};
 
 	load = async (pvId: string): Promise<void> => {
 		return new Promise(async (resolve, reject /* TODO: Reject. */) => {
-			PVPlayerConsole.debug(`PVPlayerNiconico#${this.id}.load`, pvId);
+			this.debug(`load`, pvId);
 
 			this.assertPlayerAttached();
 			if (!this.player) return;
@@ -151,7 +166,7 @@ export class PVPlayerNiconico implements PVPlayer {
 
 				this.player.onload = null;
 
-				PVPlayerConsole.debug('Niconico iframe loaded');
+				this.debug(`iframe loaded`);
 
 				resolve();
 			};
@@ -181,25 +196,25 @@ export class PVPlayerNiconico implements PVPlayer {
 	};
 
 	play = (): void => {
-		PVPlayerConsole.debug(`PVPlayerNiconico#${this.id}.play`);
+		this.debug(`play`);
 
 		this.postMessage({ eventName: 'play' });
 	};
 
 	pause = (): void => {
-		PVPlayerConsole.debug(`PVPlayerNiconico#${this.id}.pause`);
+		this.debug(`pause`);
 
 		this.postMessage({ eventName: 'pause' });
 	};
 
 	seekTo = (seconds: number): void => {
-		PVPlayerConsole.debug(`PVPlayerNiconico#${this.id}.seekTo`, seconds);
+		this.debug(`seekTo`, seconds);
 
 		this.postMessage({ eventName: 'seek', data: { time: seconds * 1000 } });
 	};
 
 	setVolume = (fraction: number): void => {
-		PVPlayerConsole.debug(`PVPlayerNiconico#${this.id}.setVolume`);
+		this.debug(`setVolume`);
 
 		this.postMessage({
 			eventName: 'volumeChange',
@@ -208,7 +223,7 @@ export class PVPlayerNiconico implements PVPlayer {
 	};
 
 	mute = (): void => {
-		PVPlayerConsole.debug(`PVPlayerNiconico#${this.id}.mute`);
+		this.debug(`mute`);
 
 		this.postMessage({
 			eventName: 'mute',
@@ -217,7 +232,7 @@ export class PVPlayerNiconico implements PVPlayer {
 	};
 
 	unmute = (): void => {
-		PVPlayerConsole.debug(`PVPlayerNiconico#${this.id}.unmute`);
+		this.debug(`unmute`);
 
 		this.postMessage({
 			eventName: 'mute',
