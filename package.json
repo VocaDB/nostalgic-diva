@@ -1,6 +1,8 @@
 {
-	"name": "nostalgic-diva",
-	"license": "UNLICENSED",
+	"name": "@vocadb/nostalgic-diva",
+	"version": "1.0.0-rc.1",
+	"description": "React function components for imperatively controlling embedded players (audio, Niconico, SoundCloud and YouTube) using refs.",
+	"license": "MIT",
 	"main": "dist/index.js",
 	"devDependencies": {
 		"@trivago/prettier-plugin-sort-imports": "^3.3.0",
@@ -29,5 +31,22 @@
 	],
 	"dependencies": {
 		"qs": "^6.11.0"
-	}
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/VocaDB/nostalgic-diva.git"
+	},
+	"keywords": [
+		"react",
+		"player",
+		"audio",
+		"niconico",
+		"soundcloud",
+		"youtube"
+	],
+	"author": "Aigamo <51428094+ycanardeau@users.noreply.github.com>",
+	"bugs": {
+		"url": "https://github.com/VocaDB/nostalgic-diva/issues"
+	},
+	"homepage": "https://vocadb.net/Al/12800"
 }
