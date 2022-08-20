@@ -39,11 +39,14 @@ const options = React.useMemo(
     [handleError, handlePlay, handlePause, handleEnded],
 );
 
+const handlePlayerChange = React.useCallback((player?: PVPlayer) => {}, [])
+
 // Audio
 <NostalgicDiva
     service={PVService.File}
     playerRef={playerRef}
     options={options}
+    onPlayerChange={handlePlayerChange}
 />;
 
 // Niconico
@@ -51,6 +54,7 @@ const options = React.useMemo(
     service={PVService.Niconico}
     playerRef={playerRef}
     options={options}
+    onPlayerChange={handlePlayerChange}
 />;
 
 // SoundCloud
@@ -58,6 +62,7 @@ const options = React.useMemo(
     service={PVService.SoundCloud}
     playerRef={playerRef}
     options={options}
+    onPlayerChange={handlePlayerChange}
 />;
 
 // YouTube
@@ -65,6 +70,7 @@ const options = React.useMemo(
     service={PVService.YouTube}
     playerRef={playerRef}
     options={options}
+    onPlayerChange={handlePlayerChange}
 />;
 ```
 
@@ -109,6 +115,7 @@ playerRef.unmute();
 ## Lifecycle
 
 1. [PVPlayer.attach](https://github.com/ycanardeau/prototypes/blob/36d5fed26bc12ddc537f0a43c02e8eab3995b4d5/prototypes/nostalgic-diva/src/players/PVPlayer.ts#L22)
+1. onPlayerChange
 1. [PVPlayer.load](https://github.com/ycanardeau/prototypes/blob/36d5fed26bc12ddc537f0a43c02e8eab3995b4d5/prototypes/nostalgic-diva/src/players/PVPlayer.ts#L24)
 1. [PVPlayer.play](https://github.com/ycanardeau/prototypes/blob/36d5fed26bc12ddc537f0a43c02e8eab3995b4d5/prototypes/nostalgic-diva/src/players/PVPlayer.ts#L25)
 1. [PVPlayerOptions.onPlay](https://github.com/ycanardeau/prototypes/blob/36d5fed26bc12ddc537f0a43c02e8eab3995b4d5/prototypes/nostalgic-diva/src/players/PVPlayer.ts#L3)
@@ -126,3 +133,5 @@ The `attach` function is called when switching from another player (Audio, Nicon
 -   [ニコニコ動画の HTML5 外部プレイヤーを JavaScript で操作する](https://blog.hayu.io/web/create/nicovideo-embed-player-api/)
 -   [Widget API - SoundCloud Developers](https://developers.soundcloud.com/docs/api/html5-widget)
 -   [YouTube Player API Reference for iframe Embeds | YouTube IFrame Player API | Google Developers](https://developers.google.com/youtube/iframe_api_reference)
+-   [How to support Reusable State in Effects · Discussion #18 · reactwg/react-18](https://github.com/reactwg/react-18/discussions/18)
+-   [Synchronizing with Effects](https://beta.reactjs.org/learn/synchronizing-with-effects#how-to-handle-the-effect-firing-twice-in-development)
