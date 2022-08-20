@@ -10,6 +10,8 @@ This was originally developed in [VocaDB/vocadb#1101](https://github.com/VocaDB/
 
 ## Usage
 
+See [VocaDB/vocadb#1101](https://github.com/VocaDB/vocadb/pull/1101) for more information.
+
 ```tsx
 import {
     NostalgicDiva,
