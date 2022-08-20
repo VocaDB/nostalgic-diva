@@ -3,9 +3,13 @@ import React from 'react';
 import { PVPlayer, PVPlayerOptions } from '../players/PVPlayer';
 import { PVPlayerConsole } from '../players/PVPlayerConsole';
 
-interface EmbedPVProps<TElement extends HTMLElement, TPlayer extends PVPlayer> {
+export interface EmbedPVPropsBase {
 	playerRef?: React.MutableRefObject<PVPlayer | undefined>;
 	options: PVPlayerOptions;
+}
+
+interface EmbedPVProps<TElement extends HTMLElement, TPlayer extends PVPlayer>
+	extends EmbedPVPropsBase {
 	playerFactory: new (
 		playerElementRef: React.MutableRefObject<TElement>,
 		options: PVPlayerOptions,

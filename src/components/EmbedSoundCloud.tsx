@@ -1,17 +1,11 @@
 import React from 'react';
 
-import { PVPlayer, PVPlayerOptions } from '../players/PVPlayer';
 import { PVPlayerConsole } from '../players/PVPlayerConsole';
 import { PVPlayerSoundCloud } from '../players/PVPlayerSoundCloud';
-import { EmbedPV } from './EmbedPV';
-
-interface EmbedSoundCloudProps {
-	playerRef?: React.MutableRefObject<PVPlayer | undefined>;
-	options: PVPlayerOptions;
-}
+import { EmbedPV, EmbedPVPropsBase } from './EmbedPV';
 
 export const EmbedSoundCloud = React.memo(
-	({ ...props }: EmbedSoundCloudProps): React.ReactElement => {
+	({ ...props }: EmbedPVPropsBase): React.ReactElement => {
 		PVPlayerConsole.debug('EmbedSoundCloud');
 
 		return (

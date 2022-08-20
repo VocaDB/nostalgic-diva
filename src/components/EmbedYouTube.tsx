@@ -1,17 +1,11 @@
 import React from 'react';
 
-import { PVPlayer, PVPlayerOptions } from '../players/PVPlayer';
 import { PVPlayerConsole } from '../players/PVPlayerConsole';
 import { PVPlayerYouTube } from '../players/PVPlayerYouTube';
-import { EmbedPV } from './EmbedPV';
-
-interface EmbedYouTubeProps {
-	playerRef?: React.MutableRefObject<PVPlayer | undefined>;
-	options: PVPlayerOptions;
-}
+import { EmbedPV, EmbedPVPropsBase } from './EmbedPV';
 
 export const EmbedYouTube = React.memo(
-	({ ...props }: EmbedYouTubeProps): React.ReactElement => {
+	({ ...props }: EmbedPVPropsBase): React.ReactElement => {
 		PVPlayerConsole.debug('EmbedYouTube');
 
 		return (

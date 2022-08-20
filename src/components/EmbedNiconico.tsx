@@ -1,17 +1,11 @@
 import React from 'react';
 
-import { PVPlayer, PVPlayerOptions } from '../players/PVPlayer';
 import { PVPlayerConsole } from '../players/PVPlayerConsole';
 import { PVPlayerNiconico } from '../players/PVPlayerNiconico';
-import { EmbedPV } from './EmbedPV';
-
-interface EmbedNiconicoProps {
-	playerRef?: React.MutableRefObject<PVPlayer | undefined>;
-	options: PVPlayerOptions;
-}
+import { EmbedPV, EmbedPVPropsBase } from './EmbedPV';
 
 export const EmbedNiconico = React.memo(
-	({ ...props }: EmbedNiconicoProps): React.ReactElement => {
+	({ ...props }: EmbedPVPropsBase): React.ReactElement => {
 		PVPlayerConsole.debug('EmbedNiconico');
 
 		return (
