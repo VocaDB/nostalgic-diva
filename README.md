@@ -115,7 +115,7 @@ playerRef.unmute();
 ## Lifecycle
 
 1. [PVPlayer.attach](https://github.com/ycanardeau/prototypes/blob/36d5fed26bc12ddc537f0a43c02e8eab3995b4d5/prototypes/nostalgic-diva/src/players/PVPlayer.ts#L22)
-1. onPlayerChange
+1. [onPlayerChange](https://github.com/VocaDB/nostalgic-diva/blob/84307a7cc1eb1e72f1bd69eb056efd79ce819d84/src/components/EmbedPV.tsx#L9)
 1. [PVPlayer.load](https://github.com/ycanardeau/prototypes/blob/36d5fed26bc12ddc537f0a43c02e8eab3995b4d5/prototypes/nostalgic-diva/src/players/PVPlayer.ts#L24)
 1. [PVPlayer.play](https://github.com/ycanardeau/prototypes/blob/36d5fed26bc12ddc537f0a43c02e8eab3995b4d5/prototypes/nostalgic-diva/src/players/PVPlayer.ts#L25)
 1. [PVPlayerOptions.onPlay](https://github.com/ycanardeau/prototypes/blob/36d5fed26bc12ddc537f0a43c02e8eab3995b4d5/prototypes/nostalgic-diva/src/players/PVPlayer.ts#L3)
