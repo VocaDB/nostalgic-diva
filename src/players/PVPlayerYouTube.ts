@@ -35,7 +35,7 @@ export class PVPlayerYouTube implements PVPlayer {
 
 	constructor(
 		private readonly playerElementRef: React.MutableRefObject<HTMLDivElement>,
-		private readonly options: PVPlayerOptions,
+		private readonly options?: PVPlayerOptions,
 	) {
 		this.id = PVPlayerYouTube.nextId++;
 
@@ -105,7 +105,7 @@ export class PVPlayerYouTube implements PVPlayer {
 
 						resolve();
 					},
-					onError: (e): void => this.options.onError?.(e),
+					onError: (e): void => this.options?.onError?.(e),
 					onStateChange: (e: YT.EventArgs): void => {
 						this.assertPlayerAttached();
 						if (!this.player) return;
@@ -114,19 +114,19 @@ export class PVPlayerYouTube implements PVPlayer {
 							case YT.PlayerState.PLAYING:
 								this.debug('state changed: PLAYING');
 
-								this.options.onPlay?.();
+								this.options?.onPlay?.();
 								break;
 
 							case YT.PlayerState.PAUSED:
 								this.debug('state changed: PAUSED');
 
-								this.options.onPause?.();
+								this.options?.onPause?.();
 								break;
 
 							case YT.PlayerState.ENDED:
 								this.debug('state changed: ENDED');
 
-								this.options.onEnded?.();
+								this.options?.onEnded?.();
 								break;
 						}
 					},

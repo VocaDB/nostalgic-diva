@@ -5,14 +5,14 @@ import { PVPlayerConsole } from '../players/PVPlayerConsole';
 
 export interface EmbedPVPropsBase {
 	playerRef?: React.MutableRefObject<PVPlayer | undefined>;
-	options: PVPlayerOptions;
+	options?: PVPlayerOptions;
 }
 
 interface EmbedPVProps<TElement extends HTMLElement, TPlayer extends PVPlayer>
 	extends EmbedPVPropsBase {
 	playerFactory: new (
 		playerElementRef: React.MutableRefObject<TElement>,
-		options: PVPlayerOptions,
+		options?: PVPlayerOptions,
 	) => TPlayer;
 	children: (
 		playerElementRef: React.MutableRefObject<TElement>,

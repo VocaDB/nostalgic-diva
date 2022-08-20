@@ -24,7 +24,7 @@ export class PVPlayerFile implements PVPlayer {
 
 	constructor(
 		private readonly playerElementRef: React.MutableRefObject<HTMLAudioElement>,
-		private readonly options: PVPlayerOptions,
+		private readonly options?: PVPlayerOptions,
 	) {
 		this.id = PVPlayerFile.nextId++;
 
@@ -66,9 +66,9 @@ export class PVPlayerFile implements PVPlayer {
 		this.player.src = pvId;
 
 		// REVIEW: Do we need to remove event listeners before removing the player element?
-		this.player.onplay = (): void => this.options.onPlay?.();
-		this.player.onpause = (): void => this.options.onPause?.();
-		this.player.onended = (): void => this.options.onEnded?.();
+		this.player.onplay = (): void => this.options?.onPlay?.();
+		this.player.onpause = (): void => this.options?.onPause?.();
+		this.player.onended = (): void => this.options?.onEnded?.();
 	};
 
 	play = (): void => {

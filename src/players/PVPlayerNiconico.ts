@@ -44,7 +44,7 @@ export class PVPlayerNiconico implements PVPlayer {
 
 	constructor(
 		private readonly playerElementRef: React.MutableRefObject<HTMLIFrameElement>,
-		private readonly options: PVPlayerOptions,
+		private readonly options?: PVPlayerOptions,
 	) {
 		this.id = PVPlayerNiconico.nextId++;
 
@@ -67,15 +67,15 @@ export class PVPlayerNiconico implements PVPlayer {
 
 				switch (data.data.playerStatus) {
 					case PlayerStatus.Play:
-						this.options.onPlay?.();
+						this.options?.onPlay?.();
 						break;
 
 					case PlayerStatus.Pause:
-						this.options.onPause?.();
+						this.options?.onPause?.();
 						break;
 
 					case PlayerStatus.End:
-						this.options.onEnded?.();
+						this.options?.onEnded?.();
 						break;
 				}
 				break;
@@ -101,12 +101,12 @@ export class PVPlayerNiconico implements PVPlayer {
 			case 'error':
 				// TODO: Implement.
 
-				this.options.onError?.(data);
+				this.options?.onError?.(data);
 				break;
 
 			case 'player-error:video:play':
 			case 'player-error:video:seek':
-				this.options.onError?.(data);
+				this.options?.onError?.(data);
 				break;
 
 			default:

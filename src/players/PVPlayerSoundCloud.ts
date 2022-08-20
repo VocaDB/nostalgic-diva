@@ -29,7 +29,7 @@ export class PVPlayerSoundCloud implements PVPlayer {
 
 	constructor(
 		private readonly playerElementRef: React.MutableRefObject<HTMLIFrameElement>,
-		private readonly options: PVPlayerOptions,
+		private readonly options?: PVPlayerOptions,
 	) {
 		this.id = PVPlayerSoundCloud.nextId++;
 
@@ -87,16 +87,16 @@ export class PVPlayerSoundCloud implements PVPlayer {
 				resolve();
 			});
 			this.player.bind(SC.Widget.Events.ERROR, (e) =>
-				this.options.onError?.(e),
+				this.options?.onError?.(e),
 			);
 			this.player.bind(SC.Widget.Events.PLAY, () =>
-				this.options.onPlay?.(),
+				this.options?.onPlay?.(),
 			);
 			this.player.bind(SC.Widget.Events.PAUSE, () =>
-				this.options.onPause?.(),
+				this.options?.onPause?.(),
 			);
 			this.player.bind(SC.Widget.Events.FINISH, () =>
-				this.options.onEnded?.(),
+				this.options?.onEnded?.(),
 			);
 		});
 	};
