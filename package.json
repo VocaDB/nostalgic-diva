@@ -5,19 +5,18 @@
 	"license": "MIT",
 	"main": "dist/index.js",
 	"devDependencies": {
-		"eslint": "^8.21.0",
-		"@typescript-eslint/parser": "^5.32.0",
-		"@typescript-eslint/eslint-plugin": "^5.32.0",
-		"prettier": "2.7.1",
-		"eslint-config-prettier": "^8.5.0",
-		"eslint-plugin-prettier": "^4.2.1",
 		"@trivago/prettier-plugin-sort-imports": "^3.3.0",
-		"eslint-config-react-app": "^7.0.1",
-		"@types/qs": "^6.9.7",
 		"@types/react": "^17.0.0",
 		"@types/react-dom": "^17.0.0",
+		"@typescript-eslint/eslint-plugin": "^5.32.0",
+		"@typescript-eslint/parser": "^5.32.0",
 		"babel-core": "^6.26.3",
 		"babel-runtime": "^6.26.0",
+		"eslint": "^8.21.0",
+		"eslint-config-prettier": "^8.5.0",
+		"eslint-config-react-app": "^7.0.1",
+		"eslint-plugin-prettier": "^4.2.1",
+		"prettier": "2.7.1",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
 		"rollup": "^2.73.0",
@@ -36,9 +35,6 @@
 	"files": [
 		"dist"
 	],
-	"dependencies": {
-		"qs": "^6.11.0"
-	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/VocaDB/nostalgic-diva.git"

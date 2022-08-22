@@ -1,5 +1,3 @@
-import qs from 'qs';
-
 import { PVPlayer, PVPlayerOptions } from './PVPlayer';
 import { PVPlayerConsole } from './PVPlayerConsole';
 
@@ -171,12 +169,7 @@ export class PVPlayerNiconico implements PVPlayer {
 				resolve();
 			};
 
-			this.player.src = `https://embed.nicovideo.jp/watch/${pvId}?${qs.stringify(
-				{
-					jsapi: 1,
-					playerId: 1,
-				},
-			)}`;
+			this.player.src = `https://embed.nicovideo.jp/watch/${pvId}?jsapi=1&playerId=1`;
 		});
 	};
 
