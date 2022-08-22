@@ -117,15 +117,24 @@ export class PVPlayerSoundCloud implements PVPlayer {
 		return url;
 	};
 
-	load = async (pvId: string): Promise<void> => {
-		this.debug('load', pvId);
+	load = (pvId: string): Promise<void> => {
+		return new Promise((resolve, reject /* TODO: Reject. */) => {
+			this.debug('load', pvId);
 
-		this.assertPlayerAttached();
-		if (!this.player) return;
+			this.assertPlayerAttached();
+			if (!this.player) return;
 
-		this.debug('Loading video...');
+			this.debug('Loading video...');
 
-		this.player.load(this.getUrlFromId(pvId), { auto_play: true });
+			this.player.load(this.getUrlFromId(pvId), {
+				auto_play: true,
+				callback: () => {
+					this.debug('video loaded');
+
+					resolve();
+				},
+			});
+		});
 	};
 
 	play = (): void => {
