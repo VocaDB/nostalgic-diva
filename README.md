@@ -77,20 +77,24 @@ const handlePlayerChange = React.useCallback((player?: PVPlayer) => {}, [])
 ```
 
 ```tsx
+const player = playerRef.current;
+
+if (!player) return;
+
 // Load
-playerRef.load(pvId);
+player.load(pvId);
 
 // Play
-playerRef.play();
+player.play();
 
 // Pause
-playerRef.pause();
+player.pause();
 
 // Mute
-playerRef.mute();
+player.mute();
 
 // Unmute
-playerRef.unmute();
+player.unmute();
 ```
 
 ## Imperative functions
