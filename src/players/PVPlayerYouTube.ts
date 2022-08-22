@@ -39,7 +39,7 @@ export class PVPlayerYouTube implements PVPlayer {
 	) {
 		this.id = PVPlayerYouTube.nextId++;
 
-		this.debug(`ctor`, playerElementRef.current);
+		this.debug('ctor', playerElementRef.current);
 	}
 
 	private static scriptLoaded = false;
@@ -82,7 +82,7 @@ export class PVPlayerYouTube implements PVPlayer {
 
 	attach = (): Promise<void> => {
 		return new Promise(async (resolve, reject /* TODO: Reject. */) => {
-			this.debug(`attach`);
+			this.debug('attach');
 
 			if (this.player) {
 				this.debug('player is already attached');
@@ -136,13 +136,13 @@ export class PVPlayerYouTube implements PVPlayer {
 	};
 
 	detach = async (): Promise<void> => {
-		this.debug(`detach`);
+		this.debug('detach');
 
 		this.player = undefined;
 	};
 
 	load = async (pvId: string): Promise<void> => {
-		this.debug(`load`, pvId);
+		this.debug('load', pvId);
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
@@ -153,7 +153,7 @@ export class PVPlayerYouTube implements PVPlayer {
 	};
 
 	play = (): void => {
-		this.debug(`play`);
+		this.debug('play');
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
@@ -162,7 +162,7 @@ export class PVPlayerYouTube implements PVPlayer {
 	};
 
 	pause = (): void => {
-		this.debug(`pause`);
+		this.debug('pause');
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
@@ -171,7 +171,7 @@ export class PVPlayerYouTube implements PVPlayer {
 	};
 
 	seekTo = (seconds: number): void => {
-		this.debug(`seekTo`, seconds);
+		this.debug('seekTo', seconds);
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
@@ -180,7 +180,7 @@ export class PVPlayerYouTube implements PVPlayer {
 	};
 
 	setVolume = (fraction: number): void => {
-		this.debug(`setVolume`);
+		this.debug('setVolume');
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
@@ -189,7 +189,7 @@ export class PVPlayerYouTube implements PVPlayer {
 	};
 
 	mute = (): void => {
-		this.debug(`mute`);
+		this.debug('mute');
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
@@ -198,7 +198,7 @@ export class PVPlayerYouTube implements PVPlayer {
 	};
 
 	unmute = (): void => {
-		this.debug(`unmute`);
+		this.debug('unmute');
 
 		this.assertPlayerAttached();
 		if (!this.player) return;

@@ -33,7 +33,7 @@ export class PVPlayerSoundCloud implements PVPlayer {
 	) {
 		this.id = PVPlayerSoundCloud.nextId++;
 
-		this.debug(`ctor`);
+		this.debug('ctor');
 	}
 
 	private static scriptLoaded = false;
@@ -48,7 +48,7 @@ export class PVPlayerSoundCloud implements PVPlayer {
 			}
 
 			try {
-				this.debug('Loading SoundCloud script...');
+				this.debug('Loading script...');
 
 				await getScript('https://w.soundcloud.com/player/api.js');
 
@@ -67,7 +67,7 @@ export class PVPlayerSoundCloud implements PVPlayer {
 
 	attach = (): Promise<void> => {
 		return new Promise(async (resolve, reject /* TODO: Reject. */) => {
-			this.debug(`${this.id}.attach`);
+			this.debug('attach');
 
 			if (this.player) {
 				this.debug('player is already attached');
@@ -102,7 +102,7 @@ export class PVPlayerSoundCloud implements PVPlayer {
 	};
 
 	detach = async (): Promise<void> => {
-		this.debug(`detach`);
+		this.debug('detach');
 
 		this.player = undefined;
 	};
@@ -118,7 +118,7 @@ export class PVPlayerSoundCloud implements PVPlayer {
 	};
 
 	load = async (pvId: string): Promise<void> => {
-		this.debug(`load`, pvId);
+		this.debug('load', pvId);
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
@@ -129,7 +129,7 @@ export class PVPlayerSoundCloud implements PVPlayer {
 	};
 
 	play = (): void => {
-		this.debug(`play`);
+		this.debug('play');
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
@@ -138,7 +138,7 @@ export class PVPlayerSoundCloud implements PVPlayer {
 	};
 
 	pause = (): void => {
-		this.debug(`pause`);
+		this.debug('pause');
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
@@ -147,7 +147,7 @@ export class PVPlayerSoundCloud implements PVPlayer {
 	};
 
 	seekTo = (seconds: number): void => {
-		this.debug(`seekTo`, seconds);
+		this.debug('seekTo', seconds);
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
@@ -156,7 +156,7 @@ export class PVPlayerSoundCloud implements PVPlayer {
 	};
 
 	setVolume = (fraction: number): void => {
-		this.debug(`setVolume`);
+		this.debug('setVolume');
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
@@ -165,13 +165,13 @@ export class PVPlayerSoundCloud implements PVPlayer {
 	};
 
 	mute = (): void => {
-		this.debug(`mute`);
+		this.debug('mute');
 
 		this.setVolume(0);
 	};
 
 	unmute = (): void => {
-		this.debug(`unmute`);
+		this.debug('unmute');
 
 		this.setVolume(1 /* TODO */);
 	};

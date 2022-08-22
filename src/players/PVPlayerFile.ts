@@ -28,34 +28,34 @@ export class PVPlayerFile implements PVPlayer {
 	) {
 		this.id = PVPlayerFile.nextId++;
 
-		this.debug(`ctor`);
+		this.debug('ctor');
 	}
 
 	attach = async (): Promise<void> => {
-		this.debug(`attach`);
+		this.debug('attach');
 
 		if (this.player) {
-			this.debug(`player is already attached`);
+			this.debug('player is already attached');
 			return;
 		}
 
 		this.player = this.playerElementRef.current;
 
-		this.debug(`player attached`);
+		this.debug('player attached');
 	};
 
 	detach = async (): Promise<void> => {
-		this.debug(`detach`);
+		this.debug('detach');
 
 		this.player = undefined;
 	};
 
 	private assertPlayerAttached = (): void => {
-		this.assert(!!this.player, `player is not attached`);
+		this.assert(!!this.player, 'player is not attached');
 	};
 
 	load = async (pvId: string): Promise<void> => {
-		this.debug(`load`, pvId);
+		this.debug('load', pvId);
 
 		this.assert(!!pvId, 'pvId is not defined');
 		if (!pvId) return;
@@ -72,7 +72,7 @@ export class PVPlayerFile implements PVPlayer {
 	};
 
 	play = (): void => {
-		this.debug(`play`);
+		this.debug('play');
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
@@ -81,7 +81,7 @@ export class PVPlayerFile implements PVPlayer {
 	};
 
 	pause = (): void => {
-		this.debug(`pause`);
+		this.debug('pause');
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
@@ -90,7 +90,7 @@ export class PVPlayerFile implements PVPlayer {
 	};
 
 	seekTo = (seconds: number): void => {
-		this.debug(`seekTo`, seconds);
+		this.debug('seekTo', seconds);
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
@@ -99,7 +99,7 @@ export class PVPlayerFile implements PVPlayer {
 	};
 
 	setVolume = (fraction: number): void => {
-		this.debug(`setVolume`);
+		this.debug('setVolume');
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
@@ -108,7 +108,7 @@ export class PVPlayerFile implements PVPlayer {
 	};
 
 	mute = (): void => {
-		this.debug(`mute`);
+		this.debug('mute');
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
@@ -117,7 +117,7 @@ export class PVPlayerFile implements PVPlayer {
 	};
 
 	unmute = (): void => {
-		this.debug(`unmute`);
+		this.debug('unmute');
 
 		this.assertPlayerAttached();
 		if (!this.player) return;

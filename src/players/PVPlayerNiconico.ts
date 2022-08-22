@@ -48,7 +48,7 @@ export class PVPlayerNiconico implements PVPlayer {
 	) {
 		this.id = PVPlayerNiconico.nextId++;
 
-		this.debug(`ctor`);
+		this.debug('ctor');
 	}
 
 	private handleMessage = (e: nico.PlayerEvent): void => {
@@ -93,7 +93,7 @@ export class PVPlayerNiconico implements PVPlayer {
 				break;
 
 			case 'loadComplete':
-				this.debug(`load completed`);
+				this.debug('load completed');
 
 				// TODO: Implement.
 				break;
@@ -111,7 +111,7 @@ export class PVPlayerNiconico implements PVPlayer {
 
 			default:
 				this.warn(
-					`message`,
+					'message',
 					(data as any).eventName,
 					(data as any).data,
 				);
@@ -121,10 +121,10 @@ export class PVPlayerNiconico implements PVPlayer {
 
 	attach = (): Promise<void> => {
 		return new Promise((resolve, reject /* TODO: Reject. */) => {
-			this.debug(`attach`);
+			this.debug('attach');
 
 			if (this.player) {
-				this.debug(`player is already attached`);
+				this.debug('player is already attached');
 
 				resolve();
 				return;
@@ -134,14 +134,14 @@ export class PVPlayerNiconico implements PVPlayer {
 
 			window.addEventListener('message', this.handleMessage);
 
-			this.debug(`player attached`);
+			this.debug('player attached');
 
 			resolve();
 		});
 	};
 
 	detach = async (): Promise<void> => {
-		this.debug(`detach`);
+		this.debug('detach');
 
 		this.player = undefined;
 
@@ -149,12 +149,12 @@ export class PVPlayerNiconico implements PVPlayer {
 	};
 
 	private assertPlayerAttached = (): void => {
-		this.assert(!!this.player, `player is not attached`);
+		this.assert(!!this.player, 'player is not attached');
 	};
 
 	load = async (pvId: string): Promise<void> => {
 		return new Promise(async (resolve, reject /* TODO: Reject. */) => {
-			this.debug(`load`, pvId);
+			this.debug('load', pvId);
 
 			this.assertPlayerAttached();
 			if (!this.player) return;
@@ -166,7 +166,7 @@ export class PVPlayerNiconico implements PVPlayer {
 
 				this.player.onload = null;
 
-				this.debug(`iframe loaded`);
+				this.debug('iframe loaded');
 
 				resolve();
 			};
@@ -196,25 +196,25 @@ export class PVPlayerNiconico implements PVPlayer {
 	};
 
 	play = (): void => {
-		this.debug(`play`);
+		this.debug('play');
 
 		this.postMessage({ eventName: 'play' });
 	};
 
 	pause = (): void => {
-		this.debug(`pause`);
+		this.debug('pause');
 
 		this.postMessage({ eventName: 'pause' });
 	};
 
 	seekTo = (seconds: number): void => {
-		this.debug(`seekTo`, seconds);
+		this.debug('seekTo', seconds);
 
 		this.postMessage({ eventName: 'seek', data: { time: seconds * 1000 } });
 	};
 
 	setVolume = (fraction: number): void => {
-		this.debug(`setVolume`);
+		this.debug('setVolume');
 
 		this.postMessage({
 			eventName: 'volumeChange',
@@ -223,7 +223,7 @@ export class PVPlayerNiconico implements PVPlayer {
 	};
 
 	mute = (): void => {
-		this.debug(`mute`);
+		this.debug('mute');
 
 		this.postMessage({
 			eventName: 'mute',
@@ -232,7 +232,7 @@ export class PVPlayerNiconico implements PVPlayer {
 	};
 
 	unmute = (): void => {
-		this.debug(`unmute`);
+		this.debug('unmute');
 
 		this.postMessage({
 			eventName: 'mute',
