@@ -8,6 +8,7 @@ export class PVPlayerSoundCloud implements PVPlayer {
 
 	private readonly id: number;
 	private player?: SC.SoundCloudWidget;
+	private currentTime?: number;
 
 	toString = (): string => `PVPlayerSoundCloud#${this.id}`;
 
@@ -98,6 +99,9 @@ export class PVPlayerSoundCloud implements PVPlayer {
 			this.player.bind(SC.Widget.Events.FINISH, () =>
 				this.options?.onEnded?.(),
 			);
+			this.player.bind(SC.Widget.Events.PLAY_PROGRESS, (e) => {
+				this.currentTime = e.currentPosition / 1000;
+			});
 		});
 	};
 
@@ -183,5 +187,14 @@ export class PVPlayerSoundCloud implements PVPlayer {
 		this.debug('unmute');
 
 		this.setVolume(1 /* TODO */);
+	};
+
+	getCurrentTime = (): number | undefined => {
+		this.debug('getCurrentTime');
+
+		this.assertPlayerAttached();
+		if (!this.player) return undefined;
+
+		return this.currentTime;
 	};
 }

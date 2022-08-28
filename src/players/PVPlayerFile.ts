@@ -124,4 +124,13 @@ export class PVPlayerFile implements PVPlayer {
 
 		this.player.muted = false;
 	};
+
+	getCurrentTime = (): number | undefined => {
+		this.debug('getCurrentTime');
+
+		this.assertPlayerAttached();
+		if (!this.player) return undefined;
+
+		return this.player.currentTime;
+	};
 }

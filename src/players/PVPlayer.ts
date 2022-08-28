@@ -28,4 +28,5 @@ export interface PVPlayer {
 	setVolume(fraction: number): void;
 	mute(): void;
 	unmute(): void;
+	getCurrentTime(): number | undefined;
 }

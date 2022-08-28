@@ -205,4 +205,13 @@ export class PVPlayerYouTube implements PVPlayer {
 
 		this.player.unMute();
 	};
+
+	getCurrentTime = (): number | undefined => {
+		this.debug('getCurrentTime');
+
+		this.assertPlayerAttached();
+		if (!this.player) return undefined;
+
+		return this.player.getCurrentTime();
+	};
 }

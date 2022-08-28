@@ -101,22 +101,23 @@ player.unmute();
 
 | Function | Description |
 | --- | --- |
-| `load(pvId)` | Loads the specified video. |
-| `play()` | Plays the currently loaded video. |
-| `pause()` | Pauses the currently loaded video. |
-| `seekTo(seconds)` | Seeks to a specified time in the video. |
-| `setVolume(fraction)` | Sets the volume. Accepts a number between 0 and 1. |
-| `mute()` | Mutes the player. |
-| `unmute()` | Unmutes the player. |
+| `load(pvId: string): Promise<void>` | Loads the specified video. |
+| `play(): void` | Plays the currently loaded video. |
+| `pause(): void` | Pauses the currently loaded video. |
+| `seekTo(seconds: number): void` | Seeks to a specified time in the video. |
+| `setVolume(fraction: number): void` | Sets the volume. Accepts a number between 0 and 1. |
+| `mute(): void` | Mutes the player. |
+| `unmute(): void` | Unmutes the player. |
+| `getCurrentTime(): number | undefined` | Gets the current playback position, in seconds. |
 
 ## Events
 
 | Event | Description |
 | --- | --- |
-| `onError(event)` | Fired when an error occurs in the player. |
-| `onPlay()` | Fired when the sound begins to play. |
-| `onPause()` | Fired when the sound pauses. |
-| `onEnded()` | Fired when the sound finishes. |
+| `onError(event: any): void` | Fired when an error occurs in the player. |
+| `onPlay(): void` | Fired when the sound begins to play. |
+| `onPause(): void` | Fired when the sound pauses. |
+| `onEnded(): void` | Fired when the sound finishes. |
 
 ## Lifecycle
 

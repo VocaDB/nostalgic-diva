@@ -21,6 +21,7 @@ export class PVPlayerNiconico implements PVPlayer {
 
 	private readonly id: number;
 	private player?: HTMLIFrameElement;
+	private currentTime?: number;
 
 	toString = (): string => `PVPlayerNiconico#${this.id}`;
 
@@ -88,6 +89,10 @@ export class PVPlayerNiconico implements PVPlayer {
 				break;
 
 			case 'playerMetadataChange':
+				this.currentTime =
+					data.data.currentTime === undefined
+						? undefined
+						: data.data.currentTime / 1000;
 				break;
 
 			case 'loadComplete':
@@ -231,5 +236,14 @@ export class PVPlayerNiconico implements PVPlayer {
 			eventName: 'mute',
 			data: { mute: false },
 		});
+	};
+
+	getCurrentTime = (): number | undefined => {
+		this.debug('getCurrentTime');
+
+		this.assertPlayerAttached();
+		if (!this.player) return undefined;
+
+		return this.currentTime;
 	};
 }
