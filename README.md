@@ -108,7 +108,7 @@ player.unmute();
 | `setVolume(fraction: number): void` | Sets the volume. Accepts a number between 0 and 1. |
 | `mute(): void` | Mutes the player. |
 | `unmute(): void` | Unmutes the player. |
-| `getCurrentTime(): number | undefined` | Gets the current playback position, in seconds. |
+| `getCurrentTime(): number \| undefined` | Gets the current playback position, in seconds. |
 
 ## Events
 
