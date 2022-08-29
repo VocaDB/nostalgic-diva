@@ -29,6 +29,7 @@ const handleError = React.useCallback(() => {}, []);
 const handlePlay = React.useCallback(() => {}, []);
 const handlePause = React.useCallback(() => {}, []);
 const handleEnded = React.useCallback(() => {}, []);
+const handleTimeUpdate = React.useCallback(() => {}, []);
 
 // Options
 const options = React.useMemo(
@@ -37,8 +38,9 @@ const options = React.useMemo(
         onPlay: handlePlay,
         onPause: handlePause,
         onEnded: handleEnded,
+        onTimeUpdate: handleTimeUpdate,
     }),
-    [handleError, handlePlay, handlePause, handleEnded],
+    [handleError, handlePlay, handlePause, handleEnded, handleTimeUpdate],
 );
 
 const handlePlayerChange = React.useCallback((player?: PVPlayer) => {}, [])
@@ -91,10 +93,10 @@ await player.play();
 await player.pause();
 
 // Mute
-await player.mute();
+await player.setMuted(true);
 
 // Unmute
-await player.unmute();
+await player.setMuted(false);
 ```
 
 ## Imperative functions
@@ -118,19 +120,20 @@ await player.unmute();
 | `onPlay(): void` | Fired when the sound begins to play. |
 | `onPause(): void` | Fired when the sound pauses. |
 | `onEnded(): void` | Fired when the sound finishes. |
-| `onTimeUpdate(event: { duration?: number; percent?: number; seconds?: number; }): void` | |
+| `onTimeUpdate(event: TimeEvent): void` | |
 
 ## Lifecycle
 
-1. [PVPlayer.attach](https://github.com/VocaDB/nostalgic-diva/blob/f60ba4174b0592e43511935d25a19b27a8f3cb62/src/players/PVPlayer.ts#L22)
+1. [PVPlayer.attach](https://github.com/VocaDB/nostalgic-diva/blob/daaffb0d1597c78062da306370d7fb854106b43c/src/players/PVPlayer.ts#L27)
 1. [onPlayerChange](https://github.com/VocaDB/nostalgic-diva/blob/84307a7cc1eb1e72f1bd69eb056efd79ce819d84/src/components/EmbedPV.tsx#L9)
-1. [PVPlayer.load](https://github.com/VocaDB/nostalgic-diva/blob/f60ba4174b0592e43511935d25a19b27a8f3cb62/src/players/PVPlayer.ts#L24)
-1. [PVPlayer.play](https://github.com/VocaDB/nostalgic-diva/blob/f60ba4174b0592e43511935d25a19b27a8f3cb62/src/players/PVPlayer.ts#L25)
-1. [PVPlayerOptions.onPlay](https://github.com/VocaDB/nostalgic-diva/blob/f60ba4174b0592e43511935d25a19b27a8f3cb62/src/players/PVPlayer.ts#L3)
-1. [PVPlayer.pause](https://github.com/VocaDB/nostalgic-diva/blob/f60ba4174b0592e43511935d25a19b27a8f3cb62/src/players/PVPlayer.ts#L26)
-1. [PVPlayerOptions.onPause](https://github.com/VocaDB/nostalgic-diva/blob/f60ba4174b0592e43511935d25a19b27a8f3cb62/src/players/PVPlayer.ts#L4)
-1. [PVPlayerOptions.onEnded](https://github.com/VocaDB/nostalgic-diva/blob/f60ba4174b0592e43511935d25a19b27a8f3cb62/src/players/PVPlayer.ts#L5)
-1. [PVPlayer.detach](https://github.com/VocaDB/nostalgic-diva/blob/f60ba4174b0592e43511935d25a19b27a8f3cb62/src/players/PVPlayer.ts#L23)
+1. [PVPlayer.loadVideo](https://github.com/VocaDB/nostalgic-diva/blob/daaffb0d1597c78062da306370d7fb854106b43c/src/players/PVPlayer.ts#L29)
+1. [PVPlayer.play](https://github.com/VocaDB/nostalgic-diva/blob/daaffb0d1597c78062da306370d7fb854106b43c/src/players/PVPlayer.ts#L30)
+1. [PVPlayerOptions.onPlay](https://github.com/VocaDB/nostalgic-diva/blob/daaffb0d1597c78062da306370d7fb854106b43c/src/players/PVPlayer.ts#L16)
+1. PVPlayerOptions.onTimeUpdate
+1. [PVPlayer.pause](https://github.com/VocaDB/nostalgic-diva/blob/daaffb0d1597c78062da306370d7fb854106b43c/src/players/PVPlayer.ts#L31)
+1. [PVPlayerOptions.onPause](https://github.com/VocaDB/nostalgic-diva/blob/daaffb0d1597c78062da306370d7fb854106b43c/src/players/PVPlayer.ts#L17)
+1. [PVPlayerOptions.onEnded](https://github.com/VocaDB/nostalgic-diva/blob/daaffb0d1597c78062da306370d7fb854106b43c/src/players/PVPlayer.ts#L18)
+1. [PVPlayer.detach](https://github.com/VocaDB/nostalgic-diva/blob/daaffb0d1597c78062da306370d7fb854106b43c/src/players/PVPlayer.ts#L28)
 
 The `attach` function is called when switching from another player (Audio, Niconico, SoundCloud and YouTube), and the `detach` function is called when switching to another player. After the `detach` function is called, you cannot use any imperative functions like `load`, `play`, `pause` and etc.
 
