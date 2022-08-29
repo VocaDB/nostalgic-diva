@@ -80,6 +80,52 @@ export class PVPlayerYouTube implements PVPlayer {
 		this.assert(!!this.player, 'player is not attached');
 	};
 
+	private timeUpdateIntervalId?: number;
+
+	private clearTimeUpdateInterval = (): void => {
+		this.debug('clearTimeUpdateInterval', this.timeUpdateIntervalId);
+
+		window.clearInterval(this.timeUpdateIntervalId);
+	};
+
+	private previousTime = 0;
+
+	private invokeTimeUpdate = (player: YT.Player): void => {
+		const currentTime = player.getCurrentTime();
+
+		if (currentTime === this.previousTime) return;
+
+		const duration = player.getDuration();
+
+		this.options?.onTimeUpdate?.({
+			duration: duration,
+			percent: currentTime / duration,
+			seconds: currentTime,
+		});
+
+		this.previousTime = currentTime;
+	};
+
+	private setTimeUpdateInterval = (): void => {
+		this.debug('setTimeUpdateInterval');
+
+		this.clearTimeUpdateInterval();
+
+		this.assertPlayerAttached();
+		if (!this.player) return;
+
+		const player = this.player;
+
+		this.timeUpdateIntervalId = window.setInterval(
+			() => this.invokeTimeUpdate(player),
+			250,
+		);
+
+		this.debug('timeUpdateIntervalId', this.timeUpdateIntervalId);
+
+		this.invokeTimeUpdate(player);
+	};
+
 	attach = (): Promise<void> => {
 		return new Promise(async (resolve, reject /* TODO: Reject. */) => {
 			this.debug('attach');
@@ -116,18 +162,24 @@ export class PVPlayerYouTube implements PVPlayer {
 								this.debug('state changed: PLAYING');
 
 								this.options?.onPlay?.();
+
+								this.setTimeUpdateInterval();
 								break;
 
 							case YT.PlayerState.PAUSED:
 								this.debug('state changed: PAUSED');
 
 								this.options?.onPause?.();
+
+								this.clearTimeUpdateInterval();
 								break;
 
 							case YT.PlayerState.ENDED:
 								this.debug('state changed: ENDED');
 
 								this.options?.onEnded?.();
+
+								this.clearTimeUpdateInterval();
 								break;
 						}
 					},
@@ -139,11 +191,15 @@ export class PVPlayerYouTube implements PVPlayer {
 	detach = async (): Promise<void> => {
 		this.debug('detach');
 
+		this.clearTimeUpdateInterval();
+
 		this.player = undefined;
 	};
 
 	loadVideo = async (id: string): Promise<void> => {
 		this.debug('loadVideo', id);
+
+		this.previousTime = 0;
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
@@ -177,7 +233,11 @@ export class PVPlayerYouTube implements PVPlayer {
 		this.assertPlayerAttached();
 		if (!this.player) return;
 
-		this.player.seekTo(seconds);
+		const player = this.player;
+
+		player.seekTo(seconds);
+
+		this.invokeTimeUpdate(player);
 	};
 
 	setVolume = async (volume: number): Promise<void> => {

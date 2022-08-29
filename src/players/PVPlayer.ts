@@ -11,16 +11,18 @@ export enum PVService {
 	//Bandcamp = 'Bandcamp',
 }
 
+export interface TimeEvent {
+	duration: number | undefined;
+	percent: number | undefined;
+	seconds: number | undefined;
+}
+
 export interface PVPlayerOptions {
 	onError?(event: any): void;
 	onPlay?(): void;
 	onPause?(): void;
 	onEnded?(): void;
-	onTimeUpdate?(event: {
-		duration: number | undefined;
-		percent: number | undefined;
-		seconds: number | undefined;
-	}): void;
+	onTimeUpdate?(event: TimeEvent): void;
 }
 
 export interface PVPlayer {
