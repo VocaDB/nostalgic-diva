@@ -97,6 +97,16 @@ export class PVPlayerNiconico implements PVPlayer {
 					data.data.currentTime === undefined
 						? undefined
 						: data.data.currentTime / 1000;
+
+				this.options?.onTimeUpdate?.({
+					duration: this.duration,
+					percent:
+						this.currentTime !== undefined &&
+						this.duration !== undefined
+							? this.currentTime / this.duration
+							: undefined,
+					seconds: this.currentTime,
+				});
 				break;
 
 			case 'loadComplete':

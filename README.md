@@ -118,6 +118,7 @@ await player.unmute();
 | `onPlay(): void` | Fired when the sound begins to play. |
 | `onPause(): void` | Fired when the sound pauses. |
 | `onEnded(): void` | Fired when the sound finishes. |
+| `onTimeUpdate(event: { duration?: number; percent?: number; seconds?: number; }): void` | |
 
 ## Lifecycle
 

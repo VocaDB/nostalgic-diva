@@ -63,12 +63,22 @@ export class PVPlayerFile implements PVPlayer {
 		this.assertPlayerAttached();
 		if (!this.player) return;
 
-		this.player.src = id;
+		const player = this.player;
+
+		player.src = id;
 
 		// REVIEW: Do we need to remove event listeners before removing the player element?
-		this.player.onplay = (): void => this.options?.onPlay?.();
-		this.player.onpause = (): void => this.options?.onPause?.();
-		this.player.onended = (): void => this.options?.onEnded?.();
+		player.onerror = (event): void => this.options?.onError?.(event);
+		player.onplay = (): void => this.options?.onPlay?.();
+		player.onpause = (): void => this.options?.onPause?.();
+		player.onended = (): void => this.options?.onEnded?.();
+		player.ontimeupdate = (): void => {
+			this.options?.onTimeUpdate?.({
+				duration: player.duration,
+				percent: player.currentTime / player.duration,
+				seconds: player.currentTime,
+			});
+		};
 	};
 
 	play = async (): Promise<void> => {

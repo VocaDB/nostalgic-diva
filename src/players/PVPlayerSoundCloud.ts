@@ -60,6 +60,14 @@ export class PVPlayerSoundCloud implements PVPlayer {
 		}
 	};
 
+	private static playerGetDurationAsync = (
+		player: SC.SoundCloudWidget,
+	): Promise<number> => {
+		return new Promise((resolve, reject /* TODO: Reject. */) => {
+			player.getDuration(resolve);
+		});
+	};
+
 	attach = (): Promise<void> => {
 		return new Promise(async (resolve, reject /* TODO: Reject. */) => {
 			this.debug('attach');
@@ -76,23 +84,34 @@ export class PVPlayerSoundCloud implements PVPlayer {
 			this.debug('Attaching player...');
 
 			this.player = SC.Widget(this.playerElementRef.current);
-			this.player.bind(SC.Widget.Events.READY, () => {
+
+			const player = this.player;
+
+			player.bind(SC.Widget.Events.READY, () => {
 				this.debug('player attached');
 
 				resolve();
 			});
-			this.player.bind(SC.Widget.Events.ERROR, (event) =>
+			player.bind(SC.Widget.Events.ERROR, (event) =>
 				this.options?.onError?.(event),
 			);
-			this.player.bind(SC.Widget.Events.PLAY, () =>
-				this.options?.onPlay?.(),
-			);
-			this.player.bind(SC.Widget.Events.PAUSE, () =>
+			player.bind(SC.Widget.Events.PLAY, () => this.options?.onPlay?.());
+			player.bind(SC.Widget.Events.PAUSE, () =>
 				this.options?.onPause?.(),
 			);
-			this.player.bind(SC.Widget.Events.FINISH, () =>
+			player.bind(SC.Widget.Events.FINISH, () =>
 				this.options?.onEnded?.(),
 			);
+			player.bind(SC.Widget.Events.PLAY_PROGRESS, async (event) => {
+				const duration =
+					await PVPlayerSoundCloud.playerGetDurationAsync(player);
+
+				this.options?.onTimeUpdate?.({
+					duration: duration / 1000,
+					percent: event.loadedProgress,
+					seconds: event.currentPosition / 1000,
+				});
+			});
 		});
 	};
 
@@ -183,14 +202,6 @@ export class PVPlayerSoundCloud implements PVPlayer {
 		this.debug('setMuted', muted);
 
 		this.setVolume(muted ? 0 : 1 /* TODO */);
-	};
-
-	private static playerGetDurationAsync = (
-		player: SC.SoundCloudWidget,
-	): Promise<number> => {
-		return new Promise((resolve, reject /* TODO: Reject. */) => {
-			player.getDuration(resolve);
-		});
 	};
 
 	getDuration = async (): Promise<number | undefined> => {

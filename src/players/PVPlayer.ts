@@ -16,6 +16,11 @@ export interface PVPlayerOptions {
 	onPlay?(): void;
 	onPause?(): void;
 	onEnded?(): void;
+	onTimeUpdate?(event: {
+		duration: number | undefined;
+		percent: number | undefined;
+		seconds: number | undefined;
+	}): void;
 }
 
 export interface PVPlayer {
