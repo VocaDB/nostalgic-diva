@@ -108,7 +108,7 @@ export class PVPlayerSoundCloud implements PVPlayer {
 
 				this.options?.onTimeUpdate?.({
 					duration: duration / 1000,
-					percent: event.loadedProgress,
+					percent: event.currentPosition / duration,
 					seconds: event.currentPosition / 1000,
 				});
 			});
