@@ -21,6 +21,7 @@ export class PVPlayerNiconico implements PVPlayer {
 
 	private readonly id: number;
 	private player?: HTMLIFrameElement;
+	private duration?: number;
 	private currentTime?: number;
 
 	toString = (): string => `PVPlayerNiconico#${this.id}`;
@@ -89,6 +90,9 @@ export class PVPlayerNiconico implements PVPlayer {
 				break;
 
 			case 'playerMetadataChange':
+				if (data.data.duration !== undefined)
+					this.duration = data.data.duration / 1000;
+
 				this.currentTime =
 					data.data.currentTime === undefined
 						? undefined
@@ -98,7 +102,7 @@ export class PVPlayerNiconico implements PVPlayer {
 			case 'loadComplete':
 				this.debug('load completed');
 
-				// TODO: Implement.
+				this.duration = data.data.videoInfo.lengthInSeconds;
 				break;
 
 			case 'error':
@@ -122,25 +126,20 @@ export class PVPlayerNiconico implements PVPlayer {
 		}
 	};
 
-	attach = (): Promise<void> => {
-		return new Promise((resolve, reject /* TODO: Reject. */) => {
-			this.debug('attach');
+	attach = async (): Promise<void> => {
+		this.debug('attach');
 
-			if (this.player) {
-				this.debug('player is already attached');
+		if (this.player) {
+			this.debug('player is already attached');
 
-				resolve();
-				return;
-			}
+			return;
+		}
 
-			this.player = this.playerElementRef.current;
+		this.player = this.playerElementRef.current;
 
-			window.addEventListener('message', this.handleMessage);
+		window.addEventListener('message', this.handleMessage);
 
-			this.debug('player attached');
-
-			resolve();
-		});
+		this.debug('player attached');
 	};
 
 	detach = async (): Promise<void> => {
@@ -155,26 +154,27 @@ export class PVPlayerNiconico implements PVPlayer {
 		this.assert(!!this.player, 'player is not attached');
 	};
 
-	load = async (pvId: string): Promise<void> => {
-		return new Promise(async (resolve, reject /* TODO: Reject. */) => {
-			this.debug('load', pvId);
+	loadVideo = async (id: string): Promise<void> => {
+		return new Promise((resolve, reject /* TODO: Reject. */) => {
+			this.debug('loadVideo', id);
+
+			this.duration = undefined;
 
 			this.assertPlayerAttached();
 			if (!this.player) return;
 
-			// Wait for iframe to load.
-			this.player.onload = (): void => {
-				this.assertPlayerAttached();
-				if (!this.player) return;
+			const player = this.player;
 
-				this.player.onload = null;
+			// Wait for iframe to load.
+			player.onload = (): void => {
+				player.onload = null;
 
 				this.debug('iframe loaded');
 
 				resolve();
 			};
 
-			this.player.src = `https://embed.nicovideo.jp/watch/${pvId}?jsapi=1&playerId=1`;
+			this.player.src = `https://embed.nicovideo.jp/watch/${id}?jsapi=1&playerId=1`;
 		});
 	};
 
@@ -193,52 +193,52 @@ export class PVPlayerNiconico implements PVPlayer {
 		);
 	};
 
-	play = (): void => {
+	play = async (): Promise<void> => {
 		this.debug('play');
 
 		this.postMessage({ eventName: 'play' });
 	};
 
-	pause = (): void => {
+	pause = async (): Promise<void> => {
 		this.debug('pause');
 
 		this.postMessage({ eventName: 'pause' });
 	};
 
-	seekTo = (seconds: number): void => {
-		this.debug('seekTo', seconds);
+	setCurrentTime = async (seconds: number): Promise<void> => {
+		this.debug('setCurrentTime', seconds);
 
 		this.postMessage({ eventName: 'seek', data: { time: seconds * 1000 } });
 	};
 
-	setVolume = (fraction: number): void => {
+	setVolume = async (volume: number): Promise<void> => {
 		this.debug('setVolume');
 
 		this.postMessage({
 			eventName: 'volumeChange',
-			data: { volume: fraction },
+			data: { volume: volume },
 		});
 	};
 
-	mute = (): void => {
-		this.debug('mute');
+	setMuted = async (muted: boolean): Promise<void> => {
+		this.debug('setMuted', muted);
 
 		this.postMessage({
 			eventName: 'mute',
-			data: { mute: true },
+			data: { mute: muted },
 		});
 	};
 
-	unmute = (): void => {
-		this.debug('unmute');
+	getDuration = async (): Promise<number | undefined> => {
+		this.debug('getDuration');
 
-		this.postMessage({
-			eventName: 'mute',
-			data: { mute: false },
-		});
+		this.assertPlayerAttached();
+		if (!this.player) return undefined;
+
+		return this.duration;
 	};
 
-	getCurrentTime = (): number | undefined => {
+	getCurrentTime = async (): Promise<number | undefined> => {
 		this.debug('getCurrentTime');
 
 		this.assertPlayerAttached();

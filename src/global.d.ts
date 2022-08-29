@@ -37,6 +37,7 @@ declare namespace nico {
 		data: {
 			videoInfo: {
 				watchId: string;
+				lengthInSeconds: number;
 			};
 		};
 	}
@@ -83,6 +84,8 @@ declare namespace SC {
 		seekTo(milliseconds: number);
 		setVolume(volume: number);
 		unbind(eventName: string);
+		getDuration(callback: (duration: number) => void): void;
+		getPosition(callback: (position: number) => void): void;
 	}
 
 	interface SoundCloudLoadOptions {

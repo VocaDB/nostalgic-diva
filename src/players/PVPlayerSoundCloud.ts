@@ -8,7 +8,6 @@ export class PVPlayerSoundCloud implements PVPlayer {
 
 	private readonly id: number;
 	private player?: SC.SoundCloudWidget;
-	private currentTime?: number;
 
 	toString = (): string => `PVPlayerSoundCloud#${this.id}`;
 
@@ -39,31 +38,26 @@ export class PVPlayerSoundCloud implements PVPlayer {
 
 	private static scriptLoaded = false;
 
-	private loadScript = (): Promise<void> => {
-		return new Promise(async (resolve, reject) => {
-			if (PVPlayerSoundCloud.scriptLoaded) {
-				this.debug('script is already loaded');
+	private loadScript = async (): Promise<void> => {
+		if (PVPlayerSoundCloud.scriptLoaded) {
+			this.debug('script is already loaded');
 
-				resolve();
-				return;
-			}
+			return;
+		}
 
-			try {
-				this.debug('Loading script...');
+		try {
+			this.debug('Loading script...');
 
-				await getScript('https://w.soundcloud.com/player/api.js');
+			await getScript('https://w.soundcloud.com/player/api.js');
 
-				PVPlayerSoundCloud.scriptLoaded = true;
+			PVPlayerSoundCloud.scriptLoaded = true;
 
-				this.debug('script loaded');
+			this.debug('script loaded');
+		} catch (error) {
+			this.error('Failed to load script');
 
-				resolve();
-			} catch {
-				this.error('Failed to load script');
-
-				reject();
-			}
-		});
+			throw error;
+		}
 	};
 
 	attach = (): Promise<void> => {
@@ -87,8 +81,8 @@ export class PVPlayerSoundCloud implements PVPlayer {
 
 				resolve();
 			});
-			this.player.bind(SC.Widget.Events.ERROR, (e) =>
-				this.options?.onError?.(e),
+			this.player.bind(SC.Widget.Events.ERROR, (event) =>
+				this.options?.onError?.(event),
 			);
 			this.player.bind(SC.Widget.Events.PLAY, () =>
 				this.options?.onPlay?.(),
@@ -99,9 +93,6 @@ export class PVPlayerSoundCloud implements PVPlayer {
 			this.player.bind(SC.Widget.Events.FINISH, () =>
 				this.options?.onEnded?.(),
 			);
-			this.player.bind(SC.Widget.Events.PLAY_PROGRESS, (e) => {
-				this.currentTime = e.currentPosition / 1000;
-			});
 		});
 	};
 
@@ -115,33 +106,44 @@ export class PVPlayerSoundCloud implements PVPlayer {
 		this.assert(!!this.player, 'player is not attached');
 	};
 
-	private getUrlFromId = (pvId: string): string => {
-		const parts = pvId.split(' ');
+	private getUrlFromId = (id: string): string => {
+		const parts = id.split(' ');
 		const url = `https://api.soundcloud.com/tracks/${parts[0]}`;
 		return url;
 	};
 
-	load = (pvId: string): Promise<void> => {
+	private static playerLoadAsync = (
+		player: SC.SoundCloudWidget,
+		url: string,
+		options: Omit<SC.SoundCloudLoadOptions, 'callback'>,
+	): Promise<void> => {
 		return new Promise((resolve, reject /* TODO: Reject. */) => {
-			this.debug('load', pvId);
-
-			this.assertPlayerAttached();
-			if (!this.player) return;
-
-			this.debug('Loading video...');
-
-			this.player.load(this.getUrlFromId(pvId), {
-				auto_play: true,
-				callback: () => {
-					this.debug('video loaded');
-
-					resolve();
-				},
-			});
+			player.load(url, { ...options, callback: resolve });
 		});
 	};
 
-	play = (): void => {
+	loadVideo = async (id: string): Promise<void> => {
+		this.debug('loadVideo', id);
+
+		this.assertPlayerAttached();
+		if (!this.player) return;
+
+		const player = this.player;
+
+		this.debug('Loading video...');
+
+		await PVPlayerSoundCloud.playerLoadAsync(
+			player,
+			this.getUrlFromId(id),
+			{
+				auto_play: true,
+			},
+		);
+
+		this.debug('video loaded');
+	};
+
+	play = async (): Promise<void> => {
 		this.debug('play');
 
 		this.assertPlayerAttached();
@@ -150,7 +152,7 @@ export class PVPlayerSoundCloud implements PVPlayer {
 		this.player.play();
 	};
 
-	pause = (): void => {
+	pause = async (): Promise<void> => {
 		this.debug('pause');
 
 		this.assertPlayerAttached();
@@ -159,8 +161,8 @@ export class PVPlayerSoundCloud implements PVPlayer {
 		this.player.pause();
 	};
 
-	seekTo = (seconds: number): void => {
-		this.debug('seekTo', seconds);
+	setCurrentTime = async (seconds: number): Promise<void> => {
+		this.debug('setCurrentTime', seconds);
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
@@ -168,33 +170,60 @@ export class PVPlayerSoundCloud implements PVPlayer {
 		this.player.seekTo(seconds * 1000);
 	};
 
-	setVolume = (fraction: number): void => {
+	setVolume = async (volume: number): Promise<void> => {
 		this.debug('setVolume');
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
 
-		this.player.setVolume(fraction * 100);
+		this.player.setVolume(volume * 100);
 	};
 
-	mute = (): void => {
-		this.debug('mute');
+	setMuted = async (muted: boolean): Promise<void> => {
+		this.debug('setMuted', muted);
 
-		this.setVolume(0);
+		this.setVolume(muted ? 0 : 1 /* TODO */);
 	};
 
-	unmute = (): void => {
-		this.debug('unmute');
-
-		this.setVolume(1 /* TODO */);
+	private static playerGetDurationAsync = (
+		player: SC.SoundCloudWidget,
+	): Promise<number> => {
+		return new Promise((resolve, reject /* TODO: Reject. */) => {
+			player.getDuration(resolve);
+		});
 	};
 
-	getCurrentTime = (): number | undefined => {
+	getDuration = async (): Promise<number | undefined> => {
+		this.debug('getDuration');
+
+		this.assertPlayerAttached();
+		if (!this.player) return undefined;
+
+		const duration = await PVPlayerSoundCloud.playerGetDurationAsync(
+			this.player,
+		);
+
+		return duration / 1000;
+	};
+
+	private static playerGetPositionAsync = (
+		player: SC.SoundCloudWidget,
+	): Promise<number> => {
+		return new Promise((resolve, reject /* TODO: Reject. */) => {
+			player.getPosition(resolve);
+		});
+	};
+
+	getCurrentTime = async (): Promise<number | undefined> => {
 		this.debug('getCurrentTime');
 
 		this.assertPlayerAttached();
 		if (!this.player) return undefined;
 
-		return this.currentTime;
+		const position = await PVPlayerSoundCloud.playerGetPositionAsync(
+			this.player,
+		);
+
+		return position / 1000;
 	};
 }

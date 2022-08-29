@@ -82,33 +82,33 @@ const player = playerRef.current;
 if (!player) return;
 
 // Load
-player.load(pvId);
+await player.loadVideo(id);
 
 // Play
-player.play();
+await player.play();
 
 // Pause
-player.pause();
+await player.pause();
 
 // Mute
-player.mute();
+await player.mute();
 
 // Unmute
-player.unmute();
+await player.unmute();
 ```
 
 ## Imperative functions
 
 | Function | Description |
 | --- | --- |
-| `load(pvId: string): Promise<void>` | Loads the specified video. |
-| `play(): void` | Plays the currently loaded video. |
-| `pause(): void` | Pauses the currently loaded video. |
-| `seekTo(seconds: number): void` | Seeks to a specified time in the video. |
-| `setVolume(fraction: number): void` | Sets the volume. Accepts a number between 0 and 1. |
-| `mute(): void` | Mutes the player. |
-| `unmute(): void` | Unmutes the player. |
-| `getCurrentTime(): number \| undefined` | Gets the current playback position, in seconds. |
+| `loadVideo(id: string): Promise<void>` | Loads the specified video. |
+| `play(): Promise<void>` | Plays the currently loaded video. |
+| `pause(): Promise<void>` | Pauses the currently loaded video. |
+| `setCurrentTime(seconds: number): Promise<void>` | Seeks to a specified time in the video. |
+| `setVolume(volume: number): Promise<void>` | Sets the volume. Accepts a number between 0 and 1. |
+| `setMuted(muted: boolean): Promise<void>` | Sets the muted state of the player. |
+| `getDuration(): Promise<number \| undefined>` | Returns the duration in seconds of the current media resource. |
+| `getCurrentTime(): Promise<number \| undefined>` | Gets the current playback position, in seconds. |
 
 ## Events
 

@@ -1,10 +1,3 @@
-export interface PVPlayerOptions {
-	onError?(e: any): void;
-	onPlay?(): void;
-	onPause?(): void;
-	onEnded?(): void;
-}
-
 export enum PVService {
 	Niconico = 'NicoNicoDouga',
 	YouTube = 'Youtube',
@@ -18,15 +11,22 @@ export enum PVService {
 	//Bandcamp = 'Bandcamp',
 }
 
+export interface PVPlayerOptions {
+	onError?(event: any): void;
+	onPlay?(): void;
+	onPause?(): void;
+	onEnded?(): void;
+}
+
 export interface PVPlayer {
 	attach(): Promise<void>;
 	detach(): Promise<void>;
-	load(pvId: string): Promise<void>;
-	play(): void;
-	pause(): void;
-	seekTo(seconds: number): void;
-	setVolume(fraction: number): void;
-	mute(): void;
-	unmute(): void;
-	getCurrentTime(): number | undefined;
+	loadVideo(id: string): Promise<void>;
+	play(): Promise<void>;
+	pause(): Promise<void>;
+	setCurrentTime(seconds: number): Promise<void>;
+	setVolume(volume: number): Promise<void>;
+	setMuted(muted: boolean): Promise<void>;
+	getDuration(): Promise<number | undefined>;
+	getCurrentTime(): Promise<number | undefined>;
 }

@@ -105,7 +105,8 @@ export class PVPlayerYouTube implements PVPlayer {
 
 						resolve();
 					},
-					onError: (e): void => this.options?.onError?.(e),
+					onError: (event): void =>
+						this.options?.onError?.(event.data),
 					onStateChange: (e: YT.EventArgs): void => {
 						this.assertPlayerAttached();
 						if (!this.player) return;
@@ -141,18 +142,18 @@ export class PVPlayerYouTube implements PVPlayer {
 		this.player = undefined;
 	};
 
-	load = async (pvId: string): Promise<void> => {
-		this.debug('load', pvId);
+	loadVideo = async (id: string): Promise<void> => {
+		this.debug('loadVideo', id);
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
 
 		this.debug('Loading video...');
 
-		this.player.loadVideoById(pvId);
+		this.player.loadVideoById(id);
 	};
 
-	play = (): void => {
+	play = async (): Promise<void> => {
 		this.debug('play');
 
 		this.assertPlayerAttached();
@@ -161,7 +162,7 @@ export class PVPlayerYouTube implements PVPlayer {
 		this.player.playVideo();
 	};
 
-	pause = (): void => {
+	pause = async (): Promise<void> => {
 		this.debug('pause');
 
 		this.assertPlayerAttached();
@@ -170,8 +171,8 @@ export class PVPlayerYouTube implements PVPlayer {
 		this.player.pauseVideo();
 	};
 
-	seekTo = (seconds: number): void => {
-		this.debug('seekTo', seconds);
+	setCurrentTime = async (seconds: number): Promise<void> => {
+		this.debug('setCurrentTime', seconds);
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
@@ -179,34 +180,38 @@ export class PVPlayerYouTube implements PVPlayer {
 		this.player.seekTo(seconds);
 	};
 
-	setVolume = (fraction: number): void => {
+	setVolume = async (volume: number): Promise<void> => {
 		this.debug('setVolume');
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
 
-		this.player.setVolume(fraction * 100);
+		this.player.setVolume(volume * 100);
 	};
 
-	mute = (): void => {
-		this.debug('mute');
+	setMuted = async (muted: boolean): Promise<void> => {
+		this.debug('setMuted', muted);
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
 
-		this.player.mute();
+		if (muted) {
+			this.player.mute();
+		} else {
+			this.player.unMute();
+		}
 	};
 
-	unmute = (): void => {
-		this.debug('unmute');
+	getDuration = async (): Promise<number | undefined> => {
+		this.debug('getDuration');
 
 		this.assertPlayerAttached();
-		if (!this.player) return;
+		if (!this.player) return undefined;
 
-		this.player.unMute();
+		return this.player.getDuration();
 	};
 
-	getCurrentTime = (): number | undefined => {
+	getCurrentTime = async (): Promise<number | undefined> => {
 		this.debug('getCurrentTime');
 
 		this.assertPlayerAttached();

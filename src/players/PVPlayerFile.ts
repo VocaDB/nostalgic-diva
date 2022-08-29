@@ -54,16 +54,16 @@ export class PVPlayerFile implements PVPlayer {
 		this.assert(!!this.player, 'player is not attached');
 	};
 
-	load = async (pvId: string): Promise<void> => {
-		this.debug('load', pvId);
+	loadVideo = async (id: string): Promise<void> => {
+		this.debug('loadVideo', id);
 
-		this.assert(!!pvId, 'pvId is not defined');
-		if (!pvId) return;
+		this.assert(!!id, 'id is not defined');
+		if (!id) return;
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
 
-		this.player.src = pvId;
+		this.player.src = id;
 
 		// REVIEW: Do we need to remove event listeners before removing the player element?
 		this.player.onplay = (): void => this.options?.onPlay?.();
@@ -71,7 +71,7 @@ export class PVPlayerFile implements PVPlayer {
 		this.player.onended = (): void => this.options?.onEnded?.();
 	};
 
-	play = (): void => {
+	play = async (): Promise<void> => {
 		this.debug('play');
 
 		this.assertPlayerAttached();
@@ -80,7 +80,7 @@ export class PVPlayerFile implements PVPlayer {
 		this.player.play();
 	};
 
-	pause = (): void => {
+	pause = async (): Promise<void> => {
 		this.debug('pause');
 
 		this.assertPlayerAttached();
@@ -89,8 +89,8 @@ export class PVPlayerFile implements PVPlayer {
 		this.player.pause();
 	};
 
-	seekTo = (seconds: number): void => {
-		this.debug('seekTo', seconds);
+	setCurrentTime = async (seconds: number): Promise<void> => {
+		this.debug('setCurrentTime', seconds);
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
@@ -98,34 +98,34 @@ export class PVPlayerFile implements PVPlayer {
 		this.player.currentTime = seconds;
 	};
 
-	setVolume = (fraction: number): void => {
+	setVolume = async (volume: number): Promise<void> => {
 		this.debug('setVolume');
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
 
-		this.player.volume = fraction;
+		this.player.volume = volume;
 	};
 
-	mute = (): void => {
-		this.debug('mute');
+	setMuted = async (muted: boolean): Promise<void> => {
+		this.debug('setMuted', muted);
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
 
-		this.player.muted = true;
+		this.player.muted = muted;
 	};
 
-	unmute = (): void => {
-		this.debug('unmute');
+	getDuration = async (): Promise<number | undefined> => {
+		this.debug('getDuration');
 
 		this.assertPlayerAttached();
-		if (!this.player) return;
+		if (!this.player) return undefined;
 
-		this.player.muted = false;
+		return this.player.duration;
 	};
 
-	getCurrentTime = (): number | undefined => {
+	getCurrentTime = async (): Promise<number | undefined> => {
 		this.debug('getCurrentTime');
 
 		this.assertPlayerAttached();
