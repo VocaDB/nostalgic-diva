@@ -86,6 +86,8 @@ export class PVPlayerYouTube implements PVPlayer {
 		this.debug('clearTimeUpdateInterval', this.timeUpdateIntervalId);
 
 		window.clearInterval(this.timeUpdateIntervalId);
+
+		this.timeUpdateIntervalId = undefined;
 	};
 
 	private previousTime = 0;
