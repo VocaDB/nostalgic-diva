@@ -129,13 +129,13 @@ await player.setMuted(false);
 1. [PVPlayer.loadVideo](https://github.com/VocaDB/nostalgic-diva/blob/daaffb0d1597c78062da306370d7fb854106b43c/src/players/PVPlayer.ts#L29)
 1. [PVPlayer.play](https://github.com/VocaDB/nostalgic-diva/blob/daaffb0d1597c78062da306370d7fb854106b43c/src/players/PVPlayer.ts#L30)
 1. [PVPlayerOptions.onPlay](https://github.com/VocaDB/nostalgic-diva/blob/daaffb0d1597c78062da306370d7fb854106b43c/src/players/PVPlayer.ts#L16)
-1. PVPlayerOptions.onTimeUpdate
+1. [PVPlayerOptions.onTimeUpdate](https://github.com/VocaDB/nostalgic-diva/blob/76dc9b60e080a22e91bdd3f1dd39708d7b570628/src/players/PVPlayer.ts#L25)
 1. [PVPlayer.pause](https://github.com/VocaDB/nostalgic-diva/blob/daaffb0d1597c78062da306370d7fb854106b43c/src/players/PVPlayer.ts#L31)
 1. [PVPlayerOptions.onPause](https://github.com/VocaDB/nostalgic-diva/blob/daaffb0d1597c78062da306370d7fb854106b43c/src/players/PVPlayer.ts#L17)
 1. [PVPlayerOptions.onEnded](https://github.com/VocaDB/nostalgic-diva/blob/daaffb0d1597c78062da306370d7fb854106b43c/src/players/PVPlayer.ts#L18)
 1. [PVPlayer.detach](https://github.com/VocaDB/nostalgic-diva/blob/daaffb0d1597c78062da306370d7fb854106b43c/src/players/PVPlayer.ts#L28)
 
-The `attach` function is called when switching from another player (Audio, Niconico, SoundCloud and YouTube), and the `detach` function is called when switching to another player. After the `detach` function is called, you cannot use any imperative functions like `load`, `play`, `pause` and etc.
+The `attach` function is called when switching from another player (Audio, Niconico, SoundCloud and YouTube), and the `detach` function is called when switching to another player. After the `detach` function is called, you cannot use any imperative functions like `loadVideo`, `play`, `pause` and etc.
 
 ## References
 
