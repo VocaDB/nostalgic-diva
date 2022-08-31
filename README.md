@@ -4,6 +4,10 @@ React function components for imperatively controlling embedded players (audio, 
 
 This was originally developed in [VocaDB/vocadb#1101](https://github.com/VocaDB/vocadb/pull/1101) as a part of [VocaDB](https://github.com/VocaDB/vocadb).
 
+## Live demo
+
+See [VocaDB](https://vocadb.net/) and [its playlist page](https://vocadb.net/playlist).
+
 ## Installation
 
 `yarn add @vocadb/nostalgic-diva` or `npm i @vocadb/nostalgic-diva`
