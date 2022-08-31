@@ -1,6 +1,6 @@
 {
 	"name": "@vocadb/nostalgic-diva",
-	"version": "1.0.0-rc.7",
+	"version": "1.0.0",
 	"description": "React function components for imperatively controlling embedded players (audio, Niconico, SoundCloud and YouTube) using refs.",
 	"license": "MIT",
 	"main": "dist/index.js",
