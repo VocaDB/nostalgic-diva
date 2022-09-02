@@ -19,13 +19,14 @@ See [VocaDB/vocadb#1101](https://github.com/VocaDB/vocadb/pull/1101) for more in
 ```tsx
 import {
     NostalgicDiva,
+    PlayerApi,
     PlayerOptions,
 } from '@vocadb/nostalgic-diva';
 ```
 
 ```tsx
 // Ref
-const playerRef = React.useRef<PVPlayer>(undefined!);
+const playerRef = React.useRef<PlayerApi>(undefined!);
 
 // Callbacks
 const handleError = React.useCallback(() => {}, []);
