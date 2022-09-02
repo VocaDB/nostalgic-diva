@@ -141,16 +141,16 @@ await player.setMuted(false);
 
 ## Lifecycle
 
-1. [PlayerApi.attach](https://github.com/VocaDB/nostalgic-diva/blob/daaffb0d1597c78062da306370d7fb854106b43c/src/players/PVPlayer.ts#L27)
-1. [onPlayerChange](https://github.com/VocaDB/nostalgic-diva/blob/84307a7cc1eb1e72f1bd69eb056efd79ce819d84/src/components/EmbedPV.tsx#L9)
-1. [PlayerApi.loadVideo](https://github.com/VocaDB/nostalgic-diva/blob/daaffb0d1597c78062da306370d7fb854106b43c/src/players/PVPlayer.ts#L29)
-1. [PlayerApi.play](https://github.com/VocaDB/nostalgic-diva/blob/daaffb0d1597c78062da306370d7fb854106b43c/src/players/PVPlayer.ts#L30)
-1. [PlayerOptions.onPlay](https://github.com/VocaDB/nostalgic-diva/blob/daaffb0d1597c78062da306370d7fb854106b43c/src/players/PVPlayer.ts#L16)
-1. [PlayerOptions.onTimeUpdate](https://github.com/VocaDB/nostalgic-diva/blob/76dc9b60e080a22e91bdd3f1dd39708d7b570628/src/players/PVPlayer.ts#L25)
-1. [PlayerApi.pause](https://github.com/VocaDB/nostalgic-diva/blob/daaffb0d1597c78062da306370d7fb854106b43c/src/players/PVPlayer.ts#L31)
-1. [PlayerOptions.onPause](https://github.com/VocaDB/nostalgic-diva/blob/daaffb0d1597c78062da306370d7fb854106b43c/src/players/PVPlayer.ts#L17)
-1. [PlayerOptions.onEnded](https://github.com/VocaDB/nostalgic-diva/blob/daaffb0d1597c78062da306370d7fb854106b43c/src/players/PVPlayer.ts#L18)
-1. [PlayerApi.detach](https://github.com/VocaDB/nostalgic-diva/blob/daaffb0d1597c78062da306370d7fb854106b43c/src/players/PVPlayer.ts#L28)
+1. [PlayerApi.attach](https://github.com/VocaDB/nostalgic-diva/blob/2cb564805bd1e0c9a1ce6b2e0a0e0300c8442f27/src/players/PlayerApi.ts#L23)
+1. [PlayerPropsBase.onPlayerChange](https://github.com/VocaDB/nostalgic-diva/blob/2cb564805bd1e0c9a1ce6b2e0a0e0300c8442f27/src/components/Player.tsx#L9)
+1. [PlayerApi.loadVideo](https://github.com/VocaDB/nostalgic-diva/blob/2cb564805bd1e0c9a1ce6b2e0a0e0300c8442f27/src/players/PlayerApi.ts#L25)
+1. [PlayerApi.play](https://github.com/VocaDB/nostalgic-diva/blob/2cb564805bd1e0c9a1ce6b2e0a0e0300c8442f27/src/players/PlayerApi.ts#L26)
+1. [PlayerOptions.onPlay](https://github.com/VocaDB/nostalgic-diva/blob/2cb564805bd1e0c9a1ce6b2e0a0e0300c8442f27/src/players/PlayerApi.ts#L16)
+1. [PlayerOptions.onTimeUpdate](https://github.com/VocaDB/nostalgic-diva/blob/2cb564805bd1e0c9a1ce6b2e0a0e0300c8442f27/src/players/PlayerApi.ts#L19)
+1. [PlayerApi.pause](https://github.com/VocaDB/nostalgic-diva/blob/2cb564805bd1e0c9a1ce6b2e0a0e0300c8442f27/src/players/PlayerApi.ts#L27)
+1. [PlayerOptions.onPause](https://github.com/VocaDB/nostalgic-diva/blob/2cb564805bd1e0c9a1ce6b2e0a0e0300c8442f27/src/players/PlayerApi.ts#L17)
+1. [PlayerOptions.onEnded](https://github.com/VocaDB/nostalgic-diva/blob/2cb564805bd1e0c9a1ce6b2e0a0e0300c8442f27/src/players/PlayerApi.ts#L18)
+1. [PlayerApi.detach](https://github.com/VocaDB/nostalgic-diva/blob/2cb564805bd1e0c9a1ce6b2e0a0e0300c8442f27/src/players/PlayerApi.ts#L24)
 
 The `attach` function is called when switching from another player (Audio, Niconico, SoundCloud and YouTube), and the `detach` function is called when switching to another player. After the `detach` function is called, you cannot use any imperative functions like `loadVideo`, `play`, `pause` and etc.
 
