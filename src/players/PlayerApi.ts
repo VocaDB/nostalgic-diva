@@ -1,4 +1,9 @@
-export type PlayerType = 'Audio' | 'Niconico' | 'SoundCloud' | 'YouTube';
+export type PlayerType =
+	| 'Audio'
+	| 'Niconico'
+	| 'SoundCloud'
+	| 'Vimeo'
+	| 'YouTube';
 
 export interface TimeEvent {
 	duration: number | undefined;

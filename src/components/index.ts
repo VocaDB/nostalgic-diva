@@ -4,3 +4,4 @@ export * from './NostalgicDiva';
 export * from './Player';
 export * from './SoundCloudPlayer';
 export * from './YouTubePlayer';
+export * from './VimeoPlayer';
