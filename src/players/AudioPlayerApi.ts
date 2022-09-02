@@ -1,32 +1,32 @@
-import { PVPlayer, PVPlayerOptions } from './PVPlayer';
-import { PVPlayerConsole } from './PVPlayerConsole';
+import { PlayerApi, PlayerOptions } from './PlayerApi';
+import { PlayerConsole } from './PlayerConsole';
 
 // Code from: https://github.com/VocaDB/vocadb/blob/61b8c54f3eca906a477101dab4fdd9b154be310e/VocaDbWeb/Scripts/ViewModels/PVs/PVPlayerFile.ts.
-export class PVPlayerFile implements PVPlayer {
+export class AudioPlayerApi implements PlayerApi {
 	private static nextId = 1;
 
 	private readonly id: number;
 	private player?: HTMLAudioElement;
 
-	toString = (): string => `PVPlayerFile#${this.id}`;
+	toString = (): string => `AudioPlayerApi#${this.id}`;
 
 	private assert = (
 		condition?: boolean | undefined,
 		message?: any,
 		...optionalParams: any
 	): void => {
-		PVPlayerConsole.assert(condition, this, message, ...optionalParams);
+		PlayerConsole.assert(condition, this, message, ...optionalParams);
 	};
 
 	private debug = (message?: any, ...optionalParams: any): void => {
-		PVPlayerConsole.debug(this, message, ...optionalParams);
+		PlayerConsole.debug(this, message, ...optionalParams);
 	};
 
 	constructor(
 		private readonly playerElementRef: React.MutableRefObject<HTMLAudioElement>,
-		private readonly options?: PVPlayerOptions,
+		private readonly options?: PlayerOptions,
 	) {
-		this.id = PVPlayerFile.nextId++;
+		this.id = AudioPlayerApi.nextId++;
 
 		this.debug('ctor');
 	}

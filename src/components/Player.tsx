@@ -1,47 +1,47 @@
 import React from 'react';
 
-import { PVPlayer, PVPlayerOptions } from '../players/PVPlayer';
-import { PVPlayerConsole } from '../players/PVPlayerConsole';
+import { PlayerApi, PlayerOptions } from '../players/PlayerApi';
+import { PlayerConsole } from '../players/PlayerConsole';
 
-export interface EmbedPVPropsBase {
-	playerRef?: React.MutableRefObject<PVPlayer | undefined>;
-	options?: PVPlayerOptions;
-	onPlayerChange?: (player: PVPlayer | undefined) => void;
+export interface PlayerPropsBase {
+	playerRef?: React.MutableRefObject<PlayerApi | undefined>;
+	options?: PlayerOptions;
+	onPlayerChange?: (player: PlayerApi | undefined) => void;
 }
 
-interface EmbedPVProps<TElement extends HTMLElement, TPlayer extends PVPlayer>
-	extends EmbedPVPropsBase {
-	playerFactory: new (
+interface PlayerProps<TElement extends HTMLElement, TPlayer extends PlayerApi>
+	extends PlayerPropsBase {
+	playerApi: new (
 		playerElementRef: React.MutableRefObject<TElement>,
-		options?: PVPlayerOptions,
+		options?: PlayerOptions,
 	) => TPlayer;
 	children: (
 		playerElementRef: React.MutableRefObject<TElement>,
 	) => React.ReactNode;
 }
 
-export const EmbedPV = <
+export const Player = <
 	TElement extends HTMLElement,
-	TPlayer extends PVPlayer,
+	TPlayer extends PlayerApi,
 >({
 	playerRef,
 	options,
 	onPlayerChange,
-	playerFactory,
+	playerApi,
 	children,
-}: EmbedPVProps<TElement, TPlayer>): React.ReactElement<
-	EmbedPVProps<TElement, TPlayer>
+}: PlayerProps<TElement, TPlayer>): React.ReactElement<
+	PlayerProps<TElement, TPlayer>
 > => {
-	PVPlayerConsole.debug('EmbedPV');
+	PlayerConsole.debug('Player');
 
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	const playerElementRef = React.useRef<TElement>(undefined!);
 
-	const [player, setPlayer] = React.useState<PVPlayer>();
+	const [player, setPlayer] = React.useState<PlayerApi>();
 
 	// Make sure that `options` do not change between re-rendering.
 	React.useEffect(() => {
-		const player = new playerFactory(playerElementRef, options);
+		const player = new playerApi(playerElementRef, options);
 
 		if (playerRef) playerRef.current = player;
 
@@ -49,7 +49,7 @@ export const EmbedPV = <
 
 		return (): void => {
 			if (playerRef) {
-				PVPlayerConsole.assert(
+				PlayerConsole.assert(
 					player === playerRef.current,
 					'player differs',
 					player,
@@ -59,7 +59,7 @@ export const EmbedPV = <
 
 			player.detach().then(() => setPlayer(undefined));
 		};
-	}, [playerRef, options, playerFactory]);
+	}, [playerRef, options, playerApi]);
 
 	// Call onPlayerChange in a separate useEffect to prevent the player from being created multiple times.
 	React.useEffect(() => {

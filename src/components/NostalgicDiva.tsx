@@ -1,30 +1,29 @@
 import React from 'react';
 
-import { PVService } from '../players/PVPlayer';
-import { PVPlayerConsole } from '../players/PVPlayerConsole';
-import { EmbedFile } from './EmbedFile';
-import { EmbedNiconico } from './EmbedNiconico';
-import { EmbedPVPropsBase } from './EmbedPV';
-import { EmbedSoundCloud } from './EmbedSoundCloud';
-import { EmbedYouTube } from './EmbedYouTube';
+import { PlayerType } from '../players/PlayerApi';
+import { PlayerConsole } from '../players/PlayerConsole';
+import { AudioPlayer } from './AudioPlayer';
+import { NiconicoPlayer } from './NiconicoPlayer';
+import { PlayerPropsBase } from './Player';
+import { SoundCloudPlayer } from './SoundCloudPlayer';
+import { YouTubePlayer } from './YouTubePlayer';
 
-const players: Record<PVService, React.ElementType<EmbedPVPropsBase>> = {
-	[PVService.File]: EmbedFile,
-	[PVService.LocalFile]: EmbedFile,
-	[PVService.Niconico]: EmbedNiconico,
-	[PVService.SoundCloud]: EmbedSoundCloud,
-	[PVService.YouTube]: EmbedYouTube,
+const players: Record<PlayerType, React.ElementType<PlayerPropsBase>> = {
+	Audio: AudioPlayer,
+	Niconico: NiconicoPlayer,
+	SoundCloud: SoundCloudPlayer,
+	YouTube: YouTubePlayer,
 };
 
-interface NostalgicDivaProps extends EmbedPVPropsBase {
-	service: PVService;
+interface NostalgicDivaProps extends PlayerPropsBase {
+	type: PlayerType;
 }
 
 export const NostalgicDiva = React.memo(
-	({ service, ...props }: NostalgicDivaProps): React.ReactElement => {
-		PVPlayerConsole.debug('EmbedPV');
+	({ type, ...props }: NostalgicDivaProps): React.ReactElement => {
+		PlayerConsole.debug('NostalgicDiva');
 
-		const Player = players[service];
+		const Player = players[type];
 		return <Player {...props} />;
 	},
 );

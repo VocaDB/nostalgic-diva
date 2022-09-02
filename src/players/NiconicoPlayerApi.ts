@@ -1,5 +1,5 @@
-import { PVPlayer, PVPlayerOptions } from './PVPlayer';
-import { PVPlayerConsole } from './PVPlayerConsole';
+import { PlayerApi, PlayerOptions } from './PlayerApi';
+import { PlayerConsole } from './PlayerConsole';
 
 declare global {
 	interface Window {
@@ -14,7 +14,7 @@ export enum PlayerStatus {
 }
 
 // Code from: https://github.com/VocaDB/vocadb/blob/a4b5f9d8186772d7e6f58f997bbcbb51509d2539/VocaDbWeb/Scripts/ViewModels/PVs/PVPlayerNico.ts.
-export class PVPlayerNiconico implements PVPlayer {
+export class NiconicoPlayerApi implements PlayerApi {
 	private static readonly origin = 'https://embed.nicovideo.jp';
 
 	private static nextId = 1;
@@ -24,35 +24,35 @@ export class PVPlayerNiconico implements PVPlayer {
 	private duration?: number;
 	private currentTime?: number;
 
-	toString = (): string => `PVPlayerNiconico#${this.id}`;
+	toString = (): string => `NiconicoPlayerApi#${this.id}`;
 
 	private assert = (
 		condition?: boolean | undefined,
 		message?: any,
 		...optionalParams: any
 	): void => {
-		PVPlayerConsole.assert(condition, this, message, ...optionalParams);
+		PlayerConsole.assert(condition, this, message, ...optionalParams);
 	};
 
 	private debug = (message?: any, ...optionalParams: any): void => {
-		PVPlayerConsole.debug(this, message, ...optionalParams);
+		PlayerConsole.debug(this, message, ...optionalParams);
 	};
 
 	private warn = (message?: any, ...optionalParams: any): void => {
-		PVPlayerConsole.warn(this, message, ...optionalParams);
+		PlayerConsole.warn(this, message, ...optionalParams);
 	};
 
 	constructor(
 		private readonly playerElementRef: React.MutableRefObject<HTMLIFrameElement>,
-		private readonly options?: PVPlayerOptions,
+		private readonly options?: PlayerOptions,
 	) {
-		this.id = PVPlayerNiconico.nextId++;
+		this.id = NiconicoPlayerApi.nextId++;
 
 		this.debug('ctor');
 	}
 
 	private handleMessage = (e: nico.PlayerEvent): void => {
-		if (e.origin !== PVPlayerNiconico.origin) return;
+		if (e.origin !== NiconicoPlayerApi.origin) return;
 
 		const data = e.data;
 
@@ -199,7 +199,7 @@ export class PVPlayerNiconico implements PVPlayer {
 				playerId: '1' /* Needs to be a string, not a number. */,
 				sourceConnectorType: 1,
 			},
-			PVPlayerNiconico.origin,
+			NiconicoPlayerApi.origin,
 		);
 	};
 

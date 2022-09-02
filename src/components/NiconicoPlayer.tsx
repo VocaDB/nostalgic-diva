@@ -1,15 +1,15 @@
 import React from 'react';
 
-import { PVPlayerConsole } from '../players/PVPlayerConsole';
-import { PVPlayerNiconico } from '../players/PVPlayerNiconico';
-import { EmbedPV, EmbedPVPropsBase } from './EmbedPV';
+import { NiconicoPlayerApi } from '../players/NiconicoPlayerApi';
+import { PlayerConsole } from '../players/PlayerConsole';
+import { Player, PlayerPropsBase } from './Player';
 
-export const EmbedNiconico = React.memo(
-	({ ...props }: EmbedPVPropsBase): React.ReactElement => {
-		PVPlayerConsole.debug('EmbedNiconico');
+export const NiconicoPlayer = React.memo(
+	({ ...props }: PlayerPropsBase): React.ReactElement => {
+		PlayerConsole.debug('NiconicoPlayer');
 
 		return (
-			<EmbedPV {...props} playerFactory={PVPlayerNiconico}>
+			<Player {...props} playerApi={NiconicoPlayerApi}>
 				{(playerElementRef): React.ReactElement => (
 					<div style={{ width: '100%', height: '100%' }}>
 						{/* eslint-disable-next-line jsx-a11y/iframe-has-title */}
@@ -28,7 +28,7 @@ export const EmbedNiconico = React.memo(
 						/>
 					</div>
 				)}
-			</EmbedPV>
+			</Player>
 		);
 	},
 );

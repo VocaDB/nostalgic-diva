@@ -1,4 +1,4 @@
-export class PVPlayerConsole {
+export class PlayerConsole {
 	private static title = 'nostalgic-diva';
 
 	public static assert = (
@@ -8,25 +8,16 @@ export class PVPlayerConsole {
 	): void =>
 		console.assert(
 			condition,
-			`[${PVPlayerConsole.title}] ${message}`,
+			`[${PlayerConsole.title}] ${message}`,
 			...optionalParams,
 		);
 
 	public static debug = (message?: any, ...optionalParams: any): void =>
-		console.debug(
-			`[${PVPlayerConsole.title}] ${message}`,
-			...optionalParams,
-		);
+		console.debug(`[${PlayerConsole.title}] ${message}`, ...optionalParams);
 
 	public static error = (message?: any, ...optionalParams: any): void =>
-		console.error(
-			`[${PVPlayerConsole.title}] ${message}`,
-			...optionalParams,
-		);
+		console.error(`[${PlayerConsole.title}] ${message}`, ...optionalParams);
 
 	public static warn = (message?: any, ...optionalParams: any): void =>
-		console.warn(
-			`[${PVPlayerConsole.title}] ${message}`,
-			...optionalParams,
-		);
+		console.warn(`[${PlayerConsole.title}] ${message}`, ...optionalParams);
 }

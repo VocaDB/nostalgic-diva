@@ -1,15 +1,4 @@
-export enum PVService {
-	Niconico = 'NicoNicoDouga',
-	YouTube = 'Youtube',
-	SoundCloud = 'SoundCloud',
-	//Vimeo = 'Vimeo',
-	//Piapro = 'Piapro',
-	//Bilibili = 'Bilibili',
-	File = 'File',
-	LocalFile = 'LocalFile',
-	//Creofuga = 'Creofuga',
-	//Bandcamp = 'Bandcamp',
-}
+export type PlayerType = 'Audio' | 'Niconico' | 'SoundCloud' | 'YouTube';
 
 export interface TimeEvent {
 	duration: number | undefined;
@@ -17,7 +6,7 @@ export interface TimeEvent {
 	seconds: number | undefined;
 }
 
-export interface PVPlayerOptions {
+export interface PlayerOptions {
 	onError?(event: any): void;
 	onPlay?(): void;
 	onPause?(): void;
@@ -25,7 +14,7 @@ export interface PVPlayerOptions {
 	onTimeUpdate?(event: TimeEvent): void;
 }
 
-export interface PVPlayer {
+export interface PlayerApi {
 	attach(): Promise<void>;
 	detach(): Promise<void>;
 	loadVideo(id: string): Promise<void>;

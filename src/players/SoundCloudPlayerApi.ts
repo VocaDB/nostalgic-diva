@@ -1,37 +1,37 @@
-import { PVPlayer, PVPlayerOptions } from './PVPlayer';
-import { PVPlayerConsole } from './PVPlayerConsole';
+import { PlayerApi, PlayerOptions } from './PlayerApi';
+import { PlayerConsole } from './PlayerConsole';
 import { getScript } from './getScript';
 
 // Code from: https://github.com/VocaDB/vocadb/blob/e147650a8f1f85c8fa865d0ab562126c278527ec/VocaDbWeb/Scripts/ViewModels/PVs/PVPlayerSoundCloud.ts.
-export class PVPlayerSoundCloud implements PVPlayer {
+export class SoundCloudPlayerApi implements PlayerApi {
 	private static nextId = 1;
 
 	private readonly id: number;
 	private player?: SC.SoundCloudWidget;
 
-	toString = (): string => `PVPlayerSoundCloud#${this.id}`;
+	toString = (): string => `SoundCloudPlayerApi#${this.id}`;
 
 	private assert = (
 		condition?: boolean | undefined,
 		message?: any,
 		...optionalParams: any
 	): void => {
-		PVPlayerConsole.assert(condition, this, message, ...optionalParams);
+		PlayerConsole.assert(condition, this, message, ...optionalParams);
 	};
 
 	private debug = (message?: any, ...optionalParams: any): void => {
-		PVPlayerConsole.debug(this, message, ...optionalParams);
+		PlayerConsole.debug(this, message, ...optionalParams);
 	};
 
 	private error = (message?: any, ...optionalParams: any): void => {
-		PVPlayerConsole.error(this, message, ...optionalParams);
+		PlayerConsole.error(this, message, ...optionalParams);
 	};
 
 	constructor(
 		private readonly playerElementRef: React.MutableRefObject<HTMLIFrameElement>,
-		private readonly options?: PVPlayerOptions,
+		private readonly options?: PlayerOptions,
 	) {
-		this.id = PVPlayerSoundCloud.nextId++;
+		this.id = SoundCloudPlayerApi.nextId++;
 
 		this.debug('ctor');
 	}
@@ -39,7 +39,7 @@ export class PVPlayerSoundCloud implements PVPlayer {
 	private static scriptLoaded = false;
 
 	private loadScript = async (): Promise<void> => {
-		if (PVPlayerSoundCloud.scriptLoaded) {
+		if (SoundCloudPlayerApi.scriptLoaded) {
 			this.debug('script is already loaded');
 
 			return;
@@ -50,7 +50,7 @@ export class PVPlayerSoundCloud implements PVPlayer {
 
 			await getScript('https://w.soundcloud.com/player/api.js');
 
-			PVPlayerSoundCloud.scriptLoaded = true;
+			SoundCloudPlayerApi.scriptLoaded = true;
 
 			this.debug('script loaded');
 		} catch (error) {
@@ -104,7 +104,7 @@ export class PVPlayerSoundCloud implements PVPlayer {
 			);
 			player.bind(SC.Widget.Events.PLAY_PROGRESS, async (event) => {
 				const duration =
-					await PVPlayerSoundCloud.playerGetDurationAsync(player);
+					await SoundCloudPlayerApi.playerGetDurationAsync(player);
 
 				this.options?.onTimeUpdate?.({
 					duration: duration / 1000,
@@ -151,7 +151,7 @@ export class PVPlayerSoundCloud implements PVPlayer {
 
 		this.debug('Loading video...');
 
-		await PVPlayerSoundCloud.playerLoadAsync(
+		await SoundCloudPlayerApi.playerLoadAsync(
 			player,
 			this.getUrlFromId(id),
 			{
@@ -210,7 +210,7 @@ export class PVPlayerSoundCloud implements PVPlayer {
 		this.assertPlayerAttached();
 		if (!this.player) return undefined;
 
-		const duration = await PVPlayerSoundCloud.playerGetDurationAsync(
+		const duration = await SoundCloudPlayerApi.playerGetDurationAsync(
 			this.player,
 		);
 
@@ -231,7 +231,7 @@ export class PVPlayerSoundCloud implements PVPlayer {
 		this.assertPlayerAttached();
 		if (!this.player) return undefined;
 
-		const position = await PVPlayerSoundCloud.playerGetPositionAsync(
+		const position = await SoundCloudPlayerApi.playerGetPositionAsync(
 			this.player,
 		);
 

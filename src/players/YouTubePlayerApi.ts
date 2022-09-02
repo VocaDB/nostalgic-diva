@@ -1,5 +1,5 @@
-import { PVPlayer, PVPlayerOptions } from './PVPlayer';
-import { PVPlayerConsole } from './PVPlayerConsole';
+import { PlayerApi, PlayerOptions } from './PlayerApi';
+import { PlayerConsole } from './PlayerConsole';
 import { getScript } from './getScript';
 
 declare global {
@@ -9,35 +9,35 @@ declare global {
 }
 
 // Code from: https://github.com/VocaDB/vocadb/blob/076dac9f0808aba5da7332209fdfd2ff4e12c235/VocaDbWeb/Scripts/ViewModels/PVs/PVPlayerYoutube.ts.
-export class PVPlayerYouTube implements PVPlayer {
+export class YouTubePlayerApi implements PlayerApi {
 	private static nextId = 1;
 
 	private readonly id: number;
 	private player?: YT.Player;
 
-	toString = (): string => `PVPlayerYouTube#${this.id}`;
+	toString = (): string => `YouTubePlayerApi#${this.id}`;
 
 	private assert = (
 		condition?: boolean | undefined,
 		message?: any,
 		...optionalParams: any
 	): void => {
-		PVPlayerConsole.assert(condition, this, message, ...optionalParams);
+		PlayerConsole.assert(condition, this, message, ...optionalParams);
 	};
 
 	private debug = (message?: any, ...optionalParams: any): void => {
-		PVPlayerConsole.debug(this, message, ...optionalParams);
+		PlayerConsole.debug(this, message, ...optionalParams);
 	};
 
 	private error = (message?: any, ...optionalParams: any): void => {
-		PVPlayerConsole.error(this, message, ...optionalParams);
+		PlayerConsole.error(this, message, ...optionalParams);
 	};
 
 	constructor(
 		private readonly playerElementRef: React.MutableRefObject<HTMLDivElement>,
-		private readonly options?: PVPlayerOptions,
+		private readonly options?: PlayerOptions,
 	) {
-		this.id = PVPlayerYouTube.nextId++;
+		this.id = YouTubePlayerApi.nextId++;
 
 		this.debug('ctor', playerElementRef.current);
 	}
@@ -46,7 +46,7 @@ export class PVPlayerYouTube implements PVPlayer {
 
 	private loadScript = (): Promise<void> => {
 		return new Promise(async (resolve, reject) => {
-			if (PVPlayerYouTube.scriptLoaded) {
+			if (YouTubePlayerApi.scriptLoaded) {
 				this.debug('script is already loaded');
 
 				resolve();
@@ -65,7 +65,7 @@ export class PVPlayerYouTube implements PVPlayer {
 
 				await getScript('https://www.youtube.com/iframe_api');
 
-				PVPlayerYouTube.scriptLoaded = true;
+				YouTubePlayerApi.scriptLoaded = true;
 
 				this.debug('script loaded');
 			} catch {
