@@ -44,12 +44,12 @@ const options = React.useMemo(
         onTimeUpdate: handleTimeUpdate,
     }),
     [
-		handleError,
-		handlePlay,
-		handlePause,
-		handleEnded,
-		handleTimeUpdate,
-	],
+        handleError,
+        handlePlay,
+        handlePause,
+        handleEnded,
+        handleTimeUpdate,
+    ],
 );
 
 const handlePlayerChange = React.useCallback((player?: PlayerApi) => {}, [])
