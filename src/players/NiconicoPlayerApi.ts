@@ -21,6 +21,7 @@ export class NiconicoPlayerApi implements PlayerApi {
 
 	private readonly id: number;
 	private player?: HTMLIFrameElement;
+
 	private duration?: number;
 	private currentTime?: number;
 
@@ -179,7 +180,7 @@ export class NiconicoPlayerApi implements PlayerApi {
 			player.onload = (): void => {
 				player.onload = null;
 
-				this.debug('iframe loaded');
+				this.debug('video loaded', id);
 
 				resolve();
 			};

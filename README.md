@@ -1,6 +1,6 @@
 # Nostalgic Diva
 
-React function components for imperatively controlling embedded players (audio, [Niconico](https://www.nicovideo.jp/), [SoundCloud](https://soundcloud.com/) and [YouTube](https://www.youtube.com/)) using refs.
+React function components for imperatively controlling embedded players (audio, [Niconico](https://www.nicovideo.jp/), [SoundCloud](https://soundcloud.com/), [Vimeo](https://vimeo.com/) and [YouTube](https://www.youtube.com/)) using refs.
 
 This was originally developed in [VocaDB/vocadb#1101](https://github.com/VocaDB/vocadb/pull/1101) as a part of [VocaDB](https://github.com/VocaDB/vocadb).
 
@@ -43,7 +43,13 @@ const options = React.useMemo(
         onEnded: handleEnded,
         onTimeUpdate: handleTimeUpdate,
     }),
-    [handleError, handlePlay, handlePause, handleEnded, handleTimeUpdate],
+    [
+		handleError,
+		handlePlay,
+		handlePause,
+		handleEnded,
+		handleTimeUpdate,
+	],
 );
 
 const handlePlayerChange = React.useCallback((player?: PlayerApi) => {}, [])
@@ -67,6 +73,14 @@ const handlePlayerChange = React.useCallback((player?: PlayerApi) => {}, [])
 // SoundCloud
 <NostalgicDiva
     type="SoundCloud"
+    playerRef={playerRef}
+    options={options}
+    onPlayerChange={handlePlayerChange}
+/>;
+
+// Vimeo
+<NostalgicDiva
+    type="Vimeo"
     playerRef={playerRef}
     options={options}
     onPlayerChange={handlePlayerChange}
@@ -106,24 +120,24 @@ await player.setMuted(false);
 
 | Function | Description |
 | --- | --- |
-| `loadVideo(id: string): Promise<void>` | Loads the specified video. |
-| `play(): Promise<void>` | Plays the currently loaded video. |
-| `pause(): Promise<void>` | Pauses the currently loaded video. |
-| `setCurrentTime(seconds: number): Promise<void>` | Seeks to a specified time in the video. |
-| `setVolume(volume: number): Promise<void>` | Sets the volume. Accepts a number between 0 and 1. |
+| `loadVideo(id: string): Promise<void>` | Loads a new video into an existing player. |
+| `play(): Promise<void>` | Plays a video. |
+| `pause(): Promise<void>` | Pauses the playback of a video. |
+| `setCurrentTime(seconds: number): Promise<void>` | Sets the current playback position in seconds. |
+| `setVolume(volume: number): Promise<void>` | Sets the volume level of the player on a scale from 0 to 1. |
 | `setMuted(muted: boolean): Promise<void>` | Sets the muted state of the player. |
-| `getDuration(): Promise<number \| undefined>` | Returns the duration in seconds of the current media resource. |
-| `getCurrentTime(): Promise<number \| undefined>` | Gets the current playback position, in seconds. |
+| `getDuration(): Promise<number \| undefined>` | Gets the duration of the video in seconds. |
+| `getCurrentTime(): Promise<number \| undefined>` | Gets the current playback position of a video, measured in seconds. |
 
 ## Events
 
 | Event | Description |
 | --- | --- |
-| `onError(event: any): void` | Fired when an error occurs in the player. |
-| `onPlay(): void` | Fired when the sound begins to play. |
-| `onPause(): void` | Fired when the sound pauses. |
-| `onEnded(): void` | Fired when the sound finishes. |
-| `onTimeUpdate(event: TimeEvent): void` | |
+| `onError(event: any): void` | Fired when the player experiences some sort of error. |
+| `onPlay(): void` | Fired when the video plays. |
+| `onPause(): void` | Fired when the video is paused. |
+| `onEnded(): void` | Fired when playback reaches the end of a video. |
+| `onTimeUpdate(event: TimeEvent): void` | Fired when the playback position of the video changes. |
 
 ## Lifecycle
 
@@ -146,6 +160,7 @@ The `attach` function is called when switching from another player (Audio, Nicon
 -   [React Player](https://github.com/cookpete/react-player)
 -   [ニコニコ動画の HTML5 外部プレイヤーを JavaScript で操作する](https://blog.hayu.io/web/create/nicovideo-embed-player-api/)
 -   [Widget API - SoundCloud Developers](https://developers.soundcloud.com/docs/api/html5-widget)
+-   [Player SDK: Reference - Vimeo Developer](https://developer.vimeo.com/player/sdk/reference)
 -   [YouTube Player API Reference for iframe Embeds | YouTube IFrame Player API | Google Developers](https://developers.google.com/youtube/iframe_api_reference)
 -   [How to support Reusable State in Effects · Discussion #18 · reactwg/react-18](https://github.com/reactwg/react-18/discussions/18)
 -   [Synchronizing with Effects](https://beta.reactjs.org/learn/synchronizing-with-effects#how-to-handle-the-effect-firing-twice-in-development)

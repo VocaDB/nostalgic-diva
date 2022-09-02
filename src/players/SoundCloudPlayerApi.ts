@@ -159,7 +159,7 @@ export class SoundCloudPlayerApi implements PlayerApi {
 			},
 		);
 
-		this.debug('video loaded');
+		this.debug('video loaded', id);
 	};
 
 	play = async (): Promise<void> => {

@@ -6,12 +6,14 @@ import { AudioPlayer } from './AudioPlayer';
 import { NiconicoPlayer } from './NiconicoPlayer';
 import { PlayerPropsBase } from './Player';
 import { SoundCloudPlayer } from './SoundCloudPlayer';
+import { VimeoPlayer } from './VimeoPlayer';
 import { YouTubePlayer } from './YouTubePlayer';
 
 const players: Record<PlayerType, React.ElementType<PlayerPropsBase>> = {
 	Audio: AudioPlayer,
 	Niconico: NiconicoPlayer,
 	SoundCloud: SoundCloudPlayer,
+	Vimeo: VimeoPlayer,
 	YouTube: YouTubePlayer,
 };
 
