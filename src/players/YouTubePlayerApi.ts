@@ -8,12 +8,23 @@ declare global {
 	}
 }
 
+enum PlayerState {
+	UNSTARTED = -1,
+	ENDED = 0,
+	PLAYING = 1,
+	PAUSED = 2,
+	BUFFERING = 3,
+	CUED = 5,
+}
+
 // Code from: https://github.com/VocaDB/vocadb/blob/076dac9f0808aba5da7332209fdfd2ff4e12c235/VocaDbWeb/Scripts/ViewModels/PVs/PVPlayerYoutube.ts.
 export class YouTubePlayerApi implements PlayerApi {
 	private static nextId = 1;
 
 	private readonly id: number;
 	private player?: YT.Player;
+
+	private previousTime?: number;
 
 	toString = (): string => `YouTubePlayerApi#${this.id}`;
 
@@ -90,15 +101,11 @@ export class YouTubePlayerApi implements PlayerApi {
 		this.timeUpdateIntervalId = undefined;
 	};
 
-	private previousTime = 0;
-
 	private invokeTimeUpdate = (player: YT.Player): void => {
 		const currentTime = player.getCurrentTime();
-
 		if (currentTime === this.previousTime) return;
 
 		const duration = player.getDuration();
-
 		this.options?.onTimeUpdate?.({
 			duration: duration,
 			percent: currentTime / duration,
@@ -159,26 +166,22 @@ export class YouTubePlayerApi implements PlayerApi {
 						this.assertPlayerAttached();
 						if (!this.player) return;
 
+						this.debug(`state changed: ${PlayerState[e.data]}`);
+
 						switch (e.data) {
 							case YT.PlayerState.PLAYING:
-								this.debug('state changed: PLAYING');
-
 								this.options?.onPlay?.();
 
 								this.setTimeUpdateInterval();
 								break;
 
 							case YT.PlayerState.PAUSED:
-								this.debug('state changed: PAUSED');
-
 								this.options?.onPause?.();
 
 								this.clearTimeUpdateInterval();
 								break;
 
 							case YT.PlayerState.ENDED:
-								this.debug('state changed: ENDED');
-
 								this.options?.onEnded?.();
 
 								this.clearTimeUpdateInterval();
@@ -201,7 +204,7 @@ export class YouTubePlayerApi implements PlayerApi {
 	loadVideo = async (id: string): Promise<void> => {
 		this.debug('loadVideo', id);
 
-		this.previousTime = 0;
+		this.previousTime = undefined;
 
 		this.assertPlayerAttached();
 		if (!this.player) return;

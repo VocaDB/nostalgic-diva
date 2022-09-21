@@ -7,7 +7,7 @@ declare global {
 	}
 }
 
-export enum PlayerStatus {
+enum PlayerStatus {
 	Play = 2,
 	Pause = 3,
 	End = 4,
@@ -170,6 +170,7 @@ export class NiconicoPlayerApi implements PlayerApi {
 			this.debug('loadVideo', id);
 
 			this.duration = undefined;
+			this.currentTime = undefined;
 
 			this.assertPlayerAttached();
 			if (!this.player) return;
@@ -180,7 +181,7 @@ export class NiconicoPlayerApi implements PlayerApi {
 			player.onload = (): void => {
 				player.onload = null;
 
-				this.debug('video loaded', id);
+				this.debug('iframe loaded', id);
 
 				resolve();
 			};
