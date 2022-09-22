@@ -1,9 +1,10 @@
 import React from 'react';
 
-import { PlayerType } from '../players/PlayerApi';
+import { PlayerApi, PlayerOptions, PlayerType } from '../players/PlayerApi';
 import { PlayerConsole } from '../players/PlayerConsole';
 import { AudioPlayer } from './AudioPlayer';
 import { NiconicoPlayer } from './NiconicoPlayer';
+import { useNostalgicDiva } from './NostalgicDivaProvider';
 import { PlayerPropsBase } from './Player';
 import { SoundCloudPlayer } from './SoundCloudPlayer';
 import { VimeoPlayer } from './VimeoPlayer';
@@ -17,15 +18,29 @@ const players: Record<PlayerType, React.ElementType<PlayerPropsBase>> = {
 	YouTube: YouTubePlayer,
 };
 
-interface NostalgicDivaProps extends PlayerPropsBase {
+interface NostalgicDivaProps {
 	type: PlayerType;
+	options?: PlayerOptions;
+	onPlayerChange?: (player: PlayerApi | undefined) => void;
 }
 
 export const NostalgicDiva = React.memo(
-	({ type, ...props }: NostalgicDivaProps): React.ReactElement => {
+	({
+		type,
+		options,
+		onPlayerChange,
+	}: NostalgicDivaProps): React.ReactElement => {
 		PlayerConsole.debug('NostalgicDiva');
 
+		const diva = useNostalgicDiva();
+
 		const Player = players[type];
-		return <Player {...props} />;
+		return (
+			<Player
+				playerRef={diva.playerRef}
+				options={options}
+				onPlayerChange={onPlayerChange}
+			/>
+		);
 	},
 );

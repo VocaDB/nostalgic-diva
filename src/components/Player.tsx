@@ -4,9 +4,9 @@ import { PlayerApi, PlayerOptions } from '../players/PlayerApi';
 import { PlayerConsole } from '../players/PlayerConsole';
 
 export interface PlayerPropsBase {
-	playerRef?: React.MutableRefObject<PlayerApi | undefined>;
-	options?: PlayerOptions;
-	onPlayerChange?: (player: PlayerApi | undefined) => void;
+	playerRef: React.MutableRefObject<PlayerApi | undefined> | undefined;
+	options: PlayerOptions | undefined;
+	onPlayerChange: ((player: PlayerApi | undefined) => void) | undefined;
 }
 
 interface PlayerProps<TElement extends HTMLElement, TPlayer extends PlayerApi>
