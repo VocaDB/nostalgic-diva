@@ -122,7 +122,6 @@ export class YouTubePlayerApi implements PlayerApi {
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
-
 		const player = this.player;
 
 		this.timeUpdateIntervalId = window.setInterval(
@@ -237,7 +236,6 @@ export class YouTubePlayerApi implements PlayerApi {
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
-
 		const player = this.player;
 
 		player.seekTo(seconds);

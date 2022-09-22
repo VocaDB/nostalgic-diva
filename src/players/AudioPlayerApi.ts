@@ -40,12 +40,35 @@ export class AudioPlayerApi implements PlayerApi {
 		}
 
 		this.player = this.playerElementRef.current;
+		const player = this.player;
+
+		player.onerror = (event): void => this.options?.onError?.(event);
+		player.onplay = (): void => this.options?.onPlay?.();
+		player.onpause = (): void => this.options?.onPause?.();
+		player.onended = (): void => this.options?.onEnded?.();
+		player.ontimeupdate = (): void => {
+			this.options?.onTimeUpdate?.({
+				duration: player.duration,
+				percent: player.currentTime / player.duration,
+				seconds: player.currentTime,
+			});
+		};
 
 		this.debug('player attached');
 	};
 
 	detach = async (): Promise<void> => {
 		this.debug('detach');
+
+		this.assertPlayerAttached();
+		if (!this.player) return;
+		const player = this.player;
+
+		player.onerror = null;
+		player.onplay = null;
+		player.onpause = null;
+		player.onended = null;
+		player.ontimeupdate = null;
 
 		this.player = undefined;
 	};
@@ -63,22 +86,7 @@ export class AudioPlayerApi implements PlayerApi {
 		this.assertPlayerAttached();
 		if (!this.player) return;
 
-		const player = this.player;
-
-		player.src = id;
-
-		// REVIEW: Do we need to remove event listeners before removing the player element?
-		player.onerror = (event): void => this.options?.onError?.(event);
-		player.onplay = (): void => this.options?.onPlay?.();
-		player.onpause = (): void => this.options?.onPause?.();
-		player.onended = (): void => this.options?.onEnded?.();
-		player.ontimeupdate = (): void => {
-			this.options?.onTimeUpdate?.({
-				duration: player.duration,
-				percent: player.currentTime / player.duration,
-				seconds: player.currentTime,
-			});
-		};
+		this.player.src = id;
 	};
 
 	play = async (): Promise<void> => {

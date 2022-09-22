@@ -65,6 +65,15 @@ export class NiconicoPlayerApi implements PlayerApi {
 						data.data.playerStatus
 					}`,
 				);
+				break;
+
+			case 'statusChange':
+				this.debug(
+					`status changed: ${
+						PlayerStatus[data.data.playerStatus] ??
+						data.data.playerStatus
+					}`,
+				);
 
 				switch (data.data.playerStatus) {
 					case PlayerStatus.Play:
@@ -79,15 +88,6 @@ export class NiconicoPlayerApi implements PlayerApi {
 						this.options?.onEnded?.();
 						break;
 				}
-				break;
-
-			case 'statusChange':
-				this.debug(
-					`status changed: ${
-						PlayerStatus[data.data.playerStatus] ??
-						data.data.playerStatus
-					}`,
-				);
 				break;
 
 			case 'playerMetadataChange':
@@ -156,9 +156,9 @@ export class NiconicoPlayerApi implements PlayerApi {
 	detach = async (): Promise<void> => {
 		this.debug('detach');
 
-		this.player = undefined;
-
 		window.removeEventListener('message', this.handleMessage);
+
+		this.player = undefined;
 	};
 
 	private assertPlayerAttached = (): void => {
@@ -174,7 +174,6 @@ export class NiconicoPlayerApi implements PlayerApi {
 
 			this.assertPlayerAttached();
 			if (!this.player) return;
-
 			const player = this.player;
 
 			// Wait for iframe to load.

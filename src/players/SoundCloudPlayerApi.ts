@@ -84,7 +84,6 @@ export class SoundCloudPlayerApi implements PlayerApi {
 			this.debug('Attaching player...');
 
 			this.player = SC.Widget(this.playerElementRef.current);
-
 			const player = this.player;
 
 			player.bind(SC.Widget.Events.READY, () => {
@@ -118,6 +117,17 @@ export class SoundCloudPlayerApi implements PlayerApi {
 	detach = async (): Promise<void> => {
 		this.debug('detach');
 
+		this.assertPlayerAttached();
+		if (!this.player) return;
+		const player = this.player;
+
+		player.unbind(SC.Widget.Events.READY);
+		player.unbind(SC.Widget.Events.ERROR);
+		player.unbind(SC.Widget.Events.PLAY);
+		player.unbind(SC.Widget.Events.PAUSE);
+		player.unbind(SC.Widget.Events.FINISH);
+		player.unbind(SC.Widget.Events.PLAY_PROGRESS);
+
 		this.player = undefined;
 	};
 
@@ -146,7 +156,6 @@ export class SoundCloudPlayerApi implements PlayerApi {
 
 		this.assertPlayerAttached();
 		if (!this.player) return;
-
 		const player = this.player;
 
 		this.debug('Loading video...');

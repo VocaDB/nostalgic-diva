@@ -78,14 +78,15 @@ export class VimeoPlayerApi implements PlayerApi {
 		this.debug('Attaching player...');
 
 		this.player = new Vimeo.Player(this.playerElementRef.current);
+		const player = this.player;
 
-		await this.player.ready();
+		await player.ready();
 
-		this.player.on('error', (data) => this.options?.onError?.(data));
-		this.player.on('play', () => this.options?.onPlay?.());
-		this.player.on('pause', () => this.options?.onPause?.());
-		this.player.on('ended', () => this.options?.onEnded?.());
-		this.player.on('timeupdate', (data) => {
+		player.on('error', (data) => this.options?.onError?.(data));
+		player.on('play', () => this.options?.onPlay?.());
+		player.on('pause', () => this.options?.onPause?.());
+		player.on('ended', () => this.options?.onEnded?.());
+		player.on('timeupdate', (data) => {
 			this.options?.onTimeUpdate?.({
 				duration: data.duration,
 				percent: data.percent,
@@ -98,6 +99,16 @@ export class VimeoPlayerApi implements PlayerApi {
 
 	detach = async (): Promise<void> => {
 		this.debug('detach');
+
+		this.assertPlayerAttached();
+		if (!this.player) return;
+		const player = this.player;
+
+		player.off('error');
+		player.off('play');
+		player.off('pause');
+		player.off('ended');
+		player.off('timeupdate');
 
 		this.player = undefined;
 	};
