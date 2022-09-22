@@ -2,6 +2,7 @@ import React from 'react';
 
 import { PlayerApi, PlayerOptions } from './PlayerApi';
 import { PlayerApiImpl } from './PlayerApiImpl';
+import { PlayerConsole } from './PlayerConsole';
 import { getScript } from './getScript';
 
 declare global {
@@ -152,43 +153,44 @@ class YouTubePlayerApiImpl extends PlayerApiImpl<HTMLDivElement> {
 	};
 }
 
+const scriptUrl = 'https://www.youtube.com/iframe_api';
+let scriptLoaded = false;
+
+const loadScript = (): Promise<void> => {
+	return new Promise(async (resolve, reject) => {
+		if (scriptLoaded) {
+			PlayerConsole.debug(scriptUrl, 'script is already loaded');
+
+			resolve();
+			return;
+		}
+
+		// Code from: https://stackoverflow.com/a/18154942.
+		window.onYouTubeIframeAPIReady = (): void => {
+			PlayerConsole.debug(scriptUrl, 'iframe API ready');
+
+			resolve();
+		};
+
+		try {
+			PlayerConsole.debug(scriptUrl, 'Loading script...');
+
+			await getScript(scriptUrl);
+
+			scriptLoaded = true;
+
+			PlayerConsole.debug(scriptUrl, 'script loaded');
+		} catch {
+			PlayerConsole.error(scriptUrl, 'Failed to load script');
+			reject();
+		}
+	});
+};
+
 export class YouTubePlayerApi extends PlayerApi<
 	HTMLDivElement,
 	YouTubePlayerApiImpl
 > {
-	private static scriptLoaded = false;
-
-	private loadScript = (): Promise<void> => {
-		return new Promise(async (resolve, reject) => {
-			if (YouTubePlayerApi.scriptLoaded) {
-				this.debug('script is already loaded');
-
-				resolve();
-				return;
-			}
-
-			// Code from: https://stackoverflow.com/a/18154942.
-			window.onYouTubeIframeAPIReady = (): void => {
-				this.debug('iframe API ready');
-
-				resolve();
-			};
-
-			try {
-				this.debug('Loading script...');
-
-				await getScript('https://www.youtube.com/iframe_api');
-
-				YouTubePlayerApi.scriptLoaded = true;
-
-				this.debug('script loaded');
-			} catch {
-				this.error('Failed to load script');
-				reject();
-			}
-		});
-	};
-
 	attach = (): Promise<void> => {
 		return new Promise(async (resolve, reject /* TODO: Reject. */) => {
 			this.debug('attach');
@@ -199,7 +201,7 @@ export class YouTubePlayerApi extends PlayerApi<
 				return;
 			}
 
-			await this.loadScript();
+			await loadScript();
 
 			this.debug('Attaching player...');
 

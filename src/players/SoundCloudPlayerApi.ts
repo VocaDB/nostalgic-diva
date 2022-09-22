@@ -2,6 +2,7 @@ import React from 'react';
 
 import { PlayerApi, PlayerOptions } from './PlayerApi';
 import { PlayerApiImpl } from './PlayerApiImpl';
+import { PlayerConsole } from './PlayerConsole';
 import { getScript } from './getScript';
 
 // Code from: https://github.com/VocaDB/vocadb/blob/e147650a8f1f85c8fa865d0ab562126c278527ec/VocaDbWeb/Scripts/ViewModels/PVs/PVPlayerSoundCloud.ts.
@@ -136,34 +137,35 @@ class SoundCloudPlayerApiImpl extends PlayerApiImpl<HTMLIFrameElement> {
 	};
 }
 
+const scriptUrl = 'https://w.soundcloud.com/player/api.js';
+let scriptLoaded = false;
+
+const loadScript = async (): Promise<void> => {
+	if (scriptLoaded) {
+		PlayerConsole.debug(scriptUrl, 'script is already loaded');
+
+		return;
+	}
+
+	try {
+		PlayerConsole.debug(scriptUrl, 'Loading script...');
+
+		await getScript(scriptUrl);
+
+		scriptLoaded = true;
+
+		PlayerConsole.debug(scriptUrl, 'script loaded');
+	} catch (error) {
+		PlayerConsole.error(scriptUrl, 'Failed to load script');
+
+		throw error;
+	}
+};
+
 export class SoundCloudPlayerApi extends PlayerApi<
 	HTMLIFrameElement,
 	SoundCloudPlayerApiImpl
 > {
-	private static scriptLoaded = false;
-
-	private loadScript = async (): Promise<void> => {
-		if (SoundCloudPlayerApi.scriptLoaded) {
-			this.debug('script is already loaded');
-
-			return;
-		}
-
-		try {
-			this.debug('Loading script...');
-
-			await getScript('https://w.soundcloud.com/player/api.js');
-
-			SoundCloudPlayerApi.scriptLoaded = true;
-
-			this.debug('script loaded');
-		} catch (error) {
-			this.error('Failed to load script');
-
-			throw error;
-		}
-	};
-
 	attach = (): Promise<void> => {
 		return new Promise(async (resolve, reject /* TODO: Reject. */) => {
 			this.debug('attach');
@@ -174,7 +176,7 @@ export class SoundCloudPlayerApi extends PlayerApi<
 				return;
 			}
 
-			await this.loadScript();
+			await loadScript();
 
 			this.debug('Attaching player...');
 
