@@ -1,4 +1,7 @@
+import React from 'react';
+
 import { PlayerApi, PlayerOptions } from './PlayerApi';
+import { PlayerApiImpl } from './PlayerApiImpl';
 import { PlayerConsole } from './PlayerConsole';
 import { getScript } from './getScript';
 
@@ -8,23 +11,153 @@ declare global {
 	}
 }
 
-enum PlayerState {
+/* TODO: enum PlayerState {
 	UNSTARTED = -1,
 	ENDED = 0,
 	PLAYING = 1,
 	PAUSED = 2,
 	BUFFERING = 3,
 	CUED = 5,
-}
+}*/
 
 // Code from: https://github.com/VocaDB/vocadb/blob/076dac9f0808aba5da7332209fdfd2ff4e12c235/VocaDbWeb/Scripts/ViewModels/PVs/PVPlayerYoutube.ts.
+class YouTubePlayerApiImpl extends PlayerApiImpl<HTMLDivElement> {
+	private readonly player: YT.Player;
+
+	private previousTime?: number;
+
+	private timeUpdateIntervalId?: number;
+
+	private clearTimeUpdateInterval = (): void => {
+		// TODO: this.debug('clearTimeUpdateInterval', this.timeUpdateIntervalId);
+
+		window.clearInterval(this.timeUpdateIntervalId);
+
+		this.timeUpdateIntervalId = undefined;
+	};
+
+	private invokeTimeUpdate = (player: YT.Player): void => {
+		const currentTime = player.getCurrentTime();
+		if (currentTime === this.previousTime) return;
+
+		const duration = player.getDuration();
+		this.options?.onTimeUpdate?.({
+			duration: duration,
+			percent: currentTime / duration,
+			seconds: currentTime,
+		});
+
+		this.previousTime = currentTime;
+	};
+
+	private setTimeUpdateInterval = (): void => {
+		// TODO: this.debug('setTimeUpdateInterval');
+
+		this.clearTimeUpdateInterval();
+
+		this.timeUpdateIntervalId = window.setInterval(
+			() => this.invokeTimeUpdate(this.player),
+			250,
+		);
+
+		// TODO: this.debug('timeUpdateIntervalId', this.timeUpdateIntervalId);
+
+		this.invokeTimeUpdate(this.player);
+	};
+
+	constructor(
+		playerElementRef: React.MutableRefObject<HTMLDivElement>,
+		options: PlayerOptions | undefined,
+		onReady: () => void,
+	) {
+		super(playerElementRef, options);
+
+		this.player = new YT.Player(this.playerElementRef.current, {
+			host: 'https://www.youtube-nocookie.com',
+			width: '100%',
+			height: '100%',
+			events: {
+				onReady: onReady,
+				onError: (event): void => this.options?.onError?.(event.data),
+				onStateChange: (e: YT.EventArgs): void => {
+					// TODO: this.debug(`state changed: ${PlayerState[e.data]}`);
+
+					switch (e.data) {
+						case YT.PlayerState.PLAYING:
+							this.options?.onPlay?.();
+
+							this.setTimeUpdateInterval();
+							break;
+
+						case YT.PlayerState.PAUSED:
+							this.options?.onPause?.();
+
+							this.clearTimeUpdateInterval();
+							break;
+
+						case YT.PlayerState.ENDED:
+							this.options?.onEnded?.();
+
+							this.clearTimeUpdateInterval();
+							break;
+					}
+				},
+			},
+		});
+	}
+
+	attach = async (): Promise<void> => {};
+
+	detach = async (): Promise<void> => {
+		this.clearTimeUpdateInterval();
+	};
+
+	loadVideo = async (id: string): Promise<void> => {
+		this.previousTime = undefined;
+
+		this.player.loadVideoById(id);
+	};
+
+	play = async (): Promise<void> => {
+		this.player.playVideo();
+	};
+
+	pause = async (): Promise<void> => {
+		this.player.pauseVideo();
+	};
+
+	setCurrentTime = async (seconds: number): Promise<void> => {
+		this.player.seekTo(seconds);
+
+		this.invokeTimeUpdate(this.player);
+	};
+
+	setVolume = async (volume: number): Promise<void> => {
+		this.player.setVolume(volume * 100);
+	};
+
+	setMuted = async (muted: boolean): Promise<void> => {
+		if (muted) {
+			this.player.mute();
+		} else {
+			this.player.unMute();
+		}
+	};
+
+	getDuration = async (): Promise<number | undefined> => {
+		return this.player.getDuration();
+	};
+
+	getCurrentTime = async (): Promise<number | undefined> => {
+		return this.player.getCurrentTime();
+	};
+}
+
 export class YouTubePlayerApi implements PlayerApi {
 	private static nextId = 1;
 
 	private readonly id: number;
-	private player?: YT.Player;
-
-	private previousTime?: number;
+	private impl?: YouTubePlayerApiImpl;
 
 	toString = (): string => `YouTubePlayerApi#${this.id}`;
 
@@ -81,66 +214,21 @@ export class YouTubePlayerApi implements PlayerApi {
 				this.debug('script loaded');
 			} catch {
 				this.error('Failed to load script');
-
 				reject();
 			}
 		});
 	};
 
 	private assertPlayerAttached = (): void => {
-		this.assert(!!this.player, 'player is not attached');
-	};
-
-	private timeUpdateIntervalId?: number;
-
-	private clearTimeUpdateInterval = (): void => {
-		this.debug('clearTimeUpdateInterval', this.timeUpdateIntervalId);
-
-		window.clearInterval(this.timeUpdateIntervalId);
-
-		this.timeUpdateIntervalId = undefined;
-	};
-
-	private invokeTimeUpdate = (player: YT.Player): void => {
-		const currentTime = player.getCurrentTime();
-		if (currentTime === this.previousTime) return;
-
-		const duration = player.getDuration();
-		this.options?.onTimeUpdate?.({
-			duration: duration,
-			percent: currentTime / duration,
-			seconds: currentTime,
-		});
-
-		this.previousTime = currentTime;
-	};
-
-	private setTimeUpdateInterval = (): void => {
-		this.debug('setTimeUpdateInterval');
-
-		this.clearTimeUpdateInterval();
-
-		this.assertPlayerAttached();
-		if (!this.player) return;
-		const player = this.player;
-
-		this.timeUpdateIntervalId = window.setInterval(
-			() => this.invokeTimeUpdate(player),
-			250,
-		);
-
-		this.debug('timeUpdateIntervalId', this.timeUpdateIntervalId);
-
-		this.invokeTimeUpdate(player);
+		this.assert(!!this.impl, 'player is not attached');
 	};
 
 	attach = (): Promise<void> => {
 		return new Promise(async (resolve, reject /* TODO: Reject. */) => {
 			this.debug('attach');
 
-			if (this.player) {
+			if (this.impl) {
 				this.debug('player is already attached');
-
 				resolve();
 				return;
 			}
@@ -149,137 +237,86 @@ export class YouTubePlayerApi implements PlayerApi {
 
 			this.debug('Attaching player...');
 
-			this.player = new YT.Player(this.playerElementRef.current, {
-				host: 'https://www.youtube-nocookie.com',
-				width: '100%',
-				height: '100%',
-				events: {
-					onReady: (): void => {
-						this.debug('player attached');
+			const impl = new YouTubePlayerApiImpl(
+				this.playerElementRef,
+				this.options,
+				async () => {
+					await impl.attach();
 
-						resolve();
-					},
-					onError: (event): void =>
-						this.options?.onError?.(event.data),
-					onStateChange: (e: YT.EventArgs): void => {
-						this.assertPlayerAttached();
-						if (!this.player) return;
-
-						this.debug(`state changed: ${PlayerState[e.data]}`);
-
-						switch (e.data) {
-							case YT.PlayerState.PLAYING:
-								this.options?.onPlay?.();
-
-								this.setTimeUpdateInterval();
-								break;
-
-							case YT.PlayerState.PAUSED:
-								this.options?.onPause?.();
-
-								this.clearTimeUpdateInterval();
-								break;
-
-							case YT.PlayerState.ENDED:
-								this.options?.onEnded?.();
-
-								this.clearTimeUpdateInterval();
-								break;
-						}
-					},
+					this.debug('player attached');
+					resolve();
 				},
-			});
+			);
+			this.impl = impl;
 		});
 	};
 
 	detach = async (): Promise<void> => {
 		this.debug('detach');
+		this.assertPlayerAttached();
 
-		this.clearTimeUpdateInterval();
+		await this.impl?.detach();
 
-		this.player = undefined;
+		this.impl = undefined;
 	};
 
 	loadVideo = async (id: string): Promise<void> => {
 		this.debug('loadVideo', id);
-
-		this.previousTime = undefined;
-
 		this.assertPlayerAttached();
-		if (!this.player) return;
 
 		this.debug('Loading video...');
 
-		this.player.loadVideoById(id);
+		await this.impl?.loadVideo(id);
+
+		this.debug('video loaded', id);
 	};
 
 	play = async (): Promise<void> => {
 		this.debug('play');
-
 		this.assertPlayerAttached();
-		if (!this.player) return;
 
-		this.player.playVideo();
+		await this.impl?.play();
 	};
 
 	pause = async (): Promise<void> => {
 		this.debug('pause');
-
 		this.assertPlayerAttached();
-		if (!this.player) return;
 
-		this.player.pauseVideo();
+		await this.impl?.pause();
 	};
 
 	setCurrentTime = async (seconds: number): Promise<void> => {
 		this.debug('setCurrentTime', seconds);
-
 		this.assertPlayerAttached();
-		if (!this.player) return;
-		const player = this.player;
 
-		player.seekTo(seconds);
-
-		this.invokeTimeUpdate(player);
+		await this.impl?.setCurrentTime(seconds);
 	};
 
 	setVolume = async (volume: number): Promise<void> => {
-		this.debug('setVolume');
-
+		this.debug('setVolume', volume);
 		this.assertPlayerAttached();
-		if (!this.player) return;
 
-		this.player.setVolume(volume * 100);
+		await this.impl?.setVolume(volume);
 	};
 
 	setMuted = async (muted: boolean): Promise<void> => {
 		this.debug('setMuted', muted);
-
 		this.assertPlayerAttached();
-		if (!this.player) return;
 
-		if (muted) {
-			this.player.mute();
-		} else {
-			this.player.unMute();
-		}
+		await this.impl?.setMuted(muted);
 	};
 
 	getDuration = async (): Promise<number | undefined> => {
 		this.debug('getDuration');
-
 		this.assertPlayerAttached();
-		if (!this.player) return undefined;
 
-		return this.player.getDuration();
+		return await this.impl?.getDuration();
 	};
 
 	getCurrentTime = async (): Promise<number | undefined> => {
 		this.debug('getCurrentTime');
-
 		this.assertPlayerAttached();
-		if (!this.player) return undefined;
 
-		return this.player.getCurrentTime();
+		return await this.impl?.getCurrentTime();
 	};
 }

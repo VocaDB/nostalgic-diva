@@ -1,4 +1,7 @@
+import React from 'react';
+
 import { PlayerApi, PlayerOptions } from './PlayerApi';
+import { PlayerApiImpl } from './PlayerApiImpl';
 import { PlayerConsole } from './PlayerConsole';
 
 declare global {
@@ -14,66 +17,45 @@ enum PlayerStatus {
 }
 
 // Code from: https://github.com/VocaDB/vocadb/blob/a4b5f9d8186772d7e6f58f997bbcbb51509d2539/VocaDbWeb/Scripts/ViewModels/PVs/PVPlayerNico.ts.
-export class NiconicoPlayerApi implements PlayerApi {
+class NiconicoPlayerApiImpl extends PlayerApiImpl<HTMLIFrameElement> {
 	private static readonly origin = 'https://embed.nicovideo.jp';
 
-	private static nextId = 1;
-
-	private readonly id: number;
-	private player?: HTMLIFrameElement;
+	private readonly player: HTMLIFrameElement;
 
 	private duration?: number;
 	private currentTime?: number;
 
-	toString = (): string => `NiconicoPlayerApi#${this.id}`;
-
-	private assert = (
-		condition?: boolean | undefined,
-		message?: any,
-		...optionalParams: any
-	): void => {
-		PlayerConsole.assert(condition, this, message, ...optionalParams);
-	};
-
-	private debug = (message?: any, ...optionalParams: any): void => {
-		PlayerConsole.debug(this, message, ...optionalParams);
-	};
-
-	private warn = (message?: any, ...optionalParams: any): void => {
-		PlayerConsole.warn(this, message, ...optionalParams);
-	};
-
 	constructor(
-		private readonly playerElementRef: React.MutableRefObject<HTMLIFrameElement>,
-		private readonly options?: PlayerOptions,
+		playerElementRef: React.MutableRefObject<HTMLIFrameElement>,
+		options: PlayerOptions | undefined,
 	) {
-		this.id = NiconicoPlayerApi.nextId++;
+		super(playerElementRef, options);
 
-		this.debug('ctor');
+		this.player = playerElementRef.current;
 	}
 
 	private handleMessage = (e: nico.PlayerEvent): void => {
-		if (e.origin !== NiconicoPlayerApi.origin) return;
+		if (e.origin !== NiconicoPlayerApiImpl.origin) return;
 
 		const data = e.data;
 
 		switch (data.eventName) {
 			case 'playerStatusChange':
-				this.debug(
+				/* TODO: this.debug(
 					`player status changed: ${
 						PlayerStatus[data.data.playerStatus] ??
 						data.data.playerStatus
 					}`,
-				);
+				);*/
 				break;
 
 			case 'statusChange':
-				this.debug(
+				/* TODO: this.debug(
 					`status changed: ${
 						PlayerStatus[data.data.playerStatus] ??
 						data.data.playerStatus
 					}`,
-				);
+				);*/
 
 				switch (data.data.playerStatus) {
 					case PlayerStatus.Play:
@@ -111,7 +93,7 @@ export class NiconicoPlayerApi implements PlayerApi {
 				break;
 
 			case 'loadComplete':
-				this.debug('load completed');
+				// TODO: this.debug('load completed');
 
 				this.duration = data.data.videoInfo.lengthInSeconds;
 				break;
@@ -128,60 +110,31 @@ export class NiconicoPlayerApi implements PlayerApi {
 				break;
 
 			default:
-				this.warn(
+				/* TODO: this.warn(
 					'message',
 					(data as any).eventName,
 					(data as any).data,
-				);
+				);*/
 				break;
 		}
 	};
 
 	attach = async (): Promise<void> => {
-		this.debug('attach');
-
-		if (this.player) {
-			this.debug('player is already attached');
-
-			return;
-		}
-
-		this.player = this.playerElementRef.current;
-
 		window.addEventListener('message', this.handleMessage);
-
-		this.debug('player attached');
 	};
 
 	detach = async (): Promise<void> => {
-		this.debug('detach');
-
 		window.removeEventListener('message', this.handleMessage);
-
-		this.player = undefined;
-	};
-
-	private assertPlayerAttached = (): void => {
-		this.assert(!!this.player, 'player is not attached');
 	};
 
 	loadVideo = async (id: string): Promise<void> => {
 		return new Promise((resolve, reject /* TODO: Reject. */) => {
-			this.debug('loadVideo', id);
-
 			this.duration = undefined;
 			this.currentTime = undefined;
 
-			this.assertPlayerAttached();
-			if (!this.player) return;
-			const player = this.player;
-
 			// Wait for iframe to load.
-			player.onload = (): void => {
-				player.onload = null;
-
-				this.debug('iframe loaded', id);
-
+			this.player.onload = (): void => {
+				this.player.onload = null;
 				resolve();
 			};
 
@@ -191,40 +144,29 @@ export class NiconicoPlayerApi implements PlayerApi {
 
 	// Code from: https://blog.hayu.io/web/create/nicovideo-embed-player-api/.
 	private postMessage = (message: any): void => {
-		this.assertPlayerAttached();
-		if (!this.player) return;
-
 		this.player.contentWindow?.postMessage(
 			{
 				...message,
 				playerId: '1' /* Needs to be a string, not a number. */,
 				sourceConnectorType: 1,
 			},
-			NiconicoPlayerApi.origin,
+			NiconicoPlayerApiImpl.origin,
 		);
 	};
 
 	play = async (): Promise<void> => {
-		this.debug('play');
-
 		this.postMessage({ eventName: 'play' });
 	};
 
 	pause = async (): Promise<void> => {
-		this.debug('pause');
-
 		this.postMessage({ eventName: 'pause' });
 	};
 
 	setCurrentTime = async (seconds: number): Promise<void> => {
-		this.debug('setCurrentTime', seconds);
-
 		this.postMessage({ eventName: 'seek', data: { time: seconds * 1000 } });
 	};
 
 	setVolume = async (volume: number): Promise<void> => {
-		this.debug('setVolume');
-
 		this.postMessage({
 			eventName: 'volumeChange',
 			data: { volume: volume },
@@ -232,8 +174,6 @@ export class NiconicoPlayerApi implements PlayerApi {
 	};
 
 	setMuted = async (muted: boolean): Promise<void> => {
-		this.debug('setMuted', muted);
-
 		this.postMessage({
 			eventName: 'mute',
 			data: { mute: muted },
@@ -241,20 +181,131 @@ export class NiconicoPlayerApi implements PlayerApi {
 	};
 
 	getDuration = async (): Promise<number | undefined> => {
-		this.debug('getDuration');
-
-		this.assertPlayerAttached();
-		if (!this.player) return undefined;
-
 		return this.duration;
 	};
 
 	getCurrentTime = async (): Promise<number | undefined> => {
-		this.debug('getCurrentTime');
-
-		this.assertPlayerAttached();
-		if (!this.player) return undefined;
-
 		return this.currentTime;
+	};
+}
+
+export class NiconicoPlayerApi implements PlayerApi {
+	private static nextId = 1;
+
+	private readonly id: number;
+	private impl?: NiconicoPlayerApiImpl;
+
+	toString = (): string => `NiconicoPlayerApi#${this.id}`;
+
+	private assert = (
+		condition?: boolean | undefined,
+		message?: any,
+		...optionalParams: any
+	): void => {
+		PlayerConsole.assert(condition, this, message, ...optionalParams);
+	};
+
+	private debug = (message?: any, ...optionalParams: any): void => {
+		PlayerConsole.debug(this, message, ...optionalParams);
+	};
+
+	constructor(
+		private readonly playerElementRef: React.MutableRefObject<HTMLIFrameElement>,
+		private readonly options?: PlayerOptions,
+	) {
+		this.id = NiconicoPlayerApi.nextId++;
+
+		this.debug('ctor');
+	}
+
+	attach = async (): Promise<void> => {
+		this.debug('attach');
+
+		if (this.impl) {
+			this.debug('player is already attached');
+			return;
+		}
+
+		this.impl = new NiconicoPlayerApiImpl(
+			this.playerElementRef,
+			this.options,
+		);
+
+		await this.impl.attach();
+
+		this.debug('player attached');
+	};
+
+	private assertPlayerAttached = (): void => {
+		this.assert(!!this.impl, 'player is not attached');
+	};
+
+	detach = async (): Promise<void> => {
+		this.debug('detach');
+		this.assertPlayerAttached();
+
+		await this.impl?.detach();
+
+		this.impl = undefined;
+	};
+
+	loadVideo = async (id: string): Promise<void> => {
+		this.debug('loadVideo', id);
+		this.assertPlayerAttached();
+
+		this.debug('Loading video...');
+
+		await this.impl?.loadVideo(id);
+
+		this.debug('video loaded', id);
+	};
+
+	play = async (): Promise<void> => {
+		this.debug('play');
+		this.assertPlayerAttached();
+
+		await this.impl?.play();
+	};
+
+	pause = async (): Promise<void> => {
+		this.debug('pause');
+		this.assertPlayerAttached();
+
+		await this.impl?.pause();
+	};
+
+	setCurrentTime = async (seconds: number): Promise<void> => {
+		this.debug('setCurrentTime', seconds);
+		this.assertPlayerAttached();
+
+		await this.impl?.setCurrentTime(seconds);
+	};
+
+	setVolume = async (volume: number): Promise<void> => {
+		this.debug('setVolume', volume);
+		this.assertPlayerAttached();
+
+		await this.impl?.setVolume(volume);
+	};
+
+	setMuted = async (muted: boolean): Promise<void> => {
+		this.debug('setMuted', muted);
+		this.assertPlayerAttached();
+
+		await this.impl?.setMuted(muted);
+	};
+
+	getDuration = async (): Promise<number | undefined> => {
+		this.debug('getDuration');
+		this.assertPlayerAttached();
+
+		return await this.impl?.getDuration();
+	};
+
+	getCurrentTime = async (): Promise<number | undefined> => {
+		this.debug('getCurrentTime');
+		this.assertPlayerAttached();
+
+		return await this.impl?.getCurrentTime();
 	};
 }

@@ -1,13 +1,147 @@
+import React from 'react';
+
 import { PlayerApi, PlayerOptions } from './PlayerApi';
+import { PlayerApiImpl } from './PlayerApiImpl';
 import { PlayerConsole } from './PlayerConsole';
 import { getScript } from './getScript';
 
 // Code from: https://github.com/VocaDB/vocadb/blob/e147650a8f1f85c8fa865d0ab562126c278527ec/VocaDbWeb/Scripts/ViewModels/PVs/PVPlayerSoundCloud.ts.
+class SoundCloudPlayerApiImpl extends PlayerApiImpl<HTMLIFrameElement> {
+	private readonly player: SC.SoundCloudWidget;
+
+	constructor(
+		playerElementRef: React.MutableRefObject<HTMLIFrameElement>,
+		options: PlayerOptions | undefined,
+		onReady: () => void,
+	) {
+		super(playerElementRef, options);
+
+		this.player = SC.Widget(this.playerElementRef.current);
+
+		this.player.bind(SC.Widget.Events.READY, () => {
+			this.player.unbind(SC.Widget.Events.READY);
+
+			onReady();
+		});
+	}
+
+	private getUrlFromId = (id: string): string => {
+		const parts = id.split(' ');
+		const url = `https://api.soundcloud.com/tracks/${parts[0]}`;
+		return url;
+	};
+
+	private static playerGetDurationAsync = (
+		player: SC.SoundCloudWidget,
+	): Promise<number> => {
+		return new Promise((resolve, reject /* TODO: Reject. */) => {
+			player.getDuration(resolve);
+		});
+	};
+
+	attach = async (): Promise<void> => {
+		this.player.bind(SC.Widget.Events.ERROR, (event) =>
+			this.options?.onError?.(event),
+		);
+		this.player.bind(SC.Widget.Events.PLAY, () => this.options?.onPlay?.());
+		this.player.bind(SC.Widget.Events.PAUSE, () =>
+			this.options?.onPause?.(),
+		);
+		this.player.bind(SC.Widget.Events.FINISH, () =>
+			this.options?.onEnded?.(),
+		);
+		this.player.bind(SC.Widget.Events.PLAY_PROGRESS, async (event) => {
+			const duration =
+				await SoundCloudPlayerApiImpl.playerGetDurationAsync(
+					this.player,
+				);
+
+			this.options?.onTimeUpdate?.({
+				duration: duration / 1000,
+				percent: event.currentPosition / duration,
+				seconds: event.currentPosition / 1000,
+			});
+		});
+	};
+
+	detach = async (): Promise<void> => {
+		this.player.unbind(SC.Widget.Events.ERROR);
+		this.player.unbind(SC.Widget.Events.PLAY);
+		this.player.unbind(SC.Widget.Events.PAUSE);
+		this.player.unbind(SC.Widget.Events.FINISH);
+		this.player.unbind(SC.Widget.Events.PLAY_PROGRESS);
+	};
+
+	private static playerLoadAsync = (
+		player: SC.SoundCloudWidget,
+		url: string,
+		options: Omit<SC.SoundCloudLoadOptions, 'callback'>,
+	): Promise<void> => {
+		return new Promise((resolve, reject /* TODO: Reject. */) => {
+			player.load(url, { ...options, callback: resolve });
+		});
+	};
+
+	loadVideo = async (id: string): Promise<void> => {
+		await SoundCloudPlayerApiImpl.playerLoadAsync(
+			this.player,
+			this.getUrlFromId(id),
+			{
+				auto_play: true,
+			},
+		);
+	};
+
+	play = async (): Promise<void> => {
+		this.player.play();
+	};
+
+	pause = async (): Promise<void> => {
+		this.player.pause();
+	};
+
+	setCurrentTime = async (seconds: number): Promise<void> => {
+		this.player.seekTo(seconds * 1000);
+	};
+
+	setVolume = async (volume: number): Promise<void> => {
+		this.player.setVolume(volume * 100);
+	};
+
+	setMuted = async (muted: boolean): Promise<void> => {
+		this.setVolume(muted ? 0 : 1 /* TODO */);
+	};
+
+	getDuration = async (): Promise<number | undefined> => {
+		const duration = await SoundCloudPlayerApiImpl.playerGetDurationAsync(
+			this.player,
+		);
+
+		return duration / 1000;
+	};
+
+	private static playerGetPositionAsync = (
+		player: SC.SoundCloudWidget,
+	): Promise<number> => {
+		return new Promise((resolve, reject /* TODO: Reject. */) => {
+			player.getPosition(resolve);
+		});
+	};
+
+	getCurrentTime = async (): Promise<number | undefined> => {
+		const position = await SoundCloudPlayerApiImpl.playerGetPositionAsync(
+			this.player,
+		);
+
+		return position / 1000;
+	};
+}
+
 export class SoundCloudPlayerApi implements PlayerApi {
 	private static nextId = 1;
 
 	private readonly id: number;
-	private player?: SC.SoundCloudWidget;
+	private impl?: SoundCloudPlayerApiImpl;
 
 	toString = (): string => `SoundCloudPlayerApi#${this.id}`;
 
@@ -60,21 +194,12 @@ export class SoundCloudPlayerApi implements PlayerApi {
 		}
 	};
 
-	private static playerGetDurationAsync = (
-		player: SC.SoundCloudWidget,
-	): Promise<number> => {
-		return new Promise((resolve, reject /* TODO: Reject. */) => {
-			player.getDuration(resolve);
-		});
-	};
-
 	attach = (): Promise<void> => {
 		return new Promise(async (resolve, reject /* TODO: Reject. */) => {
 			this.debug('attach');
 
-			if (this.player) {
+			if (this.impl) {
 				this.debug('player is already attached');
-
 				resolve();
 				return;
 			}
@@ -83,167 +208,90 @@ export class SoundCloudPlayerApi implements PlayerApi {
 
 			this.debug('Attaching player...');
 
-			this.player = SC.Widget(this.playerElementRef.current);
-			const player = this.player;
+			const impl = new SoundCloudPlayerApiImpl(
+				this.playerElementRef,
+				this.options,
+				async () => {
+					await impl.attach();
 
-			player.bind(SC.Widget.Events.READY, () => {
-				this.debug('player attached');
-
-				resolve();
-			});
-			player.bind(SC.Widget.Events.ERROR, (event) =>
-				this.options?.onError?.(event),
+					this.debug('player attached');
+					resolve();
+				},
 			);
-			player.bind(SC.Widget.Events.PLAY, () => this.options?.onPlay?.());
-			player.bind(SC.Widget.Events.PAUSE, () =>
-				this.options?.onPause?.(),
-			);
-			player.bind(SC.Widget.Events.FINISH, () =>
-				this.options?.onEnded?.(),
-			);
-			player.bind(SC.Widget.Events.PLAY_PROGRESS, async (event) => {
-				const duration =
-					await SoundCloudPlayerApi.playerGetDurationAsync(player);
-
-				this.options?.onTimeUpdate?.({
-					duration: duration / 1000,
-					percent: event.currentPosition / duration,
-					seconds: event.currentPosition / 1000,
-				});
-			});
+			this.impl = impl;
 		});
+	};
+
+	private assertPlayerAttached = (): void => {
+		this.assert(!!this.impl, 'player is not attached');
 	};
 
 	detach = async (): Promise<void> => {
 		this.debug('detach');
-
 		this.assertPlayerAttached();
-		if (!this.player) return;
-		const player = this.player;
 
-		player.unbind(SC.Widget.Events.READY);
-		player.unbind(SC.Widget.Events.ERROR);
-		player.unbind(SC.Widget.Events.PLAY);
-		player.unbind(SC.Widget.Events.PAUSE);
-		player.unbind(SC.Widget.Events.FINISH);
-		player.unbind(SC.Widget.Events.PLAY_PROGRESS);
+		await this.impl?.detach();
 
-		this.player = undefined;
-	};
-
-	private assertPlayerAttached = (): void => {
-		this.assert(!!this.player, 'player is not attached');
-	};
-
-	private getUrlFromId = (id: string): string => {
-		const parts = id.split(' ');
-		const url = `https://api.soundcloud.com/tracks/${parts[0]}`;
-		return url;
-	};
-
-	private static playerLoadAsync = (
-		player: SC.SoundCloudWidget,
-		url: string,
-		options: Omit<SC.SoundCloudLoadOptions, 'callback'>,
-	): Promise<void> => {
-		return new Promise((resolve, reject /* TODO: Reject. */) => {
-			player.load(url, { ...options, callback: resolve });
-		});
+		this.impl = undefined;
 	};
 
 	loadVideo = async (id: string): Promise<void> => {
 		this.debug('loadVideo', id);
-
 		this.assertPlayerAttached();
-		if (!this.player) return;
-		const player = this.player;
 
 		this.debug('Loading video...');
 
-		await SoundCloudPlayerApi.playerLoadAsync(
-			player,
-			this.getUrlFromId(id),
-			{
-				auto_play: true,
-			},
-		);
+		await this.impl?.loadVideo(id);
 
 		this.debug('video loaded', id);
 	};
 
 	play = async (): Promise<void> => {
 		this.debug('play');
-
 		this.assertPlayerAttached();
-		if (!this.player) return;
 
-		this.player.play();
+		await this.impl?.play();
 	};
 
 	pause = async (): Promise<void> => {
 		this.debug('pause');
-
 		this.assertPlayerAttached();
-		if (!this.player) return;
 
-		this.player.pause();
+		await this.impl?.pause();
 	};
 
 	setCurrentTime = async (seconds: number): Promise<void> => {
 		this.debug('setCurrentTime', seconds);
-
 		this.assertPlayerAttached();
-		if (!this.player) return;
 
-		this.player.seekTo(seconds * 1000);
+		await this.impl?.setCurrentTime(seconds);
 	};
 
 	setVolume = async (volume: number): Promise<void> => {
-		this.debug('setVolume');
-
+		this.debug('setVolume', volume);
 		this.assertPlayerAttached();
-		if (!this.player) return;
 
-		this.player.setVolume(volume * 100);
+		await this.impl?.setVolume(volume);
 	};
 
 	setMuted = async (muted: boolean): Promise<void> => {
 		this.debug('setMuted', muted);
+		this.assertPlayerAttached();
 
-		this.setVolume(muted ? 0 : 1 /* TODO */);
+		await this.impl?.setMuted(muted);
 	};
 
 	getDuration = async (): Promise<number | undefined> => {
 		this.debug('getDuration');
-
 		this.assertPlayerAttached();
-		if (!this.player) return undefined;
 
-		const duration = await SoundCloudPlayerApi.playerGetDurationAsync(
-			this.player,
-		);
-
-		return duration / 1000;
-	};
-
-	private static playerGetPositionAsync = (
-		player: SC.SoundCloudWidget,
-	): Promise<number> => {
-		return new Promise((resolve, reject /* TODO: Reject. */) => {
-			player.getPosition(resolve);
-		});
+		return await this.impl?.getDuration();
 	};
 
 	getCurrentTime = async (): Promise<number | undefined> => {
 		this.debug('getCurrentTime');
-
 		this.assertPlayerAttached();
-		if (!this.player) return undefined;
 
-		const position = await SoundCloudPlayerApi.playerGetPositionAsync(
-			this.player,
-		);
-
-		return position / 1000;
+		return await this.impl?.getCurrentTime();
 	};
 }

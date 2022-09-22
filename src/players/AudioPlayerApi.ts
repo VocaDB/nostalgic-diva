@@ -1,12 +1,82 @@
+import React from 'react';
+
 import { PlayerApi, PlayerOptions } from './PlayerApi';
+import { PlayerApiImpl } from './PlayerApiImpl';
 import { PlayerConsole } from './PlayerConsole';
 
 // Code from: https://github.com/VocaDB/vocadb/blob/61b8c54f3eca906a477101dab4fdd9b154be310e/VocaDbWeb/Scripts/ViewModels/PVs/PVPlayerFile.ts.
+class AudioPlayerApiImpl extends PlayerApiImpl<HTMLAudioElement> {
+	private readonly player: HTMLAudioElement;
+
+	constructor(
+		playerElementRef: React.MutableRefObject<HTMLAudioElement>,
+		options: PlayerOptions | undefined,
+	) {
+		super(playerElementRef, options);
+
+		this.player = playerElementRef.current;
+	}
+
+	attach = async (): Promise<void> => {
+		this.player.onerror = (event): void => this.options?.onError?.(event);
+		this.player.onplay = (): void => this.options?.onPlay?.();
+		this.player.onpause = (): void => this.options?.onPause?.();
+		this.player.onended = (): void => this.options?.onEnded?.();
+		this.player.ontimeupdate = (): void => {
+			this.options?.onTimeUpdate?.({
+				duration: this.player.duration,
+				percent: this.player.currentTime / this.player.duration,
+				seconds: this.player.currentTime,
+			});
+		};
+	};
+
+	detach = async (): Promise<void> => {
+		this.player.onerror = null;
+		this.player.onplay = null;
+		this.player.onpause = null;
+		this.player.onended = null;
+		this.player.ontimeupdate = null;
+	};
+
+	loadVideo = async (id: string): Promise<void> => {
+		this.player.src = id;
+	};
+
+	play = async (): Promise<void> => {
+		this.player.play();
+	};
+
+	pause = async (): Promise<void> => {
+		this.player.pause();
+	};
+
+	setCurrentTime = async (seconds: number): Promise<void> => {
+		this.player.currentTime = seconds;
+	};
+
+	setVolume = async (volume: number): Promise<void> => {
+		this.player.volume = volume;
+	};
+
+	setMuted = async (muted: boolean): Promise<void> => {
+		this.player.muted = muted;
+	};
+
+	getDuration = async (): Promise<number | undefined> => {
+		return this.player.duration;
+	};
+
+	getCurrentTime = async (): Promise<number | undefined> => {
+		return this.player.currentTime;
+	};
+}
+
 export class AudioPlayerApi implements PlayerApi {
 	private static nextId = 1;
 
 	private readonly id: number;
-	private player?: HTMLAudioElement;
+	private impl?: AudioPlayerApiImpl;
 
 	toString = (): string => `AudioPlayerApi#${this.id}`;
 
@@ -34,121 +104,88 @@ export class AudioPlayerApi implements PlayerApi {
 	attach = async (): Promise<void> => {
 		this.debug('attach');
 
-		if (this.player) {
+		if (this.impl) {
 			this.debug('player is already attached');
 			return;
 		}
 
-		this.player = this.playerElementRef.current;
-		const player = this.player;
+		this.impl = new AudioPlayerApiImpl(this.playerElementRef, this.options);
 
-		player.onerror = (event): void => this.options?.onError?.(event);
-		player.onplay = (): void => this.options?.onPlay?.();
-		player.onpause = (): void => this.options?.onPause?.();
-		player.onended = (): void => this.options?.onEnded?.();
-		player.ontimeupdate = (): void => {
-			this.options?.onTimeUpdate?.({
-				duration: player.duration,
-				percent: player.currentTime / player.duration,
-				seconds: player.currentTime,
-			});
-		};
+		await this.impl.attach();
 
 		this.debug('player attached');
 	};
 
-	detach = async (): Promise<void> => {
-		this.debug('detach');
-
-		this.assertPlayerAttached();
-		if (!this.player) return;
-		const player = this.player;
-
-		player.onerror = null;
-		player.onplay = null;
-		player.onpause = null;
-		player.onended = null;
-		player.ontimeupdate = null;
-
-		this.player = undefined;
+	private assertPlayerAttached = (): void => {
+		this.assert(!!this.impl, 'player is not attached');
 	};
 
-	private assertPlayerAttached = (): void => {
-		this.assert(!!this.player, 'player is not attached');
+	detach = async (): Promise<void> => {
+		this.debug('detach');
+		this.assertPlayerAttached();
+
+		await this.impl?.detach();
+
+		this.impl = undefined;
 	};
 
 	loadVideo = async (id: string): Promise<void> => {
 		this.debug('loadVideo', id);
-
-		this.assert(!!id, 'id is not defined');
-		if (!id) return;
-
 		this.assertPlayerAttached();
-		if (!this.player) return;
 
-		this.player.src = id;
+		this.debug('Loading video...');
+
+		await this.impl?.loadVideo(id);
+
+		this.debug('video loaded', id);
 	};
 
 	play = async (): Promise<void> => {
 		this.debug('play');
-
 		this.assertPlayerAttached();
-		if (!this.player) return;
 
-		this.player.play();
+		await this.impl?.play();
 	};
 
 	pause = async (): Promise<void> => {
 		this.debug('pause');
-
 		this.assertPlayerAttached();
-		if (!this.player) return;
 
-		this.player.pause();
+		await this.impl?.pause();
 	};
 
 	setCurrentTime = async (seconds: number): Promise<void> => {
 		this.debug('setCurrentTime', seconds);
-
 		this.assertPlayerAttached();
-		if (!this.player) return;
 
-		this.player.currentTime = seconds;
+		await this.impl?.setCurrentTime(seconds);
 	};
 
 	setVolume = async (volume: number): Promise<void> => {
-		this.debug('setVolume');
-
+		this.debug('setVolume', volume);
 		this.assertPlayerAttached();
-		if (!this.player) return;
 
-		this.player.volume = volume;
+		await this.impl?.setVolume(volume);
 	};
 
 	setMuted = async (muted: boolean): Promise<void> => {
 		this.debug('setMuted', muted);
-
 		this.assertPlayerAttached();
-		if (!this.player) return;
 
-		this.player.muted = muted;
+		await this.impl?.setMuted(muted);
 	};
 
 	getDuration = async (): Promise<number | undefined> => {
 		this.debug('getDuration');
-
 		this.assertPlayerAttached();
-		if (!this.player) return undefined;
 
-		return this.player.duration;
+		return await this.impl?.getDuration();
 	};
 
 	getCurrentTime = async (): Promise<number | undefined> => {
 		this.debug('getCurrentTime');
-
 		this.assertPlayerAttached();
-		if (!this.player) return undefined;
 
-		return this.player.currentTime;
+		return await this.impl?.getCurrentTime();
 	};
 }

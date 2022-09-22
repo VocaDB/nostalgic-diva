@@ -1,13 +1,85 @@
+import React from 'react';
+
 import { PlayerApi, PlayerOptions } from './PlayerApi';
+import { PlayerApiImpl } from './PlayerApiImpl';
 import { PlayerConsole } from './PlayerConsole';
 import { getScript } from './getScript';
 
 // https://github.com/cookpete/react-player/blob/e3c324bc6845698179d065fa408db515c2296b4b/src/players/Vimeo.js
+class VimeoPlayerApiImpl extends PlayerApiImpl<HTMLIFrameElement> {
+	private readonly player: Vimeo.Player;
+
+	constructor(
+		playerElementRef: React.MutableRefObject<HTMLIFrameElement>,
+		options: PlayerOptions | undefined,
+	) {
+		super(playerElementRef, options);
+
+		this.player = new Vimeo.Player(this.playerElementRef.current);
+	}
+
+	attach = async (): Promise<void> => {
+		await this.player.ready();
+
+		this.player.on('error', (data) => this.options?.onError?.(data));
+		this.player.on('play', () => this.options?.onPlay?.());
+		this.player.on('pause', () => this.options?.onPause?.());
+		this.player.on('ended', () => this.options?.onEnded?.());
+		this.player.on('timeupdate', (data) => {
+			this.options?.onTimeUpdate?.({
+				duration: data.duration,
+				percent: data.percent,
+				seconds: data.seconds,
+			});
+		});
+	};
+
+	detach = async (): Promise<void> => {
+		this.player.off('error');
+		this.player.off('play');
+		this.player.off('pause');
+		this.player.off('ended');
+		this.player.off('timeupdate');
+	};
+
+	loadVideo = async (id: string): Promise<void> => {
+		await this.player.loadVideo(id);
+	};
+
+	play = async (): Promise<void> => {
+		await this.player.play();
+	};
+
+	pause = async (): Promise<void> => {
+		await this.player.pause();
+	};
+
+	setCurrentTime = async (seconds: number): Promise<void> => {
+		await this.player.setCurrentTime(seconds);
+	};
+
+	setVolume = async (fraction: number): Promise<void> => {
+		await this.player.setVolume(fraction);
+	};
+
+	setMuted = async (muted: boolean): Promise<void> => {
+		await this.player.setMuted(muted);
+	};
+
+	getDuration = async (): Promise<number | undefined> => {
+		return await this.player.getDuration();
+	};
+
+	getCurrentTime = async (): Promise<number | undefined> => {
+		return await this.player.getCurrentTime();
+	};
+}
+
 export class VimeoPlayerApi implements PlayerApi {
 	private static nextId = 1;
 
 	private readonly id: number;
-	private player?: Vimeo.Player;
+	private impl?: VimeoPlayerApiImpl;
 
 	toString = (): string => `VimeoPlayerApi#${this.id}`;
 
@@ -55,21 +127,15 @@ export class VimeoPlayerApi implements PlayerApi {
 			this.debug('script loaded');
 		} catch (error) {
 			this.error('Failed to load script');
-
 			throw error;
 		}
-	};
-
-	private assertPlayerAttached = (): void => {
-		this.assert(!!this.player, 'player is not attached');
 	};
 
 	attach = async (): Promise<void> => {
 		this.debug('attach');
 
-		if (this.player) {
+		if (this.impl) {
 			this.debug('player is already attached');
-
 			return;
 		}
 
@@ -77,119 +143,83 @@ export class VimeoPlayerApi implements PlayerApi {
 
 		this.debug('Attaching player...');
 
-		this.player = new Vimeo.Player(this.playerElementRef.current);
-		const player = this.player;
+		this.impl = new VimeoPlayerApiImpl(this.playerElementRef, this.options);
 
-		await player.ready();
-
-		player.on('error', (data) => this.options?.onError?.(data));
-		player.on('play', () => this.options?.onPlay?.());
-		player.on('pause', () => this.options?.onPause?.());
-		player.on('ended', () => this.options?.onEnded?.());
-		player.on('timeupdate', (data) => {
-			this.options?.onTimeUpdate?.({
-				duration: data.duration,
-				percent: data.percent,
-				seconds: data.seconds,
-			});
-		});
+		await this.impl.attach();
 
 		this.debug('player attached');
 	};
 
+	private assertPlayerAttached = (): void => {
+		this.assert(!!this.impl, 'player is not attached');
+	};
+
 	detach = async (): Promise<void> => {
 		this.debug('detach');
-
 		this.assertPlayerAttached();
-		if (!this.player) return;
-		const player = this.player;
 
-		player.off('error');
-		player.off('play');
-		player.off('pause');
-		player.off('ended');
-		player.off('timeupdate');
+		await this.impl?.detach();
 
-		this.player = undefined;
+		this.impl = undefined;
 	};
 
 	loadVideo = async (id: string): Promise<void> => {
 		this.debug('loadVideo', id);
-
 		this.assertPlayerAttached();
-		if (!this.player) return;
 
 		this.debug('Loading video...');
 
-		await this.player.loadVideo(id);
+		await this.impl?.loadVideo(id);
 
 		this.debug('video loaded', id);
 	};
 
 	play = async (): Promise<void> => {
 		this.debug('play');
-
 		this.assertPlayerAttached();
-		if (!this.player) return;
 
-		await this.player.play();
+		await this.impl?.play();
 	};
 
 	pause = async (): Promise<void> => {
 		this.debug('pause');
-
 		this.assertPlayerAttached();
-		if (!this.player) return;
 
-		await this.player.pause();
+		await this.impl?.pause();
 	};
 
 	setCurrentTime = async (seconds: number): Promise<void> => {
 		this.debug('setCurrentTime', seconds);
-
 		this.assertPlayerAttached();
-		if (!this.player) return;
 
-		await this.player.setCurrentTime(seconds);
+		await this.impl?.setCurrentTime(seconds);
 	};
 
-	setVolume = async (fraction: number): Promise<void> => {
-		this.debug('setVolume', fraction);
-
+	setVolume = async (volume: number): Promise<void> => {
+		this.debug('setVolume', volume);
 		this.assertPlayerAttached();
-		if (!this.player) return;
 
-		await this.player.setVolume(fraction);
+		await this.impl?.setVolume(volume);
 	};
 
 	setMuted = async (muted: boolean): Promise<void> => {
-		this.debug('setMuted');
-
+		this.debug('setMuted', muted);
 		this.assertPlayerAttached();
-		if (!this.player) return;
 
-		await this.player.setMuted(muted);
+		await this.impl?.setMuted(muted);
 	};
 
 	getDuration = async (): Promise<number | undefined> => {
 		this.debug('getDuration');
-
 		this.assertPlayerAttached();
-		if (!this.player) return;
 
-		const duration = await this.player.getDuration();
-
-		return duration;
+		return await this.impl?.getDuration();
 	};
 
 	getCurrentTime = async (): Promise<number | undefined> => {
 		this.debug('getCurrentTime');
-
 		this.assertPlayerAttached();
-		if (!this.player) return;
 
-		const currentTime = await this.player.getCurrentTime();
-
-		return currentTime;
+		return await this.impl?.getCurrentTime();
 	};
 }
