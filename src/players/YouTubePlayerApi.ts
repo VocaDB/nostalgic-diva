@@ -156,8 +156,6 @@ export class YouTubePlayerApi extends PlayerApi<
 	HTMLDivElement,
 	YouTubePlayerApiImpl
 > {
-	toString = (): string => `YouTubePlayerApi#${this.id}`;
-
 	private static scriptLoaded = false;
 
 	private loadScript = (): Promise<void> => {

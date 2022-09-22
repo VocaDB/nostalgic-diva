@@ -78,8 +78,6 @@ export class VimeoPlayerApi extends PlayerApi<
 	HTMLIFrameElement,
 	VimeoPlayerApiImpl
 > {
-	toString = (): string => `VimeoPlayerApi#${this.id}`;
-
 	private static scriptLoaded = false;
 
 	private loadScript = async (): Promise<void> => {

@@ -33,6 +33,8 @@ export abstract class PlayerApi<
 	protected readonly id: number;
 	protected impl?: TImpl;
 
+	toString = (): string => `${this.playerType}#${this.id}`;
+
 	protected assert = (
 		condition?: boolean | undefined,
 		message?: any,
@@ -50,8 +52,9 @@ export abstract class PlayerApi<
 	};
 
 	constructor(
+		protected readonly playerType: PlayerType,
 		protected readonly playerElementRef: React.MutableRefObject<TElement>,
-		protected readonly options?: PlayerOptions,
+		protected readonly options: PlayerOptions | undefined,
 	) {
 		this.id = PlayerApi.nextId++;
 

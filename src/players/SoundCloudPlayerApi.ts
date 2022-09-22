@@ -140,8 +140,6 @@ export class SoundCloudPlayerApi extends PlayerApi<
 	HTMLIFrameElement,
 	SoundCloudPlayerApiImpl
 > {
-	toString = (): string => `SoundCloudPlayerApi#${this.id}`;
-
 	private static scriptLoaded = false;
 
 	private loadScript = async (): Promise<void> => {

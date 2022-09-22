@@ -75,8 +75,6 @@ export class AudioPlayerApi extends PlayerApi<
 	HTMLAudioElement,
 	AudioPlayerApiImpl
 > {
-	toString = (): string => `AudioPlayerApi#${this.id}`;
-
 	attach = async (): Promise<void> => {
 		this.debug('attach');
 

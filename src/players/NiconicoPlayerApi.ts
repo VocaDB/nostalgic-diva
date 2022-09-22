@@ -192,8 +192,6 @@ export class NiconicoPlayerApi extends PlayerApi<
 	HTMLIFrameElement,
 	NiconicoPlayerApiImpl
 > {
-	toString = (): string => `NiconicoPlayerApi#${this.id}`;
-
 	attach = async (): Promise<void> => {
 		this.debug('attach');
 
