@@ -1,10 +1,10 @@
 import React from 'react';
 
-import { PlayerApi, PlayerOptions } from './PlayerApi';
+import { PlayerOptions } from './PlayerApi';
 import { PlayerApiImpl } from './PlayerApiImpl';
 
 // Code from: https://github.com/VocaDB/vocadb/blob/61b8c54f3eca906a477101dab4fdd9b154be310e/VocaDbWeb/Scripts/ViewModels/PVs/PVPlayerFile.ts.
-class AudioPlayerApiImpl extends PlayerApiImpl<HTMLAudioElement> {
+export class AudioPlayerApiImpl extends PlayerApiImpl<HTMLAudioElement> {
 	private readonly player: HTMLAudioElement;
 
 	constructor(
@@ -70,27 +70,5 @@ class AudioPlayerApiImpl extends PlayerApiImpl<HTMLAudioElement> {
 
 	getCurrentTime = async (): Promise<number | undefined> => {
 		return this.player.currentTime;
-	};
-}
-
-export class AudioPlayerApi extends PlayerApi<
-	HTMLAudioElement,
-	AudioPlayerApiImpl
-> {
-	attach = async (): Promise<void> => {
-		this.debug('attach');
-
-		if (this.impl) {
-			this.debug('player is already attached');
-			return;
-		}
-
-		this.impl = new AudioPlayerApiImpl(this.playerElementRef, this.options);
-
-		await this.impl.initialize();
-
-		await this.impl.attach();
-
-		this.debug('player attached');
 	};
 }

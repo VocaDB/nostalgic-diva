@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { NiconicoPlayerApi } from '../players/NiconicoPlayerApi';
+import { NiconicoPlayerApiImpl } from '../players/NiconicoPlayerApi';
 import { PlayerConsole } from '../players/PlayerConsole';
 import { Player, PlayerPropsBase } from './Player';
 
@@ -9,7 +9,7 @@ export const NiconicoPlayer = React.memo(
 		PlayerConsole.debug('NiconicoPlayer');
 
 		return (
-			<Player {...props} playerApi={NiconicoPlayerApi}>
+			<Player {...props} playerApi={NiconicoPlayerApiImpl}>
 				{(playerElementRef): React.ReactElement => (
 					<div style={{ width: '100%', height: '100%' }}>
 						{/* eslint-disable-next-line jsx-a11y/iframe-has-title */}

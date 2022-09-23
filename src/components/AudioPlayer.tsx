@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { AudioPlayerApi } from '../players/AudioPlayerApi';
+import { AudioPlayerApiImpl } from '../players/AudioPlayerApi';
 import { PlayerConsole } from '../players/PlayerConsole';
 import { Player, PlayerPropsBase } from './Player';
 
@@ -9,7 +9,7 @@ export const AudioPlayer = React.memo(
 		PlayerConsole.debug('AudioPlayer');
 
 		return (
-			<Player {...props} playerApi={AudioPlayerApi}>
+			<Player {...props} playerApi={AudioPlayerApiImpl}>
 				{(playerElementRef): React.ReactElement => (
 					<audio
 						ref={playerElementRef}

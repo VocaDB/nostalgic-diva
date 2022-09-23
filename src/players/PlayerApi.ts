@@ -24,11 +24,23 @@ export interface PlayerOptions {
 	onTimeUpdate?(event: TimeEvent): void;
 }
 
-export abstract class PlayerApi<
-	TElement extends HTMLElement = HTMLElement,
-	TImpl extends PlayerApiImpl<TElement> = PlayerApiImpl<TElement>,
-> {
-	protected impl?: TImpl;
+export interface IPlayerApi {
+	loadVideo(id: string): Promise<void>;
+	play(): Promise<void>;
+	pause(): Promise<void>;
+	setCurrentTime(seconds: number): Promise<void>;
+	setVolume(volume: number): Promise<void>;
+	setMuted(muted: boolean): Promise<void>;
+	getDuration(): Promise<number | undefined>;
+	getCurrentTime(): Promise<number | undefined>;
+}
+
+export class PlayerApi<
+	TElement extends HTMLElement,
+	TPlayer extends PlayerApiImpl<TElement>,
+> implements IPlayerApi
+{
+	protected impl?: TPlayer;
 
 	protected debug = (message?: any, ...optionalParams: any): void => {
 		this.impl?.debug(message, ...optionalParams);
@@ -41,9 +53,34 @@ export abstract class PlayerApi<
 	constructor(
 		protected readonly playerElementRef: React.MutableRefObject<TElement>,
 		protected readonly options: PlayerOptions | undefined,
+		private readonly playerApiImpl: new (
+			playerElementRef: React.MutableRefObject<TElement>,
+			options: PlayerOptions | undefined,
+		) => TPlayer,
 	) {}
 
-	abstract attach(): Promise<void>;
+	loadScript = async (): Promise<void> => {};
+
+	attach = async (): Promise<void> => {
+		this.debug('attach');
+
+		if (this.impl) {
+			this.debug('player is already attached');
+			return;
+		}
+
+		await this.loadScript();
+
+		this.debug('Attaching player...');
+
+		this.impl = new this.playerApiImpl(this.playerElementRef, this.options);
+
+		await this.impl.initialize();
+
+		await this.impl.attach();
+
+		this.debug('player attached');
+	};
 
 	private assertPlayerAttached = (): void => {
 		PlayerConsole.assert(!!this.impl, 'player is not attached');

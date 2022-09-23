@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { PlayerConsole } from '../players/PlayerConsole';
-import { VimeoPlayerApi } from '../players/VimeoPlayerApi';
+import { VimeoPlayerApiImpl } from '../players/VimeoPlayerApi';
 import { Player, PlayerPropsBase } from './Player';
 
 export const VimeoPlayer = React.memo(
@@ -9,7 +9,7 @@ export const VimeoPlayer = React.memo(
 		PlayerConsole.debug('VimeoPlayer');
 
 		return (
-			<Player {...props} playerApi={VimeoPlayerApi}>
+			<Player {...props} playerApi={VimeoPlayerApiImpl}>
 				{(playerElementRef): React.ReactElement => (
 					// eslint-disable-next-line jsx-a11y/iframe-has-title
 					<iframe

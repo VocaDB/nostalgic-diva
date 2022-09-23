@@ -1,9 +1,11 @@
 import React from 'react';
 
-import { PlayerOptions, PlayerType } from './PlayerApi';
+import { IPlayerApi, PlayerOptions, PlayerType } from './PlayerApi';
 import { PlayerConsole } from './PlayerConsole';
 
-export abstract class PlayerApiImpl<TElement extends HTMLElement> {
+export abstract class PlayerApiImpl<TElement extends HTMLElement>
+	implements IPlayerApi
+{
 	private static nextId = 1;
 
 	protected readonly id: number;

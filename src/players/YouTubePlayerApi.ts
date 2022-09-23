@@ -1,9 +1,7 @@
 import React from 'react';
 
-import { PlayerApi, PlayerOptions } from './PlayerApi';
+import { PlayerOptions } from './PlayerApi';
 import { PlayerApiImpl } from './PlayerApiImpl';
-import { PlayerConsole } from './PlayerConsole';
-import { ensureScriptLoaded } from './ensureScriptLoaded';
 
 declare global {
 	interface Window {
@@ -21,7 +19,7 @@ enum PlayerState {
 }
 
 // Code from: https://github.com/VocaDB/vocadb/blob/076dac9f0808aba5da7332209fdfd2ff4e12c235/VocaDbWeb/Scripts/ViewModels/PVs/PVPlayerYoutube.ts.
-class YouTubePlayerApiImpl extends PlayerApiImpl<HTMLDivElement> {
+export class YouTubePlayerApiImpl extends PlayerApiImpl<HTMLDivElement> {
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	private readonly player: YT.Player = undefined! /* HACK */;
 
@@ -159,52 +157,5 @@ class YouTubePlayerApiImpl extends PlayerApiImpl<HTMLDivElement> {
 
 	getCurrentTime = async (): Promise<number | undefined> => {
 		return this.player.getCurrentTime();
-	};
-}
-
-const loadScript = (): Promise<void> => {
-	return new Promise(async (resolve, reject) => {
-		const first = await ensureScriptLoaded(
-			'https://www.youtube.com/iframe_api',
-		);
-
-		if (first) {
-			// Code from: https://stackoverflow.com/a/18154942.
-			window.onYouTubeIframeAPIReady = (): void => {
-				PlayerConsole.debug('YouTube iframe API ready');
-				resolve();
-			};
-		} else {
-			resolve();
-		}
-	});
-};
-
-export class YouTubePlayerApi extends PlayerApi<
-	HTMLDivElement,
-	YouTubePlayerApiImpl
-> {
-	attach = async (): Promise<void> => {
-		this.debug('attach');
-
-		if (this.impl) {
-			this.debug('player is already attached');
-			return;
-		}
-
-		await loadScript();
-
-		this.debug('Attaching player...');
-
-		this.impl = new YouTubePlayerApiImpl(
-			this.playerElementRef,
-			this.options,
-		);
-
-		await this.impl.initialize();
-
-		await this.impl.attach();
-
-		this.debug('player attached');
 	};
 }

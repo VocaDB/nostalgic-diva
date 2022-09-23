@@ -1,16 +1,19 @@
 import React from 'react';
 
-import { PlayerApi, PlayerOptions } from '../players/PlayerApi';
+import { IPlayerApi, PlayerApi, PlayerOptions } from '../players/PlayerApi';
+import { PlayerApiImpl } from '../players/PlayerApiImpl';
 import { PlayerConsole } from '../players/PlayerConsole';
 
 export interface PlayerPropsBase {
-	playerRef: React.MutableRefObject<PlayerApi | undefined> | undefined;
+	playerRef: React.MutableRefObject<IPlayerApi | undefined> | undefined;
 	options: PlayerOptions | undefined;
-	onPlayerChange: ((player: PlayerApi | undefined) => void) | undefined;
+	onPlayerChange: ((player: IPlayerApi | undefined) => void) | undefined;
 }
 
-interface PlayerProps<TElement extends HTMLElement, TPlayer extends PlayerApi>
-	extends PlayerPropsBase {
+interface PlayerProps<
+	TElement extends HTMLElement,
+	TPlayer extends PlayerApiImpl<TElement>,
+> extends PlayerPropsBase {
 	playerApi: new (
 		playerElementRef: React.MutableRefObject<TElement>,
 		options?: PlayerOptions,
@@ -22,7 +25,7 @@ interface PlayerProps<TElement extends HTMLElement, TPlayer extends PlayerApi>
 
 export const Player = <
 	TElement extends HTMLElement,
-	TPlayer extends PlayerApi,
+	TPlayer extends PlayerApiImpl<TElement>,
 >({
 	playerRef,
 	options,
@@ -37,11 +40,11 @@ export const Player = <
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	const playerElementRef = React.useRef<TElement>(undefined!);
 
-	const [player, setPlayer] = React.useState<PlayerApi>();
+	const [player, setPlayer] = React.useState<IPlayerApi>();
 
 	// Make sure that `options` do not change between re-rendering.
 	React.useEffect(() => {
-		const player = new playerApi(playerElementRef, options);
+		const player = new PlayerApi(playerElementRef, options, playerApi);
 
 		if (playerRef) playerRef.current = player;
 

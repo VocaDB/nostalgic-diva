@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { PlayerApi, PlayerOptions } from './PlayerApi';
+import { PlayerOptions } from './PlayerApi';
 import { PlayerApiImpl } from './PlayerApiImpl';
 
 declare global {
@@ -16,7 +16,7 @@ enum PlayerStatus {
 }
 
 // Code from: https://github.com/VocaDB/vocadb/blob/a4b5f9d8186772d7e6f58f997bbcbb51509d2539/VocaDbWeb/Scripts/ViewModels/PVs/PVPlayerNico.ts.
-class NiconicoPlayerApiImpl extends PlayerApiImpl<HTMLIFrameElement> {
+export class NiconicoPlayerApiImpl extends PlayerApiImpl<HTMLIFrameElement> {
 	private static readonly origin = 'https://embed.nicovideo.jp';
 
 	private readonly player: HTMLIFrameElement;
@@ -187,30 +187,5 @@ class NiconicoPlayerApiImpl extends PlayerApiImpl<HTMLIFrameElement> {
 
 	getCurrentTime = async (): Promise<number | undefined> => {
 		return this.currentTime;
-	};
-}
-
-export class NiconicoPlayerApi extends PlayerApi<
-	HTMLIFrameElement,
-	NiconicoPlayerApiImpl
-> {
-	attach = async (): Promise<void> => {
-		this.debug('attach');
-
-		if (this.impl) {
-			this.debug('player is already attached');
-			return;
-		}
-
-		this.impl = new NiconicoPlayerApiImpl(
-			this.playerElementRef,
-			this.options,
-		);
-
-		await this.impl.initialize();
-
-		await this.impl.attach();
-
-		this.debug('player attached');
 	};
 }

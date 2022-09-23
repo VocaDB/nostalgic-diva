@@ -1,11 +1,10 @@
 import React from 'react';
 
-import { PlayerApi, PlayerOptions } from './PlayerApi';
+import { PlayerOptions } from './PlayerApi';
 import { PlayerApiImpl } from './PlayerApiImpl';
-import { ensureScriptLoaded } from './ensureScriptLoaded';
 
 // Code from: https://github.com/VocaDB/vocadb/blob/e147650a8f1f85c8fa865d0ab562126c278527ec/VocaDbWeb/Scripts/ViewModels/PVs/PVPlayerSoundCloud.ts.
-class SoundCloudPlayerApiImpl extends PlayerApiImpl<HTMLIFrameElement> {
+export class SoundCloudPlayerApiImpl extends PlayerApiImpl<HTMLIFrameElement> {
 	private readonly player: SC.SoundCloudWidget;
 
 	constructor(
@@ -135,34 +134,5 @@ class SoundCloudPlayerApiImpl extends PlayerApiImpl<HTMLIFrameElement> {
 		);
 
 		return position / 1000;
-	};
-}
-
-export class SoundCloudPlayerApi extends PlayerApi<
-	HTMLIFrameElement,
-	SoundCloudPlayerApiImpl
-> {
-	attach = async (): Promise<void> => {
-		this.debug('attach');
-
-		if (this.impl) {
-			this.debug('player is already attached');
-			return;
-		}
-
-		await ensureScriptLoaded('https://w.soundcloud.com/player/api.js');
-
-		this.debug('Attaching player...');
-
-		this.impl = new SoundCloudPlayerApiImpl(
-			this.playerElementRef,
-			this.options,
-		);
-
-		await this.impl.initialize();
-
-		await this.impl.attach();
-
-		this.debug('player attached');
 	};
 }

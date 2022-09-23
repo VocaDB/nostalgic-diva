@@ -1,11 +1,10 @@
 import React from 'react';
 
-import { PlayerApi, PlayerOptions } from './PlayerApi';
+import { PlayerOptions } from './PlayerApi';
 import { PlayerApiImpl } from './PlayerApiImpl';
-import { ensureScriptLoaded } from './ensureScriptLoaded';
 
 // https://github.com/cookpete/react-player/blob/e3c324bc6845698179d065fa408db515c2296b4b/src/players/Vimeo.js
-class VimeoPlayerApiImpl extends PlayerApiImpl<HTMLIFrameElement> {
+export class VimeoPlayerApiImpl extends PlayerApiImpl<HTMLIFrameElement> {
 	private readonly player: Vimeo.Player;
 
 	constructor(
@@ -73,31 +72,5 @@ class VimeoPlayerApiImpl extends PlayerApiImpl<HTMLIFrameElement> {
 
 	getCurrentTime = async (): Promise<number | undefined> => {
 		return await this.player.getCurrentTime();
-	};
-}
-
-export class VimeoPlayerApi extends PlayerApi<
-	HTMLIFrameElement,
-	VimeoPlayerApiImpl
-> {
-	attach = async (): Promise<void> => {
-		this.debug('attach');
-
-		if (this.impl) {
-			this.debug('player is already attached');
-			return;
-		}
-
-		await ensureScriptLoaded('https://player.vimeo.com/api/player.js');
-
-		this.debug('Attaching player...');
-
-		this.impl = new VimeoPlayerApiImpl(this.playerElementRef, this.options);
-
-		await this.impl.initialize();
-
-		await this.impl.attach();
-
-		this.debug('player attached');
 	};
 }
