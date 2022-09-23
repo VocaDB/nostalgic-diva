@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { PlayerApi, PlayerOptions, PlayerType } from '../players/PlayerApi';
+import { IPlayerApi, PlayerOptions, PlayerType } from '../players/PlayerApi';
 import { PlayerConsole } from '../players/PlayerConsole';
 import { AudioPlayer } from './AudioPlayer';
 import { NiconicoPlayer } from './NiconicoPlayer';
@@ -21,7 +21,7 @@ const players: Record<PlayerType, React.ElementType<PlayerPropsBase>> = {
 interface NostalgicDivaProps {
 	type: PlayerType;
 	options?: PlayerOptions;
-	onPlayerChange?: (player: PlayerApi | undefined) => void;
+	onPlayerChange?: (player: IPlayerApi | undefined) => void;
 }
 
 export const NostalgicDiva = React.memo(

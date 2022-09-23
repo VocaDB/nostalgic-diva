@@ -1,10 +1,9 @@
 import React from 'react';
 
-import { PlayerApi } from '../players';
+import { IPlayerApi } from '../players';
 
-interface NostalgicDivaContextProps
-	extends Omit<PlayerApi, 'attach' | 'detach'> {
-	playerRef: React.MutableRefObject<PlayerApi | undefined>;
+interface NostalgicDivaContextProps extends IPlayerApi {
+	playerRef: React.MutableRefObject<IPlayerApi | undefined>;
 }
 
 const NostalgicDivaContext = React.createContext<NostalgicDivaContextProps>(
@@ -19,7 +18,7 @@ interface NostalgicDivaProviderProps {
 export const NostalgicDivaProvider = ({
 	children,
 }: NostalgicDivaProviderProps): React.ReactElement => {
-	const playerRef = React.useRef<PlayerApi>();
+	const playerRef = React.useRef<IPlayerApi>();
 
 	const loadVideo = React.useCallback(async () => {}, []);
 
