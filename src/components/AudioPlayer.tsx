@@ -9,7 +9,11 @@ export const AudioPlayer = React.memo(
 		PlayerConsole.debug('AudioPlayer');
 
 		return (
-			<Player {...props} playerApi={AudioPlayerApi}>
+			<Player
+				{...props}
+				loadScript={undefined}
+				playerApi={AudioPlayerApi}
+			>
 				{(playerElementRef): React.ReactElement => (
 					<audio
 						ref={playerElementRef}

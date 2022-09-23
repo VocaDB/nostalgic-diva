@@ -14,6 +14,7 @@ interface PlayerProps<
 	TElement extends HTMLElement,
 	TPlayer extends PlayerApiImpl<TElement>,
 > extends PlayerPropsBase {
+	loadScript: (() => Promise<void>) | undefined;
 	playerApi: new (
 		playerElementRef: React.MutableRefObject<TElement>,
 		options?: PlayerOptions,
@@ -30,6 +31,7 @@ export const Player = <
 	playerRef,
 	options,
 	onPlayerChange,
+	loadScript,
 	playerApi,
 	children,
 }: PlayerProps<TElement, TPlayer>): React.ReactElement<
@@ -44,7 +46,12 @@ export const Player = <
 
 	// Make sure that `options` do not change between re-rendering.
 	React.useEffect(() => {
-		const player = new PlayerApi(playerElementRef, options, playerApi);
+		const player = new PlayerApi(
+			playerElementRef,
+			options,
+			loadScript,
+			playerApi,
+		);
 
 		if (playerRef) playerRef.current = player;
 
@@ -62,7 +69,7 @@ export const Player = <
 
 			player.detach().then(() => setPlayer(undefined));
 		};
-	}, [options, playerApi, playerRef]);
+	}, [options, loadScript, playerApi, playerRef]);
 
 	// Call onPlayerChange in a separate useEffect to prevent the player from being created multiple times.
 	React.useEffect(() => {

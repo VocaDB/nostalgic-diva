@@ -2,14 +2,23 @@ import React from 'react';
 
 import { PlayerConsole } from '../players/PlayerConsole';
 import { SoundCloudPlayerApi } from '../players/SoundCloudPlayerApi';
+import { ensureScriptLoaded } from '../players/ensureScriptLoaded';
 import { Player, PlayerPropsBase } from './Player';
 
 export const SoundCloudPlayer = React.memo(
 	({ ...props }: PlayerPropsBase): React.ReactElement => {
 		PlayerConsole.debug('SoundCloudPlayer');
 
+		const loadScript = React.useCallback(async () => {
+			await ensureScriptLoaded('https://w.soundcloud.com/player/api.js');
+		}, []);
+
 		return (
-			<Player {...props} playerApi={SoundCloudPlayerApi}>
+			<Player
+				{...props}
+				loadScript={loadScript}
+				playerApi={SoundCloudPlayerApi}
+			>
 				{(playerElementRef): React.ReactElement => (
 					// eslint-disable-next-line jsx-a11y/iframe-has-title
 					<iframe

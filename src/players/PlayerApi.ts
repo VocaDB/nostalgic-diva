@@ -53,13 +53,12 @@ export class PlayerApi<
 	constructor(
 		protected readonly playerElementRef: React.MutableRefObject<TElement>,
 		protected readonly options: PlayerOptions | undefined,
+		private readonly loadScript: (() => Promise<void>) | undefined,
 		private readonly playerApi: new (
 			playerElementRef: React.MutableRefObject<TElement>,
 			options: PlayerOptions | undefined,
 		) => TPlayer,
 	) {}
-
-	loadScript = async (): Promise<void> => {};
 
 	attach = async (): Promise<void> => {
 		this.debug('attach');
@@ -69,7 +68,7 @@ export class PlayerApi<
 			return;
 		}
 
-		await this.loadScript();
+		await this.loadScript?.();
 
 		this.debug('Attaching player...');
 

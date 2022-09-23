@@ -9,7 +9,11 @@ export const NiconicoPlayer = React.memo(
 		PlayerConsole.debug('NiconicoPlayer');
 
 		return (
-			<Player {...props} playerApi={NiconicoPlayerApi}>
+			<Player
+				{...props}
+				loadScript={undefined}
+				playerApi={NiconicoPlayerApi}
+			>
 				{(playerElementRef): React.ReactElement => (
 					<div style={{ width: '100%', height: '100%' }}>
 						{/* eslint-disable-next-line jsx-a11y/iframe-has-title */}

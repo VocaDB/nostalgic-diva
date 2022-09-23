@@ -2,14 +2,23 @@ import React from 'react';
 
 import { PlayerConsole } from '../players/PlayerConsole';
 import { VimeoPlayerApi } from '../players/VimeoPlayerApi';
+import { ensureScriptLoaded } from '../players/ensureScriptLoaded';
 import { Player, PlayerPropsBase } from './Player';
 
 export const VimeoPlayer = React.memo(
 	({ ...props }: PlayerPropsBase): React.ReactElement => {
 		PlayerConsole.debug('VimeoPlayer');
 
+		const loadScript = React.useCallback(async () => {
+			await ensureScriptLoaded('https://player.vimeo.com/api/player.js');
+		}, []);
+
 		return (
-			<Player {...props} playerApi={VimeoPlayerApi}>
+			<Player
+				{...props}
+				loadScript={loadScript}
+				playerApi={VimeoPlayerApi}
+			>
 				{(playerElementRef): React.ReactElement => (
 					// eslint-disable-next-line jsx-a11y/iframe-has-title
 					<iframe
