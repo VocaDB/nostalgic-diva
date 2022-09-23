@@ -119,8 +119,6 @@ export class NiconicoPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 		}
 	};
 
-	initialize = async (): Promise<void> => {};
-
 	attach = async (): Promise<void> => {
 		window.addEventListener('message', this.handleMessage);
 	};

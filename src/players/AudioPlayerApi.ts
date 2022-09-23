@@ -17,8 +17,6 @@ export class AudioPlayerApi extends PlayerApiImpl<HTMLAudioElement> {
 		this.player = playerElementRef.current;
 	}
 
-	initialize = async (): Promise<void> => {};
-
 	attach = async (): Promise<void> => {
 		this.player.onerror = (event): void => this.options?.onError?.(event);
 		this.player.onplay = (): void => this.options?.onPlay?.();

@@ -17,15 +17,6 @@ export class SoundCloudPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 		this.player = SC.Widget(this.playerElementRef.current);
 	}
 
-	public initialize = async (): Promise<void> => {
-		return new Promise((resolve, reject /* TODO: reject */) => {
-			this.player.bind(SC.Widget.Events.READY, () => {
-				this.player.unbind(SC.Widget.Events.READY);
-				resolve();
-			});
-		});
-	};
-
 	private getUrlFromId = (id: string): string => {
 		const parts = id.split(' ');
 		const url = `https://api.soundcloud.com/tracks/${parts[0]}`;
@@ -40,36 +31,48 @@ export class SoundCloudPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 		});
 	};
 
-	attach = async (): Promise<void> => {
-		this.player.bind(SC.Widget.Events.ERROR, (event) =>
-			this.options?.onError?.(event),
-		);
-		this.player.bind(SC.Widget.Events.PLAY, () => this.options?.onPlay?.());
-		this.player.bind(SC.Widget.Events.PAUSE, () =>
-			this.options?.onPause?.(),
-		);
-		this.player.bind(SC.Widget.Events.FINISH, () =>
-			this.options?.onEnded?.(),
-		);
-		this.player.bind(SC.Widget.Events.PLAY_PROGRESS, async (event) => {
-			const duration = await SoundCloudPlayerApi.playerGetDurationAsync(
-				this.player,
-			);
+	attach = (): Promise<void> => {
+		return new Promise((resolve, reject /* TODO: reject */) => {
+			this.player.bind(SC.Widget.Events.READY, () => {
+				this.player.bind(
+					SC.Widget.Events.PLAY_PROGRESS,
+					async (event) => {
+						const duration =
+							await SoundCloudPlayerApi.playerGetDurationAsync(
+								this.player,
+							);
 
-			this.options?.onTimeUpdate?.({
-				duration: duration / 1000,
-				percent: event.currentPosition / duration,
-				seconds: event.currentPosition / 1000,
+						this.options?.onTimeUpdate?.({
+							duration: duration / 1000,
+							percent: event.currentPosition / duration,
+							seconds: event.currentPosition / 1000,
+						});
+					},
+				);
+				this.player.bind(SC.Widget.Events.ERROR, (event) =>
+					this.options?.onError?.(event),
+				);
+				this.player.bind(SC.Widget.Events.PLAY, () =>
+					this.options?.onPlay?.(),
+				);
+				this.player.bind(SC.Widget.Events.PAUSE, () =>
+					this.options?.onPause?.(),
+				);
+				this.player.bind(SC.Widget.Events.FINISH, () =>
+					this.options?.onEnded?.(),
+				);
+				resolve();
 			});
 		});
 	};
 
 	detach = async (): Promise<void> => {
+		this.player.unbind(SC.Widget.Events.READY);
+		this.player.unbind(SC.Widget.Events.PLAY_PROGRESS);
 		this.player.unbind(SC.Widget.Events.ERROR);
 		this.player.unbind(SC.Widget.Events.PLAY);
 		this.player.unbind(SC.Widget.Events.PAUSE);
 		this.player.unbind(SC.Widget.Events.FINISH);
-		this.player.unbind(SC.Widget.Events.PLAY_PROGRESS);
 	};
 
 	private static playerLoadAsync = (

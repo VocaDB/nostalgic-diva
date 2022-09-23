@@ -77,44 +77,44 @@ export class YouTubePlayerApi extends PlayerApiImpl<HTMLDivElement> {
 		this.invokeTimeUpdate(this.player);
 	};
 
-	initialize = async (): Promise<void> => {
+	attach = (): Promise<void> => {
 		return new Promise((resolve, reject /* TODO: reject */) => {
-			this.player.addEventListener('onReady', () => resolve());
-			this.player.addEventListener('onError', (event) =>
-				this.options?.onError?.(event.data),
-			);
-			this.player.addEventListener(
-				'onStateChange',
-				(event: YT.EventArgs): void => {
-					this.logger.debug(
-						`state changed: ${PlayerState[event.data]}`,
-					);
+			this.player.addEventListener('onReady', () => {
+				this.player.addEventListener('onError', (event) =>
+					this.options?.onError?.(event.data),
+				);
+				this.player.addEventListener(
+					'onStateChange',
+					(event: YT.EventArgs): void => {
+						this.logger.debug(
+							`state changed: ${PlayerState[event.data]}`,
+						);
 
-					switch (event.data) {
-						case YT.PlayerState.PLAYING:
-							this.options?.onPlay?.();
+						switch (event.data) {
+							case YT.PlayerState.PLAYING:
+								this.options?.onPlay?.();
 
-							this.setTimeUpdateInterval();
-							break;
+								this.setTimeUpdateInterval();
+								break;
 
-						case YT.PlayerState.PAUSED:
-							this.options?.onPause?.();
+							case YT.PlayerState.PAUSED:
+								this.options?.onPause?.();
 
-							this.clearTimeUpdateInterval();
-							break;
+								this.clearTimeUpdateInterval();
+								break;
 
-						case YT.PlayerState.ENDED:
-							this.options?.onEnded?.();
+							case YT.PlayerState.ENDED:
+								this.options?.onEnded?.();
 
-							this.clearTimeUpdateInterval();
-							break;
-					}
-				},
-			);
+								this.clearTimeUpdateInterval();
+								break;
+						}
+					},
+				);
+				resolve();
+			});
 		});
 	};
-
-	attach = async (): Promise<void> => {};
 
 	detach = async (): Promise<void> => {
 		this.clearTimeUpdateInterval();

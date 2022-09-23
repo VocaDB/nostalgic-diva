@@ -94,8 +94,6 @@ export class PlayerApi<
 			this.options,
 		);
 
-		await this.impl.initialize();
-
 		await this.impl.attach();
 
 		this.debug('player attached');
