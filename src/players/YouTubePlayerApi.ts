@@ -3,7 +3,7 @@ import React from 'react';
 import { PlayerApi, PlayerOptions } from './PlayerApi';
 import { PlayerApiImpl } from './PlayerApiImpl';
 import { PlayerConsole } from './PlayerConsole';
-import { getScript } from './getScript';
+import { ensureScriptLoaded } from './ensureScriptLoaded';
 
 declare global {
 	interface Window {
@@ -153,36 +153,20 @@ class YouTubePlayerApiImpl extends PlayerApiImpl<HTMLDivElement> {
 	};
 }
 
-const scriptUrl = 'https://www.youtube.com/iframe_api';
-let scriptLoaded = false;
-
 const loadScript = (): Promise<void> => {
 	return new Promise(async (resolve, reject) => {
-		if (scriptLoaded) {
-			PlayerConsole.debug(scriptUrl, 'script is already loaded');
+		const first = await ensureScriptLoaded(
+			'https://www.youtube.com/iframe_api',
+		);
 
+		if (first) {
+			// Code from: https://stackoverflow.com/a/18154942.
+			window.onYouTubeIframeAPIReady = (): void => {
+				PlayerConsole.debug('YouTube iframe API ready');
+				resolve();
+			};
+		} else {
 			resolve();
-			return;
-		}
-
-		// Code from: https://stackoverflow.com/a/18154942.
-		window.onYouTubeIframeAPIReady = (): void => {
-			PlayerConsole.debug(scriptUrl, 'iframe API ready');
-
-			resolve();
-		};
-
-		try {
-			PlayerConsole.debug(scriptUrl, 'Loading script...');
-
-			await getScript(scriptUrl);
-
-			scriptLoaded = true;
-
-			PlayerConsole.debug(scriptUrl, 'script loaded');
-		} catch {
-			PlayerConsole.error(scriptUrl, 'Failed to load script');
-			reject();
 		}
 	});
 };

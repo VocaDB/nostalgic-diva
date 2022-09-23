@@ -2,8 +2,7 @@ import React from 'react';
 
 import { PlayerApi, PlayerOptions } from './PlayerApi';
 import { PlayerApiImpl } from './PlayerApiImpl';
-import { PlayerConsole } from './PlayerConsole';
-import { getScript } from './getScript';
+import { ensureScriptLoaded } from './ensureScriptLoaded';
 
 // https://github.com/cookpete/react-player/blob/e3c324bc6845698179d065fa408db515c2296b4b/src/players/Vimeo.js
 class VimeoPlayerApiImpl extends PlayerApiImpl<HTMLIFrameElement> {
@@ -75,30 +74,6 @@ class VimeoPlayerApiImpl extends PlayerApiImpl<HTMLIFrameElement> {
 	};
 }
 
-const scriptUrl = 'https://player.vimeo.com/api/player.js';
-let scriptLoaded = false;
-
-const loadScript = async (): Promise<void> => {
-	if (scriptLoaded) {
-		PlayerConsole.debug(scriptUrl, 'script is already loaded');
-
-		return;
-	}
-
-	try {
-		PlayerConsole.debug(scriptUrl, 'Loading script...');
-
-		await getScript(scriptUrl);
-
-		scriptLoaded = true;
-
-		PlayerConsole.debug(scriptUrl, 'script loaded');
-	} catch (error) {
-		PlayerConsole.error(scriptUrl, 'Failed to load script');
-		throw error;
-	}
-};
-
 export class VimeoPlayerApi extends PlayerApi<
 	HTMLIFrameElement,
 	VimeoPlayerApiImpl
@@ -111,7 +86,7 @@ export class VimeoPlayerApi extends PlayerApi<
 			return;
 		}
 
-		await loadScript();
+		await ensureScriptLoaded('https://player.vimeo.com/api/player.js');
 
 		this.debug('Attaching player...');
 
