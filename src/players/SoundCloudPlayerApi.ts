@@ -13,7 +13,7 @@ class SoundCloudPlayerApiImpl extends PlayerApiImpl<HTMLIFrameElement> {
 		options: PlayerOptions | undefined,
 		onReady: () => void,
 	) {
-		super(playerElementRef, options);
+		super('SoundCloud', playerElementRef, options);
 
 		this.player = SC.Widget(this.playerElementRef.current);
 

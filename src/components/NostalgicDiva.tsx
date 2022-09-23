@@ -37,7 +37,6 @@ export const NostalgicDiva = React.memo(
 		const Player = players[type];
 		return (
 			<Player
-				playerType={type}
 				playerRef={diva.playerRef}
 				options={options}
 				onPlayerChange={onPlayerChange}

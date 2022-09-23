@@ -11,7 +11,7 @@ class AudioPlayerApiImpl extends PlayerApiImpl<HTMLAudioElement> {
 		playerElementRef: React.MutableRefObject<HTMLAudioElement>,
 		options: PlayerOptions | undefined,
 	) {
-		super(playerElementRef, options);
+		super('Audio', playerElementRef, options);
 
 		this.player = playerElementRef.current;
 	}

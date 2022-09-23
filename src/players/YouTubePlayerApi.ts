@@ -11,14 +11,14 @@ declare global {
 	}
 }
 
-/* TODO: enum PlayerState {
+enum PlayerState {
 	UNSTARTED = -1,
 	ENDED = 0,
 	PLAYING = 1,
 	PAUSED = 2,
 	BUFFERING = 3,
 	CUED = 5,
-}*/
+}
 
 // Code from: https://github.com/VocaDB/vocadb/blob/076dac9f0808aba5da7332209fdfd2ff4e12c235/VocaDbWeb/Scripts/ViewModels/PVs/PVPlayerYoutube.ts.
 class YouTubePlayerApiImpl extends PlayerApiImpl<HTMLDivElement> {
@@ -29,7 +29,7 @@ class YouTubePlayerApiImpl extends PlayerApiImpl<HTMLDivElement> {
 	private timeUpdateIntervalId?: number;
 
 	private clearTimeUpdateInterval = (): void => {
-		// TODO: this.debug('clearTimeUpdateInterval', this.timeUpdateIntervalId);
+		this.debug('clearTimeUpdateInterval', this.timeUpdateIntervalId);
 
 		window.clearInterval(this.timeUpdateIntervalId);
 
@@ -51,7 +51,7 @@ class YouTubePlayerApiImpl extends PlayerApiImpl<HTMLDivElement> {
 	};
 
 	private setTimeUpdateInterval = (): void => {
-		// TODO: this.debug('setTimeUpdateInterval');
+		this.debug('setTimeUpdateInterval');
 
 		this.clearTimeUpdateInterval();
 
@@ -60,7 +60,7 @@ class YouTubePlayerApiImpl extends PlayerApiImpl<HTMLDivElement> {
 			250,
 		);
 
-		// TODO: this.debug('timeUpdateIntervalId', this.timeUpdateIntervalId);
+		this.debug('timeUpdateIntervalId', this.timeUpdateIntervalId);
 
 		this.invokeTimeUpdate(this.player);
 	};
@@ -70,7 +70,7 @@ class YouTubePlayerApiImpl extends PlayerApiImpl<HTMLDivElement> {
 		options: PlayerOptions | undefined,
 		onReady: () => void,
 	) {
-		super(playerElementRef, options);
+		super('YouTube', playerElementRef, options);
 
 		this.player = new YT.Player(this.playerElementRef.current, {
 			host: 'https://www.youtube-nocookie.com',
@@ -80,7 +80,7 @@ class YouTubePlayerApiImpl extends PlayerApiImpl<HTMLDivElement> {
 				onReady: onReady,
 				onError: (event): void => this.options?.onError?.(event.data),
 				onStateChange: (e: YT.EventArgs): void => {
-					// TODO: this.debug(`state changed: ${PlayerState[e.data]}`);
+					this.debug(`state changed: ${PlayerState[e.data]}`);
 
 					switch (e.data) {
 						case YT.PlayerState.PLAYING:

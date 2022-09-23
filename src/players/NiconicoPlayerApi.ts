@@ -28,7 +28,7 @@ class NiconicoPlayerApiImpl extends PlayerApiImpl<HTMLIFrameElement> {
 		playerElementRef: React.MutableRefObject<HTMLIFrameElement>,
 		options: PlayerOptions | undefined,
 	) {
-		super(playerElementRef, options);
+		super('Niconico', playerElementRef, options);
 
 		this.player = playerElementRef.current;
 	}
@@ -40,21 +40,21 @@ class NiconicoPlayerApiImpl extends PlayerApiImpl<HTMLIFrameElement> {
 
 		switch (data.eventName) {
 			case 'playerStatusChange':
-				/* TODO: this.debug(
+				this.debug(
 					`player status changed: ${
 						PlayerStatus[data.data.playerStatus] ??
 						data.data.playerStatus
 					}`,
-				);*/
+				);
 				break;
 
 			case 'statusChange':
-				/* TODO: this.debug(
+				this.debug(
 					`status changed: ${
 						PlayerStatus[data.data.playerStatus] ??
 						data.data.playerStatus
 					}`,
-				);*/
+				);
 
 				switch (data.data.playerStatus) {
 					case PlayerStatus.Play:
@@ -92,7 +92,7 @@ class NiconicoPlayerApiImpl extends PlayerApiImpl<HTMLIFrameElement> {
 				break;
 
 			case 'loadComplete':
-				// TODO: this.debug('load completed');
+				this.debug('load completed');
 
 				this.duration = data.data.videoInfo.lengthInSeconds;
 				break;
@@ -109,11 +109,11 @@ class NiconicoPlayerApiImpl extends PlayerApiImpl<HTMLIFrameElement> {
 				break;
 
 			default:
-				/* TODO: this.warn(
+				this.debug(
 					'message',
 					(data as any).eventName,
 					(data as any).data,
-				);*/
+				);
 				break;
 		}
 	};

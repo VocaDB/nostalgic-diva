@@ -28,43 +28,25 @@ export abstract class PlayerApi<
 	TElement extends HTMLElement = HTMLElement,
 	TImpl extends PlayerApiImpl<TElement> = PlayerApiImpl<TElement>,
 > {
-	private static nextId = 1;
-
-	protected readonly id: number;
 	protected impl?: TImpl;
 
-	toString = (): string => `${this.playerType}#${this.id}`;
-
-	protected assert = (
-		condition?: boolean | undefined,
-		message?: any,
-		...optionalParams: any
-	): void => {
-		PlayerConsole.assert(condition, this, message, ...optionalParams);
-	};
-
 	protected debug = (message?: any, ...optionalParams: any): void => {
-		PlayerConsole.debug(this, message, ...optionalParams);
+		this.impl?.debug(message, ...optionalParams);
 	};
 
 	protected error = (message?: any, ...optionalParams: any): void => {
-		PlayerConsole.error(this, message, ...optionalParams);
+		this.impl?.error(message, ...optionalParams);
 	};
 
 	constructor(
-		protected readonly playerType: PlayerType,
 		protected readonly playerElementRef: React.MutableRefObject<TElement>,
 		protected readonly options: PlayerOptions | undefined,
-	) {
-		this.id = PlayerApi.nextId++;
-
-		this.debug('ctor', playerElementRef.current);
-	}
+	) {}
 
 	abstract attach(): Promise<void>;
 
 	private assertPlayerAttached = (): void => {
-		this.assert(!!this.impl, 'player is not attached');
+		PlayerConsole.assert(!!this.impl, 'player is not attached');
 	};
 
 	detach = async (): Promise<void> => {

@@ -1,10 +1,9 @@
 import React from 'react';
 
-import { PlayerApi, PlayerOptions, PlayerType } from '../players/PlayerApi';
+import { PlayerApi, PlayerOptions } from '../players/PlayerApi';
 import { PlayerConsole } from '../players/PlayerConsole';
 
 export interface PlayerPropsBase {
-	playerType: PlayerType;
 	playerRef: React.MutableRefObject<PlayerApi | undefined> | undefined;
 	options: PlayerOptions | undefined;
 	onPlayerChange: ((player: PlayerApi | undefined) => void) | undefined;
@@ -13,7 +12,6 @@ export interface PlayerPropsBase {
 interface PlayerProps<TElement extends HTMLElement, TPlayer extends PlayerApi>
 	extends PlayerPropsBase {
 	playerApi: new (
-		playerType: PlayerType,
 		playerElementRef: React.MutableRefObject<TElement>,
 		options?: PlayerOptions,
 	) => TPlayer;
@@ -29,7 +27,6 @@ export const Player = <
 	playerRef,
 	options,
 	onPlayerChange,
-	playerType,
 	playerApi,
 	children,
 }: PlayerProps<TElement, TPlayer>): React.ReactElement<
@@ -44,7 +41,7 @@ export const Player = <
 
 	// Make sure that `options` do not change between re-rendering.
 	React.useEffect(() => {
-		const player = new playerApi(playerType, playerElementRef, options);
+		const player = new playerApi(playerElementRef, options);
 
 		if (playerRef) playerRef.current = player;
 
@@ -62,7 +59,7 @@ export const Player = <
 
 			player.detach().then(() => setPlayer(undefined));
 		};
-	}, [playerType, options, playerApi, playerRef]);
+	}, [options, playerApi, playerRef]);
 
 	// Call onPlayerChange in a separate useEffect to prevent the player from being created multiple times.
 	React.useEffect(() => {

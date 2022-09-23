@@ -12,7 +12,7 @@ class VimeoPlayerApiImpl extends PlayerApiImpl<HTMLIFrameElement> {
 		playerElementRef: React.MutableRefObject<HTMLIFrameElement>,
 		options: PlayerOptions | undefined,
 	) {
-		super(playerElementRef, options);
+		super('Vimeo', playerElementRef, options);
 
 		this.player = new Vimeo.Player(this.playerElementRef.current);
 	}
