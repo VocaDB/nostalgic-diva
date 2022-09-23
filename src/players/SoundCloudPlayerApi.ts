@@ -11,18 +11,20 @@ class SoundCloudPlayerApiImpl extends PlayerApiImpl<HTMLIFrameElement> {
 	constructor(
 		playerElementRef: React.MutableRefObject<HTMLIFrameElement>,
 		options: PlayerOptions | undefined,
-		onReady: () => void,
 	) {
 		super('SoundCloud', playerElementRef, options);
 
 		this.player = SC.Widget(this.playerElementRef.current);
-
-		this.player.bind(SC.Widget.Events.READY, () => {
-			this.player.unbind(SC.Widget.Events.READY);
-
-			onReady();
-		});
 	}
+
+	public initialize = async (): Promise<void> => {
+		return new Promise((resolve, reject /* TODO: reject */) => {
+			this.player.bind(SC.Widget.Events.READY, () => {
+				this.player.unbind(SC.Widget.Events.READY);
+				resolve();
+			});
+		});
+	};
 
 	private getUrlFromId = (id: string): string => {
 		const parts = id.split(' ');
@@ -140,31 +142,27 @@ export class SoundCloudPlayerApi extends PlayerApi<
 	HTMLIFrameElement,
 	SoundCloudPlayerApiImpl
 > {
-	attach = (): Promise<void> => {
-		return new Promise(async (resolve, reject /* TODO: Reject. */) => {
-			this.debug('attach');
+	attach = async (): Promise<void> => {
+		this.debug('attach');
 
-			if (this.impl) {
-				this.debug('player is already attached');
-				resolve();
-				return;
-			}
+		if (this.impl) {
+			this.debug('player is already attached');
+			return;
+		}
 
-			await ensureScriptLoaded('https://w.soundcloud.com/player/api.js');
+		await ensureScriptLoaded('https://w.soundcloud.com/player/api.js');
 
-			this.debug('Attaching player...');
+		this.debug('Attaching player...');
 
-			const impl = new SoundCloudPlayerApiImpl(
-				this.playerElementRef,
-				this.options,
-				async () => {
-					await impl.attach();
+		this.impl = new SoundCloudPlayerApiImpl(
+			this.playerElementRef,
+			this.options,
+		);
 
-					this.debug('player attached');
-					resolve();
-				},
-			);
-			this.impl = impl;
-		});
+		await this.impl.initialize();
+
+		await this.impl.attach();
+
+		this.debug('player attached');
 	};
 }

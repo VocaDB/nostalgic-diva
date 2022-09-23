@@ -22,7 +22,8 @@ enum PlayerState {
 
 // Code from: https://github.com/VocaDB/vocadb/blob/076dac9f0808aba5da7332209fdfd2ff4e12c235/VocaDbWeb/Scripts/ViewModels/PVs/PVPlayerYoutube.ts.
 class YouTubePlayerApiImpl extends PlayerApiImpl<HTMLDivElement> {
-	private readonly player: YT.Player;
+	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+	private readonly player: YT.Player = undefined! /* HACK */;
 
 	private previousTime?: number;
 
@@ -68,43 +69,51 @@ class YouTubePlayerApiImpl extends PlayerApiImpl<HTMLDivElement> {
 	constructor(
 		playerElementRef: React.MutableRefObject<HTMLDivElement>,
 		options: PlayerOptions | undefined,
-		onReady: () => void,
 	) {
 		super('YouTube', playerElementRef, options);
-
-		this.player = new YT.Player(this.playerElementRef.current, {
-			host: 'https://www.youtube-nocookie.com',
-			width: '100%',
-			height: '100%',
-			events: {
-				onReady: onReady,
-				onError: (event): void => this.options?.onError?.(event.data),
-				onStateChange: (e: YT.EventArgs): void => {
-					this.debug(`state changed: ${PlayerState[e.data]}`);
-
-					switch (e.data) {
-						case YT.PlayerState.PLAYING:
-							this.options?.onPlay?.();
-
-							this.setTimeUpdateInterval();
-							break;
-
-						case YT.PlayerState.PAUSED:
-							this.options?.onPause?.();
-
-							this.clearTimeUpdateInterval();
-							break;
-
-						case YT.PlayerState.ENDED:
-							this.options?.onEnded?.();
-
-							this.clearTimeUpdateInterval();
-							break;
-					}
-				},
-			},
-		});
 	}
+
+	initialize = async (): Promise<void> => {
+		return new Promise((resolve, reject /* TODO: reject */) => {
+			// HACK
+			(this as any).player = new YT.Player(
+				this.playerElementRef.current,
+				{
+					host: 'https://www.youtube-nocookie.com',
+					width: '100%',
+					height: '100%',
+					events: {
+						onReady: (): void => resolve(),
+						onError: (event): void =>
+							this.options?.onError?.(event.data),
+						onStateChange: (e: YT.EventArgs): void => {
+							this.debug(`state changed: ${PlayerState[e.data]}`);
+
+							switch (e.data) {
+								case YT.PlayerState.PLAYING:
+									this.options?.onPlay?.();
+
+									this.setTimeUpdateInterval();
+									break;
+
+								case YT.PlayerState.PAUSED:
+									this.options?.onPause?.();
+
+									this.clearTimeUpdateInterval();
+									break;
+
+								case YT.PlayerState.ENDED:
+									this.options?.onEnded?.();
+
+									this.clearTimeUpdateInterval();
+									break;
+							}
+						},
+					},
+				},
+			);
+		});
+	};
 
 	attach = async (): Promise<void> => {};
 
@@ -175,31 +184,27 @@ export class YouTubePlayerApi extends PlayerApi<
 	HTMLDivElement,
 	YouTubePlayerApiImpl
 > {
-	attach = (): Promise<void> => {
-		return new Promise(async (resolve, reject /* TODO: Reject. */) => {
-			this.debug('attach');
+	attach = async (): Promise<void> => {
+		this.debug('attach');
 
-			if (this.impl) {
-				this.debug('player is already attached');
-				resolve();
-				return;
-			}
+		if (this.impl) {
+			this.debug('player is already attached');
+			return;
+		}
 
-			await loadScript();
+		await loadScript();
 
-			this.debug('Attaching player...');
+		this.debug('Attaching player...');
 
-			const impl = new YouTubePlayerApiImpl(
-				this.playerElementRef,
-				this.options,
-				async () => {
-					await impl.attach();
+		this.impl = new YouTubePlayerApiImpl(
+			this.playerElementRef,
+			this.options,
+		);
 
-					this.debug('player attached');
-					resolve();
-				},
-			);
-			this.impl = impl;
-		});
+		await this.impl.initialize();
+
+		await this.impl.attach();
+
+		this.debug('player attached');
 	};
 }

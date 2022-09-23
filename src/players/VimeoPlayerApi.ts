@@ -17,6 +17,8 @@ class VimeoPlayerApiImpl extends PlayerApiImpl<HTMLIFrameElement> {
 		this.player = new Vimeo.Player(this.playerElementRef.current);
 	}
 
+	initialize = async (): Promise<void> => {};
+
 	attach = async (): Promise<void> => {
 		await this.player.ready();
 
@@ -91,6 +93,8 @@ export class VimeoPlayerApi extends PlayerApi<
 		this.debug('Attaching player...');
 
 		this.impl = new VimeoPlayerApiImpl(this.playerElementRef, this.options);
+
+		await this.impl.initialize();
 
 		await this.impl.attach();
 

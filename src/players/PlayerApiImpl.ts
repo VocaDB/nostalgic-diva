@@ -28,6 +28,7 @@ export abstract class PlayerApiImpl<TElement extends HTMLElement> {
 		this.debug('ctor', playerElementRef.current);
 	}
 
+	abstract initialize(): Promise<void>;
 	abstract attach(): Promise<void>;
 	abstract detach(): Promise<void>;
 	abstract loadVideo(id: string): Promise<void>;
