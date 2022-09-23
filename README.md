@@ -14,7 +14,7 @@ See [VocaDB](https://vocadb.net/) and [its playlist page](https://vocadb.net/pla
 
 ## Usage
 
-See [VocaDB/vocadb#1101](https://github.com/VocaDB/vocadb/pull/1101) for more information.
+For more information, see [VdbPlayer.tsx](https://github.com/VocaDB/vocadb/blob/97f689d95c98fe73a7ba01ffd141b1ee840b4d17/VocaDbWeb/Scripts/Components/VdbPlayer/VdbPlayer.tsx) and [PlaylistIndex.tsx](https://github.com/VocaDB/vocadb/blob/97f689d95c98fe73a7ba01ffd141b1ee840b4d17/VocaDbWeb/Scripts/Pages/Playlist/PlaylistIndex.tsx).
 
 ```tsx
 import {
