@@ -20,8 +20,7 @@ enum PlayerState {
 
 // Code from: https://github.com/VocaDB/vocadb/blob/076dac9f0808aba5da7332209fdfd2ff4e12c235/VocaDbWeb/Scripts/ViewModels/PVs/PVPlayerYoutube.ts.
 export class YouTubePlayerApi extends PlayerApiImpl<HTMLDivElement> {
-	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	private readonly player: YT.Player = undefined! /* HACK */;
+	private readonly player: YT.Player;
 
 	private previousTime?: number;
 
@@ -69,45 +68,44 @@ export class YouTubePlayerApi extends PlayerApiImpl<HTMLDivElement> {
 		options: PlayerOptions | undefined,
 	) {
 		super('YouTube', playerElementRef, options);
+
+		this.player = new YT.Player(this.playerElementRef.current, {
+			host: 'https://www.youtube-nocookie.com',
+			width: '100%',
+			height: '100%',
+		});
 	}
 
 	initialize = async (): Promise<void> => {
 		return new Promise((resolve, reject /* TODO: reject */) => {
-			// HACK
-			(this as any).player = new YT.Player(
-				this.playerElementRef.current,
-				{
-					host: 'https://www.youtube-nocookie.com',
-					width: '100%',
-					height: '100%',
-					events: {
-						onReady: (): void => resolve(),
-						onError: (event): void =>
-							this.options?.onError?.(event.data),
-						onStateChange: (e: YT.EventArgs): void => {
-							this.debug(`state changed: ${PlayerState[e.data]}`);
+			this.player.addEventListener('onReady', () => resolve());
+			this.player.addEventListener('onError', (event) =>
+				this.options?.onError?.(event.data),
+			);
+			this.player.addEventListener(
+				'onStateChange',
+				(event: YT.EventArgs): void => {
+					this.debug(`state changed: ${PlayerState[event.data]}`);
 
-							switch (e.data) {
-								case YT.PlayerState.PLAYING:
-									this.options?.onPlay?.();
+					switch (event.data) {
+						case YT.PlayerState.PLAYING:
+							this.options?.onPlay?.();
 
-									this.setTimeUpdateInterval();
-									break;
+							this.setTimeUpdateInterval();
+							break;
 
-								case YT.PlayerState.PAUSED:
-									this.options?.onPause?.();
+						case YT.PlayerState.PAUSED:
+							this.options?.onPause?.();
 
-									this.clearTimeUpdateInterval();
-									break;
+							this.clearTimeUpdateInterval();
+							break;
 
-								case YT.PlayerState.ENDED:
-									this.options?.onEnded?.();
+						case YT.PlayerState.ENDED:
+							this.options?.onEnded?.();
 
-									this.clearTimeUpdateInterval();
-									break;
-							}
-						},
-					},
+							this.clearTimeUpdateInterval();
+							break;
+					}
 				},
 			);
 		});
