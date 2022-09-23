@@ -49,11 +49,18 @@ const options = React.useMemo(
     ],
 );
 
-const handlePlayerChange = React.useCallback((player?: IPlayerApi) => {}, [])
+const handlePlayerChange = React.useCallback((player?: IPlayerApi) => {
+    // ...
+}, [])
 
 <NostalgicDivaProvider>
     <NostalgicDiva
-        // Supported media types: "Audio", "Niconico", "SoundCloud", "Vimeo" and "YouTube".
+        // Supported media types:
+        // - "Audio"
+        // - "Niconico"
+        // - "SoundCloud"
+        // - "Vimeo"
+        // - "YouTube"
         type="Audio"
         options={options}
         onPlayerChange={handlePlayerChange}
