@@ -20,7 +20,7 @@ export abstract class PlayerApiImpl<TElement extends HTMLElement>
 		PlayerConsole.error(this, message, ...optionalParams);
 	};
 
-	constructor(
+	protected constructor(
 		protected readonly playerType: PlayerType,
 		protected readonly playerElementRef: React.MutableRefObject<TElement>,
 		protected readonly options: PlayerOptions | undefined,
