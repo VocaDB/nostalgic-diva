@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { PlayerConsole } from '../players/PlayerConsole';
-import { YouTubePlayerApiImpl } from '../players/YouTubePlayerApi';
+import { YouTubePlayerApi } from '../players/YouTubePlayerApi';
 import { Player, PlayerPropsBase } from './Player';
 
 export const YouTubePlayer = React.memo(
@@ -9,7 +9,7 @@ export const YouTubePlayer = React.memo(
 		PlayerConsole.debug('YouTubePlayer');
 
 		return (
-			<Player {...props} playerApi={YouTubePlayerApiImpl}>
+			<Player {...props} playerApi={YouTubePlayerApi}>
 				{(playerElementRef): React.ReactElement => (
 					<div style={{ width: '100%', height: '100%' }}>
 						<div ref={playerElementRef} />

@@ -16,7 +16,7 @@ enum PlayerStatus {
 }
 
 // Code from: https://github.com/VocaDB/vocadb/blob/a4b5f9d8186772d7e6f58f997bbcbb51509d2539/VocaDbWeb/Scripts/ViewModels/PVs/PVPlayerNico.ts.
-export class NiconicoPlayerApiImpl extends PlayerApiImpl<HTMLIFrameElement> {
+export class NiconicoPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 	private static readonly origin = 'https://embed.nicovideo.jp';
 
 	private readonly player: HTMLIFrameElement;
@@ -34,7 +34,7 @@ export class NiconicoPlayerApiImpl extends PlayerApiImpl<HTMLIFrameElement> {
 	}
 
 	private handleMessage = (e: nico.PlayerEvent): void => {
-		if (e.origin !== NiconicoPlayerApiImpl.origin) return;
+		if (e.origin !== NiconicoPlayerApi.origin) return;
 
 		const data = e.data;
 
@@ -151,7 +151,7 @@ export class NiconicoPlayerApiImpl extends PlayerApiImpl<HTMLIFrameElement> {
 				playerId: '1' /* Needs to be a string, not a number. */,
 				sourceConnectorType: 1,
 			},
-			NiconicoPlayerApiImpl.origin,
+			NiconicoPlayerApi.origin,
 		);
 	};
 

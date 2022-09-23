@@ -4,7 +4,7 @@ import { PlayerOptions } from './PlayerApi';
 import { PlayerApiImpl } from './PlayerApiImpl';
 
 // Code from: https://github.com/VocaDB/vocadb/blob/e147650a8f1f85c8fa865d0ab562126c278527ec/VocaDbWeb/Scripts/ViewModels/PVs/PVPlayerSoundCloud.ts.
-export class SoundCloudPlayerApiImpl extends PlayerApiImpl<HTMLIFrameElement> {
+export class SoundCloudPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 	private readonly player: SC.SoundCloudWidget;
 
 	constructor(
@@ -51,10 +51,9 @@ export class SoundCloudPlayerApiImpl extends PlayerApiImpl<HTMLIFrameElement> {
 			this.options?.onEnded?.(),
 		);
 		this.player.bind(SC.Widget.Events.PLAY_PROGRESS, async (event) => {
-			const duration =
-				await SoundCloudPlayerApiImpl.playerGetDurationAsync(
-					this.player,
-				);
+			const duration = await SoundCloudPlayerApi.playerGetDurationAsync(
+				this.player,
+			);
 
 			this.options?.onTimeUpdate?.({
 				duration: duration / 1000,
@@ -83,7 +82,7 @@ export class SoundCloudPlayerApiImpl extends PlayerApiImpl<HTMLIFrameElement> {
 	};
 
 	loadVideo = async (id: string): Promise<void> => {
-		await SoundCloudPlayerApiImpl.playerLoadAsync(
+		await SoundCloudPlayerApi.playerLoadAsync(
 			this.player,
 			this.getUrlFromId(id),
 			{
@@ -113,7 +112,7 @@ export class SoundCloudPlayerApiImpl extends PlayerApiImpl<HTMLIFrameElement> {
 	};
 
 	getDuration = async (): Promise<number | undefined> => {
-		const duration = await SoundCloudPlayerApiImpl.playerGetDurationAsync(
+		const duration = await SoundCloudPlayerApi.playerGetDurationAsync(
 			this.player,
 		);
 
@@ -129,7 +128,7 @@ export class SoundCloudPlayerApiImpl extends PlayerApiImpl<HTMLIFrameElement> {
 	};
 
 	getCurrentTime = async (): Promise<number | undefined> => {
-		const position = await SoundCloudPlayerApiImpl.playerGetPositionAsync(
+		const position = await SoundCloudPlayerApi.playerGetPositionAsync(
 			this.player,
 		);
 

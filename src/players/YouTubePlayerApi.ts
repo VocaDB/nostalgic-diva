@@ -19,7 +19,7 @@ enum PlayerState {
 }
 
 // Code from: https://github.com/VocaDB/vocadb/blob/076dac9f0808aba5da7332209fdfd2ff4e12c235/VocaDbWeb/Scripts/ViewModels/PVs/PVPlayerYoutube.ts.
-export class YouTubePlayerApiImpl extends PlayerApiImpl<HTMLDivElement> {
+export class YouTubePlayerApi extends PlayerApiImpl<HTMLDivElement> {
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	private readonly player: YT.Player = undefined! /* HACK */;
 

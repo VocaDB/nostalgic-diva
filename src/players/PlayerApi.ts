@@ -53,7 +53,7 @@ export class PlayerApi<
 	constructor(
 		protected readonly playerElementRef: React.MutableRefObject<TElement>,
 		protected readonly options: PlayerOptions | undefined,
-		private readonly playerApiImpl: new (
+		private readonly playerApi: new (
 			playerElementRef: React.MutableRefObject<TElement>,
 			options: PlayerOptions | undefined,
 		) => TPlayer,
@@ -73,7 +73,7 @@ export class PlayerApi<
 
 		this.debug('Attaching player...');
 
-		this.impl = new this.playerApiImpl(this.playerElementRef, this.options);
+		this.impl = new this.playerApi(this.playerElementRef, this.options);
 
 		await this.impl.initialize();
 

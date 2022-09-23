@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { PlayerConsole } from '../players/PlayerConsole';
-import { SoundCloudPlayerApiImpl } from '../players/SoundCloudPlayerApi';
+import { SoundCloudPlayerApi } from '../players/SoundCloudPlayerApi';
 import { Player, PlayerPropsBase } from './Player';
 
 export const SoundCloudPlayer = React.memo(
@@ -9,7 +9,7 @@ export const SoundCloudPlayer = React.memo(
 		PlayerConsole.debug('SoundCloudPlayer');
 
 		return (
-			<Player {...props} playerApi={SoundCloudPlayerApiImpl}>
+			<Player {...props} playerApi={SoundCloudPlayerApi}>
 				{(playerElementRef): React.ReactElement => (
 					// eslint-disable-next-line jsx-a11y/iframe-has-title
 					<iframe
