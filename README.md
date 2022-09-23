@@ -18,15 +18,11 @@ See [VocaDB/vocadb#1101](https://github.com/VocaDB/vocadb/pull/1101) for more in
 
 ```tsx
 import {
+    IPlayerApi,
     NostalgicDiva,
-    PlayerApi,
+    NostalgicDivaProvider,
     PlayerOptions,
 } from '@vocadb/nostalgic-diva';
-```
-
-```tsx
-// Ref
-const playerRef = React.useRef<PlayerApi>(undefined!);
 
 // Callbacks
 const handleError = React.useCallback(() => {}, []);
@@ -37,7 +33,7 @@ const handleTimeUpdate = React.useCallback(() => {}, []);
 
 // Options
 const options = React.useMemo(
-    () => ({
+    (): PlayerOptions => ({
         onError: handleError,
         onPlay: handlePlay,
         onPause: handlePause,
@@ -53,68 +49,42 @@ const options = React.useMemo(
     ],
 );
 
-const handlePlayerChange = React.useCallback((player?: PlayerApi) => {}, [])
+const handlePlayerChange = React.useCallback((player?: IPlayerApi) => {}, [])
 
-// Audio
-<NostalgicDiva
-    type="Audio"
-    playerRef={playerRef}
-    options={options}
-    onPlayerChange={handlePlayerChange}
-/>;
-
-// Niconico
-<NostalgicDiva
-    type="Niconico"
-    playerRef={playerRef}
-    options={options}
-    onPlayerChange={handlePlayerChange}
-/>;
-
-// SoundCloud
-<NostalgicDiva
-    type="SoundCloud"
-    playerRef={playerRef}
-    options={options}
-    onPlayerChange={handlePlayerChange}
-/>;
-
-// Vimeo
-<NostalgicDiva
-    type="Vimeo"
-    playerRef={playerRef}
-    options={options}
-    onPlayerChange={handlePlayerChange}
-/>;
-
-// YouTube
-<NostalgicDiva
-    type="YouTube"
-    playerRef={playerRef}
-    options={options}
-    onPlayerChange={handlePlayerChange}
-/>;
+<NostalgicDivaProvider>
+    <NostalgicDiva
+        // Supported media types: "Audio", "Niconico", "SoundCloud", "Vimeo" and "YouTube".
+        type="Audio"
+        options={options}
+        onPlayerChange={handlePlayerChange}
+    />;
+</NostalgicDivaProvider>
 ```
 
 ```tsx
-const player = playerRef.current;
+import {
+    useNostalgicDiva,
+} from '@vocadb/nostalgic-diva';
 
-if (!player) return;
+const diva = useNostalgicDiva();
 
 // Load
-await player.loadVideo(id);
+await diva.loadVideo(id);
 
 // Play
-await player.play();
+await diva.play();
 
 // Pause
-await player.pause();
+await diva.pause();
 
 // Mute
-await player.setMuted(true);
+await diva.setMuted(true);
 
 // Unmute
-await player.setMuted(false);
+await diva.setMuted(false);
+
+// Seek
+await diva.setCurrentTime(seconds);
 ```
 
 ## Imperative functions
