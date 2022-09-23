@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { PlayerOptions } from './PlayerApi';
+import { Logger, PlayerOptions } from './PlayerApi';
 import { PlayerApiImpl } from './PlayerApiImpl';
 
 declare global {
@@ -22,12 +22,26 @@ enum PlayerState {
 export class YouTubePlayerApi extends PlayerApiImpl<HTMLDivElement> {
 	private readonly player: YT.Player;
 
+	constructor(
+		logger: Logger,
+		playerElementRef: React.MutableRefObject<HTMLDivElement>,
+		options: PlayerOptions | undefined,
+	) {
+		super(logger, playerElementRef, options);
+
+		this.player = new YT.Player(this.playerElementRef.current, {
+			host: 'https://www.youtube-nocookie.com',
+			width: '100%',
+			height: '100%',
+		});
+	}
+
 	private previousTime?: number;
 
 	private timeUpdateIntervalId?: number;
 
 	private clearTimeUpdateInterval = (): void => {
-		this.debug('clearTimeUpdateInterval', this.timeUpdateIntervalId);
+		this.logger.debug('clearTimeUpdateInterval', this.timeUpdateIntervalId);
 
 		window.clearInterval(this.timeUpdateIntervalId);
 
@@ -49,7 +63,7 @@ export class YouTubePlayerApi extends PlayerApiImpl<HTMLDivElement> {
 	};
 
 	private setTimeUpdateInterval = (): void => {
-		this.debug('setTimeUpdateInterval');
+		this.logger.debug('setTimeUpdateInterval');
 
 		this.clearTimeUpdateInterval();
 
@@ -58,23 +72,10 @@ export class YouTubePlayerApi extends PlayerApiImpl<HTMLDivElement> {
 			250,
 		);
 
-		this.debug('timeUpdateIntervalId', this.timeUpdateIntervalId);
+		this.logger.debug('timeUpdateIntervalId', this.timeUpdateIntervalId);
 
 		this.invokeTimeUpdate(this.player);
 	};
-
-	constructor(
-		playerElementRef: React.MutableRefObject<HTMLDivElement>,
-		options: PlayerOptions | undefined,
-	) {
-		super('YouTube', playerElementRef, options);
-
-		this.player = new YT.Player(this.playerElementRef.current, {
-			host: 'https://www.youtube-nocookie.com',
-			width: '100%',
-			height: '100%',
-		});
-	}
 
 	initialize = async (): Promise<void> => {
 		return new Promise((resolve, reject /* TODO: reject */) => {
@@ -85,7 +86,9 @@ export class YouTubePlayerApi extends PlayerApiImpl<HTMLDivElement> {
 			this.player.addEventListener(
 				'onStateChange',
 				(event: YT.EventArgs): void => {
-					this.debug(`state changed: ${PlayerState[event.data]}`);
+					this.logger.debug(
+						`state changed: ${PlayerState[event.data]}`,
+					);
 
 					switch (event.data) {
 						case YT.PlayerState.PLAYING:

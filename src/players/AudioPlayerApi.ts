@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { PlayerOptions } from './PlayerApi';
+import { Logger, PlayerOptions } from './PlayerApi';
 import { PlayerApiImpl } from './PlayerApiImpl';
 
 // Code from: https://github.com/VocaDB/vocadb/blob/61b8c54f3eca906a477101dab4fdd9b154be310e/VocaDbWeb/Scripts/ViewModels/PVs/PVPlayerFile.ts.
@@ -8,10 +8,11 @@ export class AudioPlayerApi extends PlayerApiImpl<HTMLAudioElement> {
 	private readonly player: HTMLAudioElement;
 
 	constructor(
+		logger: Logger,
 		playerElementRef: React.MutableRefObject<HTMLAudioElement>,
 		options: PlayerOptions | undefined,
 	) {
-		super('Audio', playerElementRef, options);
+		super(logger, playerElementRef, options);
 
 		this.player = playerElementRef.current;
 	}

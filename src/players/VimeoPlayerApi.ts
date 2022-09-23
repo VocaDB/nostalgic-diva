@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { PlayerOptions } from './PlayerApi';
+import { Logger, PlayerOptions } from './PlayerApi';
 import { PlayerApiImpl } from './PlayerApiImpl';
 
 // https://github.com/cookpete/react-player/blob/e3c324bc6845698179d065fa408db515c2296b4b/src/players/Vimeo.js
@@ -8,10 +8,11 @@ export class VimeoPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 	private readonly player: Vimeo.Player;
 
 	constructor(
+		logger: Logger,
 		playerElementRef: React.MutableRefObject<HTMLIFrameElement>,
 		options: PlayerOptions | undefined,
 	) {
-		super('Vimeo', playerElementRef, options);
+		super(logger, playerElementRef, options);
 
 		this.player = new Vimeo.Player(this.playerElementRef.current);
 	}

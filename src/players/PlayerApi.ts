@@ -35,30 +35,46 @@ export interface IPlayerApi {
 	getCurrentTime(): Promise<number | undefined>;
 }
 
+export interface Logger {
+	debug(message?: any, ...optionalParams: any): void;
+	error(message?: any, ...optionalParams: any): void;
+}
+
 export class PlayerApi<
 	TElement extends HTMLElement,
 	TPlayer extends PlayerApiImpl<TElement>,
-> implements IPlayerApi
+> implements IPlayerApi, Logger
 {
-	protected impl?: TPlayer;
+	private static nextId = 1;
 
-	protected debug = (message?: any, ...optionalParams: any): void => {
-		this.impl?.debug(message, ...optionalParams);
-	};
-
-	protected error = (message?: any, ...optionalParams: any): void => {
-		this.impl?.error(message, ...optionalParams);
-	};
+	private readonly id: number;
+	private impl?: TPlayer;
 
 	constructor(
-		protected readonly playerElementRef: React.MutableRefObject<TElement>,
-		protected readonly options: PlayerOptions | undefined,
+		private readonly playerType: PlayerType,
+		private readonly playerElementRef: React.MutableRefObject<TElement>,
+		private readonly options: PlayerOptions | undefined,
 		private readonly loadScript: (() => Promise<void>) | undefined,
 		private readonly playerApi: new (
+			logger: Logger,
 			playerElementRef: React.MutableRefObject<TElement>,
 			options: PlayerOptions | undefined,
 		) => TPlayer,
-	) {}
+	) {
+		this.id = PlayerApi.nextId++;
+	}
+
+	private createMessage = (message: any): string => {
+		return `${this.playerType}#${this.id} ${message}`;
+	};
+
+	public debug = (message?: any, ...optionalParams: any): void => {
+		PlayerConsole.debug(this.createMessage(message), ...optionalParams);
+	};
+
+	public error = (message?: any, ...optionalParams: any): void => {
+		PlayerConsole.error(this.createMessage(message), ...optionalParams);
+	};
 
 	attach = async (): Promise<void> => {
 		this.debug('attach');
@@ -72,7 +88,11 @@ export class PlayerApi<
 
 		this.debug('Attaching player...');
 
-		this.impl = new this.playerApi(this.playerElementRef, this.options);
+		this.impl = new this.playerApi(
+			this,
+			this.playerElementRef,
+			this.options,
+		);
 
 		await this.impl.initialize();
 

@@ -1,33 +1,16 @@
 import React from 'react';
 
-import { IPlayerApi, PlayerOptions, PlayerType } from './PlayerApi';
-import { PlayerConsole } from './PlayerConsole';
+import { IPlayerApi, Logger, PlayerOptions } from './PlayerApi';
 
 export abstract class PlayerApiImpl<TElement extends HTMLElement>
 	implements IPlayerApi
 {
-	private static nextId = 1;
-
-	protected readonly id: number;
-
-	toString = (): string => `${this.playerType}#${this.id}`;
-
-	public debug = (message?: any, ...optionalParams: any): void => {
-		PlayerConsole.debug(this, message, ...optionalParams);
-	};
-
-	public error = (message?: any, ...optionalParams: any): void => {
-		PlayerConsole.error(this, message, ...optionalParams);
-	};
-
 	protected constructor(
-		protected readonly playerType: PlayerType,
+		protected readonly logger: Logger,
 		protected readonly playerElementRef: React.MutableRefObject<TElement>,
 		protected readonly options: PlayerOptions | undefined,
 	) {
-		this.id = PlayerApiImpl.nextId++;
-
-		this.debug('ctor', playerElementRef.current);
+		this.logger.debug('ctor', playerElementRef.current);
 	}
 
 	abstract initialize(): Promise<void>;

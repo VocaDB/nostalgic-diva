@@ -1,10 +1,17 @@
 import React from 'react';
 
-import { IPlayerApi, PlayerApi, PlayerOptions } from '../players/PlayerApi';
+import {
+	IPlayerApi,
+	Logger,
+	PlayerApi,
+	PlayerOptions,
+	PlayerType,
+} from '../players/PlayerApi';
 import { PlayerApiImpl } from '../players/PlayerApiImpl';
 import { PlayerConsole } from '../players/PlayerConsole';
 
 export interface PlayerPropsBase {
+	playerType: PlayerType;
 	playerRef: React.MutableRefObject<IPlayerApi | undefined> | undefined;
 	options: PlayerOptions | undefined;
 	onPlayerChange: ((player: IPlayerApi | undefined) => void) | undefined;
@@ -16,8 +23,9 @@ interface PlayerProps<
 > extends PlayerPropsBase {
 	loadScript: (() => Promise<void>) | undefined;
 	playerApi: new (
+		logger: Logger,
 		playerElementRef: React.MutableRefObject<TElement>,
-		options?: PlayerOptions,
+		options: PlayerOptions | undefined,
 	) => TPlayer;
 	children: (
 		playerElementRef: React.MutableRefObject<TElement>,
@@ -28,6 +36,7 @@ export const Player = <
 	TElement extends HTMLElement,
 	TPlayer extends PlayerApiImpl<TElement>,
 >({
+	playerType,
 	playerRef,
 	options,
 	onPlayerChange,
@@ -47,6 +56,7 @@ export const Player = <
 	// Make sure that `options` do not change between re-rendering.
 	React.useEffect(() => {
 		const player = new PlayerApi(
+			playerType,
 			playerElementRef,
 			options,
 			loadScript,
@@ -69,7 +79,7 @@ export const Player = <
 
 			player.detach().then(() => setPlayer(undefined));
 		};
-	}, [options, loadScript, playerApi, playerRef]);
+	}, [playerType, options, loadScript, playerApi, playerRef]);
 
 	// Call onPlayerChange in a separate useEffect to prevent the player from being created multiple times.
 	React.useEffect(() => {
