@@ -20,7 +20,9 @@ export const NostalgicDivaProvider = ({
 }: NostalgicDivaProviderProps): React.ReactElement => {
 	const playerRef = React.useRef<IPlayerApi>();
 
-	const loadVideo = React.useCallback(async () => {}, []);
+	const loadVideo = React.useCallback(async (id: string) => {
+		await playerRef.current?.loadVideo(id);
+	}, []);
 
 	const play = React.useCallback(async () => {
 		await playerRef.current?.play();
