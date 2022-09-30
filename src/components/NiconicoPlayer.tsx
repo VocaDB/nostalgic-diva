@@ -14,11 +14,12 @@ export const NiconicoPlayer = React.memo(
 				loadScript={undefined}
 				playerApiFactory={NiconicoPlayerApi}
 			>
-				{(playerElementRef): React.ReactElement => (
+				{(playerElementRef, videoId): React.ReactElement => (
 					<div style={{ width: '100%', height: '100%' }}>
 						{/* eslint-disable-next-line jsx-a11y/iframe-has-title */}
 						<iframe
 							ref={playerElementRef}
+							src={`https://embed.nicovideo.jp/watch/${videoId}?jsapi=1&playerId=1`}
 							width="100%"
 							height="100%"
 							allowFullScreen

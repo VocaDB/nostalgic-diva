@@ -14,9 +14,10 @@ export const AudioPlayer = React.memo(
 				loadScript={undefined}
 				playerApiFactory={AudioPlayerApi}
 			>
-				{(playerElementRef): React.ReactElement => (
+				{(playerElementRef, videoId): React.ReactElement => (
 					<audio
 						ref={playerElementRef}
+						src={videoId}
 						style={{ width: '100%', height: '100%' }}
 						preload="auto"
 						autoPlay

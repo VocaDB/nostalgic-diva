@@ -13,6 +13,7 @@ import { PlayerConsole } from '../players/PlayerConsole';
 export interface PlayerProps {
 	type: PlayerType;
 	playerApiRef: React.MutableRefObject<IPlayerApi | undefined> | undefined;
+	videoId: string;
 	options: PlayerOptions | undefined;
 	onPlayerApiChange:
 		| ((playerApi: IPlayerApi | undefined) => void)
@@ -31,6 +32,7 @@ interface PlayerContainerProps<
 	) => TPlayer;
 	children: (
 		playerElementRef: React.MutableRefObject<TElement>,
+		videoId: string,
 	) => React.ReactNode;
 }
 
@@ -40,6 +42,7 @@ export const PlayerContainer = <
 >({
 	type,
 	playerApiRef,
+	videoId,
 	options,
 	onPlayerApiChange,
 	loadScript,
@@ -49,6 +52,8 @@ export const PlayerContainer = <
 	PlayerContainerProps<TElement, TPlayer>
 > => {
 	PlayerConsole.debug('PlayerContainer');
+
+	const defaultVideoIdRef = React.useRef(videoId);
 
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	const playerElementRef = React.useRef<TElement>(undefined!);
@@ -67,7 +72,9 @@ export const PlayerContainer = <
 
 		if (playerApiRef) playerApiRef.current = playerApi;
 
-		playerApi.attach().then(() => setPlayerApi(playerApi));
+		playerApi
+			.attach(defaultVideoIdRef.current)
+			.then(() => setPlayerApi(playerApi));
 
 		return (): void => {
 			if (playerApiRef) {
@@ -88,5 +95,12 @@ export const PlayerContainer = <
 		onPlayerApiChange?.(playerApi);
 	}, [playerApi, onPlayerApiChange]);
 
-	return <>{children(playerElementRef)}</>;
+	React.useEffect(() => {
+		if (!playerApi) return;
+		if (videoId === defaultVideoIdRef.current) return;
+
+		playerApi.loadVideo(videoId);
+	}, [playerApi, videoId]);
+
+	return <>{children(playerElementRef, defaultVideoIdRef.current)}</>;
 };

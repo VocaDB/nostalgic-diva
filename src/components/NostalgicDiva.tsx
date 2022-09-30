@@ -20,6 +20,7 @@ const players: Record<PlayerType, React.ElementType<PlayerProps>> = {
 
 interface NostalgicDivaProps {
 	type: PlayerType;
+	videoId: string;
 	options?: PlayerOptions;
 	onPlayerApiChange?: (playerApi: IPlayerApi | undefined) => void;
 }
@@ -27,6 +28,7 @@ interface NostalgicDivaProps {
 export const NostalgicDiva = React.memo(
 	({
 		type,
+		videoId,
 		options,
 		onPlayerApiChange,
 	}: NostalgicDivaProps): React.ReactElement => {
@@ -39,6 +41,7 @@ export const NostalgicDiva = React.memo(
 			<Player
 				type={type}
 				playerApiRef={diva.playerApiRef}
+				videoId={videoId}
 				options={options}
 				onPlayerApiChange={onPlayerApiChange}
 			/>

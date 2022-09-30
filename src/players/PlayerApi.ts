@@ -76,7 +76,7 @@ export class PlayerApi<
 		PlayerConsole.error(this.createMessage(message), ...optionalParams);
 	};
 
-	attach = async (): Promise<void> => {
+	attach = async (id: string): Promise<void> => {
 		this.debug('attach');
 
 		if (this.impl) {
@@ -94,7 +94,7 @@ export class PlayerApi<
 			this.options,
 		);
 
-		await this.impl.attach();
+		await this.impl.attach(id);
 
 		this.debug('player attached');
 	};

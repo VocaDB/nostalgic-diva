@@ -13,7 +13,7 @@ export abstract class PlayerApiImpl<TElement extends HTMLElement>
 		this.logger.debug('ctor', playerElementRef.current);
 	}
 
-	abstract attach(): Promise<void>;
+	abstract attach(id: string): Promise<void>;
 	abstract detach(): Promise<void>;
 	abstract loadVideo(id: string): Promise<void>;
 	abstract play(): Promise<void>;

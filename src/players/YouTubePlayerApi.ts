@@ -77,7 +77,7 @@ export class YouTubePlayerApi extends PlayerApiImpl<HTMLDivElement> {
 		this.invokeTimeUpdate(this.player);
 	};
 
-	attach = (): Promise<void> => {
+	attach = (id: string): Promise<void> => {
 		return new Promise((resolve, reject /* TODO: reject */) => {
 			this.player.addEventListener('onReady', () => {
 				this.player.addEventListener('onError', (event) =>
@@ -111,6 +111,8 @@ export class YouTubePlayerApi extends PlayerApiImpl<HTMLDivElement> {
 						}
 					},
 				);
+
+				this.player.loadVideoById(id);
 				resolve();
 			});
 		});
