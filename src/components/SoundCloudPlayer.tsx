@@ -3,10 +3,10 @@ import React from 'react';
 import { PlayerConsole } from '../players/PlayerConsole';
 import { SoundCloudPlayerApi } from '../players/SoundCloudPlayerApi';
 import { ensureScriptLoaded } from '../players/ensureScriptLoaded';
-import { Player, PlayerPropsBase } from './Player';
+import { Player, PlayerProps } from './Player';
 
 export const SoundCloudPlayer = React.memo(
-	({ ...props }: PlayerPropsBase): React.ReactElement => {
+	({ ...props }: PlayerProps): React.ReactElement => {
 		PlayerConsole.debug('SoundCloudPlayer');
 
 		const loadScript = React.useCallback(async () => {

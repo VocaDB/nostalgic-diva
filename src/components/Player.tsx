@@ -10,7 +10,7 @@ import {
 import { PlayerApiImpl } from '../players/PlayerApiImpl';
 import { PlayerConsole } from '../players/PlayerConsole';
 
-export interface PlayerPropsBase {
+export interface PlayerProps {
 	type: PlayerType;
 	playerApiRef: React.MutableRefObject<IPlayerApi | undefined> | undefined;
 	options: PlayerOptions | undefined;
@@ -19,10 +19,10 @@ export interface PlayerPropsBase {
 		| undefined;
 }
 
-interface PlayerProps<
+interface PlayerContainerProps<
 	TElement extends HTMLElement,
 	TPlayer extends PlayerApiImpl<TElement>,
-> extends PlayerPropsBase {
+> extends PlayerProps {
 	loadScript: (() => Promise<void>) | undefined;
 	playerApiFactory: new (
 		logger: Logger,
@@ -45,8 +45,8 @@ export const Player = <
 	loadScript,
 	playerApiFactory,
 	children,
-}: PlayerProps<TElement, TPlayer>): React.ReactElement<
-	PlayerProps<TElement, TPlayer>
+}: PlayerContainerProps<TElement, TPlayer>): React.ReactElement<
+	PlayerContainerProps<TElement, TPlayer>
 > => {
 	PlayerConsole.debug('Player');
 

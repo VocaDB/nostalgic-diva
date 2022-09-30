@@ -3,10 +3,10 @@ import React from 'react';
 import { PlayerConsole } from '../players/PlayerConsole';
 import { YouTubePlayerApi } from '../players/YouTubePlayerApi';
 import { ensureScriptLoaded } from '../players/ensureScriptLoaded';
-import { Player, PlayerPropsBase } from './Player';
+import { Player, PlayerProps } from './Player';
 
 export const YouTubePlayer = React.memo(
-	({ ...props }: PlayerPropsBase): React.ReactElement => {
+	({ ...props }: PlayerProps): React.ReactElement => {
 		PlayerConsole.debug('YouTubePlayer');
 
 		const loadScript = React.useCallback((): Promise<void> => {

@@ -3,10 +3,10 @@ import React from 'react';
 import { PlayerConsole } from '../players/PlayerConsole';
 import { VimeoPlayerApi } from '../players/VimeoPlayerApi';
 import { ensureScriptLoaded } from '../players/ensureScriptLoaded';
-import { Player, PlayerPropsBase } from './Player';
+import { Player, PlayerProps } from './Player';
 
 export const VimeoPlayer = React.memo(
-	({ ...props }: PlayerPropsBase): React.ReactElement => {
+	({ ...props }: PlayerProps): React.ReactElement => {
 		PlayerConsole.debug('VimeoPlayer');
 
 		const loadScript = React.useCallback(async () => {

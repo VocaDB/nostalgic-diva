@@ -5,12 +5,12 @@ import { PlayerConsole } from '../players/PlayerConsole';
 import { AudioPlayer } from './AudioPlayer';
 import { NiconicoPlayer } from './NiconicoPlayer';
 import { useNostalgicDiva } from './NostalgicDivaProvider';
-import { PlayerPropsBase } from './Player';
+import { PlayerProps } from './Player';
 import { SoundCloudPlayer } from './SoundCloudPlayer';
 import { VimeoPlayer } from './VimeoPlayer';
 import { YouTubePlayer } from './YouTubePlayer';
 
-const players: Record<PlayerType, React.ElementType<PlayerPropsBase>> = {
+const players: Record<PlayerType, React.ElementType<PlayerProps>> = {
 	Audio: AudioPlayer,
 	Niconico: NiconicoPlayer,
 	SoundCloud: SoundCloudPlayer,

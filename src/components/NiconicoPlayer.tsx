@@ -2,10 +2,10 @@ import React from 'react';
 
 import { NiconicoPlayerApi } from '../players/NiconicoPlayerApi';
 import { PlayerConsole } from '../players/PlayerConsole';
-import { Player, PlayerPropsBase } from './Player';
+import { Player, PlayerProps } from './Player';
 
 export const NiconicoPlayer = React.memo(
-	({ ...props }: PlayerPropsBase): React.ReactElement => {
+	({ ...props }: PlayerProps): React.ReactElement => {
 		PlayerConsole.debug('NiconicoPlayer');
 
 		return (
