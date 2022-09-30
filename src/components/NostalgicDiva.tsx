@@ -5,7 +5,7 @@ import { PlayerConsole } from '../players/PlayerConsole';
 import { AudioPlayer } from './AudioPlayer';
 import { NiconicoPlayer } from './NiconicoPlayer';
 import { useNostalgicDiva } from './NostalgicDivaProvider';
-import { PlayerProps } from './Player';
+import { PlayerProps } from './PlayerContainer';
 import { SoundCloudPlayer } from './SoundCloudPlayer';
 import { VimeoPlayer } from './VimeoPlayer';
 import { YouTubePlayer } from './YouTubePlayer';

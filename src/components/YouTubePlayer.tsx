@@ -3,7 +3,7 @@ import React from 'react';
 import { PlayerConsole } from '../players/PlayerConsole';
 import { YouTubePlayerApi } from '../players/YouTubePlayerApi';
 import { ensureScriptLoaded } from '../players/ensureScriptLoaded';
-import { Player, PlayerProps } from './Player';
+import { PlayerContainer, PlayerProps } from './PlayerContainer';
 
 export const YouTubePlayer = React.memo(
 	({ ...props }: PlayerProps): React.ReactElement => {
@@ -28,7 +28,7 @@ export const YouTubePlayer = React.memo(
 		}, []);
 
 		return (
-			<Player
+			<PlayerContainer
 				{...props}
 				loadScript={loadScript}
 				playerApiFactory={YouTubePlayerApi}
@@ -38,7 +38,7 @@ export const YouTubePlayer = React.memo(
 						<div ref={playerElementRef} />
 					</div>
 				)}
-			</Player>
+			</PlayerContainer>
 		);
 	},
 );

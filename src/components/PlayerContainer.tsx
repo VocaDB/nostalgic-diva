@@ -34,7 +34,7 @@ interface PlayerContainerProps<
 	) => React.ReactNode;
 }
 
-export const Player = <
+export const PlayerContainer = <
 	TElement extends HTMLElement,
 	TPlayer extends PlayerApiImpl<TElement>,
 >({
@@ -48,7 +48,7 @@ export const Player = <
 }: PlayerContainerProps<TElement, TPlayer>): React.ReactElement<
 	PlayerContainerProps<TElement, TPlayer>
 > => {
-	PlayerConsole.debug('Player');
+	PlayerConsole.debug('PlayerContainer');
 
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	const playerElementRef = React.useRef<TElement>(undefined!);

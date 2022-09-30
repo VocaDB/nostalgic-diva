@@ -2,14 +2,14 @@ import React from 'react';
 
 import { AudioPlayerApi } from '../players/AudioPlayerApi';
 import { PlayerConsole } from '../players/PlayerConsole';
-import { Player, PlayerProps } from './Player';
+import { PlayerContainer, PlayerProps } from './PlayerContainer';
 
 export const AudioPlayer = React.memo(
 	({ ...props }: PlayerProps): React.ReactElement => {
 		PlayerConsole.debug('AudioPlayer');
 
 		return (
-			<Player
+			<PlayerContainer
 				{...props}
 				loadScript={undefined}
 				playerApiFactory={AudioPlayerApi}
@@ -23,7 +23,7 @@ export const AudioPlayer = React.memo(
 						controls
 					/>
 				)}
-			</Player>
+			</PlayerContainer>
 		);
 	},
 );

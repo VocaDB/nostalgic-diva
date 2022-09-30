@@ -3,7 +3,7 @@ import React from 'react';
 import { PlayerConsole } from '../players/PlayerConsole';
 import { SoundCloudPlayerApi } from '../players/SoundCloudPlayerApi';
 import { ensureScriptLoaded } from '../players/ensureScriptLoaded';
-import { Player, PlayerProps } from './Player';
+import { PlayerContainer, PlayerProps } from './PlayerContainer';
 
 export const SoundCloudPlayer = React.memo(
 	({ ...props }: PlayerProps): React.ReactElement => {
@@ -14,7 +14,7 @@ export const SoundCloudPlayer = React.memo(
 		}, []);
 
 		return (
-			<Player
+			<PlayerContainer
 				{...props}
 				loadScript={loadScript}
 				playerApiFactory={SoundCloudPlayerApi}
@@ -29,7 +29,7 @@ export const SoundCloudPlayer = React.memo(
 						style={{ width: '100%', height: '100%' }}
 					/>
 				)}
-			</Player>
+			</PlayerContainer>
 		);
 	},
 );

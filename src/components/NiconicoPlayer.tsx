@@ -2,14 +2,14 @@ import React from 'react';
 
 import { NiconicoPlayerApi } from '../players/NiconicoPlayerApi';
 import { PlayerConsole } from '../players/PlayerConsole';
-import { Player, PlayerProps } from './Player';
+import { PlayerContainer, PlayerProps } from './PlayerContainer';
 
 export const NiconicoPlayer = React.memo(
 	({ ...props }: PlayerProps): React.ReactElement => {
 		PlayerConsole.debug('NiconicoPlayer');
 
 		return (
-			<Player
+			<PlayerContainer
 				{...props}
 				loadScript={undefined}
 				playerApiFactory={NiconicoPlayerApi}
@@ -32,7 +32,7 @@ export const NiconicoPlayer = React.memo(
 						/>
 					</div>
 				)}
-			</Player>
+			</PlayerContainer>
 		);
 	},
 );
