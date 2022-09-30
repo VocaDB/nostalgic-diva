@@ -96,6 +96,8 @@ export class NiconicoPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 				this.logger.debug('load completed');
 
 				this.duration = data.data.videoInfo.lengthInSeconds;
+
+				this.options?.onLoaded?.({ id: data.data.videoInfo.watchId });
 				break;
 
 			case 'error':

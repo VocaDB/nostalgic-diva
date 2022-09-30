@@ -21,6 +21,9 @@ export class VimeoPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 		await this.player.ready();
 
 		this.player.on('error', (data) => this.options?.onError?.(data));
+		this.player.on('loaded', (event) =>
+			this.options?.onLoaded?.({ id: event.id.toString() }),
+		);
 		this.player.on('play', () => this.options?.onPlay?.());
 		this.player.on('pause', () => this.options?.onPause?.());
 		this.player.on('ended', () => this.options?.onEnded?.());

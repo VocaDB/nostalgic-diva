@@ -25,7 +25,7 @@ export class SoundCloudPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 		});
 	};
 
-	attach = (): Promise<void> => {
+	attach = (id: string): Promise<void> => {
 		return new Promise((resolve, reject /* TODO: reject */) => {
 			this.player.bind(SC.Widget.Events.READY, () => {
 				this.player.bind(
@@ -55,6 +55,8 @@ export class SoundCloudPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 				this.player.bind(SC.Widget.Events.FINISH, () =>
 					this.options?.onEnded?.(),
 				);
+
+				this.options?.onLoaded?.({ id: id });
 				resolve();
 			});
 		});
@@ -83,6 +85,8 @@ export class SoundCloudPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 		await SoundCloudPlayerApi.playerLoadAsync(this.player, id, {
 			auto_play: true,
 		});
+
+		this.options?.onLoaded?.({ id: id });
 	};
 
 	play = async (): Promise<void> => {

@@ -10,6 +10,10 @@ export type PlayerType =
 	| 'Vimeo'
 	| 'YouTube';
 
+export interface LoadedEvent {
+	id: string;
+}
+
 export interface TimeEvent {
 	duration: number | undefined;
 	percent: number | undefined;
@@ -18,6 +22,7 @@ export interface TimeEvent {
 
 export interface PlayerOptions {
 	onError?(event: any): void;
+	onLoaded?(event: LoadedEvent): void;
 	onPlay?(): void;
 	onPause?(): void;
 	onEnded?(): void;

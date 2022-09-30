@@ -20,6 +20,8 @@ enum PlayerState {
 
 // Code from: https://github.com/VocaDB/vocadb/blob/076dac9f0808aba5da7332209fdfd2ff4e12c235/VocaDbWeb/Scripts/ViewModels/PVs/PVPlayerYoutube.ts.
 export class YouTubePlayerApi extends PlayerApiImpl<HTMLDivElement> {
+	private static readonly origin = 'https://www.youtube-nocookie.com';
+
 	private readonly player: YT.Player;
 
 	constructor(
@@ -30,7 +32,7 @@ export class YouTubePlayerApi extends PlayerApiImpl<HTMLDivElement> {
 		super(logger, playerElementRef, options);
 
 		this.player = new YT.Player(this.playerElementRef.current, {
-			host: 'https://www.youtube-nocookie.com',
+			host: YouTubePlayerApi.origin,
 			width: '100%',
 			height: '100%',
 		});
@@ -79,7 +81,7 @@ export class YouTubePlayerApi extends PlayerApiImpl<HTMLDivElement> {
 
 	attach = (id: string): Promise<void> => {
 		return new Promise((resolve, reject /* TODO: reject */) => {
-			this.player.addEventListener('onReady', () => {
+			this.player.addEventListener('onReady', async () => {
 				this.player.addEventListener('onError', (event) =>
 					this.options?.onError?.(event.data),
 				);
@@ -112,7 +114,7 @@ export class YouTubePlayerApi extends PlayerApiImpl<HTMLDivElement> {
 					},
 				);
 
-				this.player.loadVideoById(id);
+				await this.loadVideo(id);
 				resolve();
 			});
 		});
@@ -123,9 +125,28 @@ export class YouTubePlayerApi extends PlayerApiImpl<HTMLDivElement> {
 	};
 
 	loadVideo = async (id: string): Promise<void> => {
-		this.previousTime = undefined;
+		return new Promise((resolve, reject /* TODO: Reject. */) => {
+			this.previousTime = undefined;
 
-		this.player.loadVideoById(id);
+			const handleMessage = (event: MessageEvent): void => {
+				if (event.origin !== YouTubePlayerApi.origin) return;
+
+				const data = JSON.parse(event.data);
+
+				if (
+					data.event === 'onStateChange' &&
+					data.info === PlayerState.UNSTARTED
+				) {
+					window.removeEventListener('message', handleMessage);
+
+					this.options?.onLoaded?.({ id: id });
+					resolve();
+				}
+			};
+			window.addEventListener('message', handleMessage);
+
+			this.player.loadVideoById(id);
+		});
 	};
 
 	play = async (): Promise<void> => {
