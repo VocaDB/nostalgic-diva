@@ -10,9 +10,10 @@ export class VimeoPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 	constructor(
 		logger: Logger,
 		playerElementRef: React.MutableRefObject<HTMLIFrameElement>,
+		videoId: string,
 		options: PlayerOptions | undefined,
 	) {
-		super(logger, playerElementRef, options);
+		super(logger, playerElementRef, videoId, options);
 
 		this.player = new Vimeo.Player(this.playerElementRef.current);
 	}

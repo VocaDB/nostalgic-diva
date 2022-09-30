@@ -8,6 +8,7 @@ export abstract class PlayerApiImpl<TElement extends HTMLElement>
 	protected constructor(
 		protected readonly logger: Logger,
 		protected readonly playerElementRef: React.MutableRefObject<TElement>,
+		protected readonly videoId: string,
 		protected readonly options: PlayerOptions | undefined,
 	) {
 		this.logger.debug('ctor', playerElementRef.current);

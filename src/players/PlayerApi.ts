@@ -53,11 +53,13 @@ export class PlayerApi<
 	constructor(
 		private readonly type: PlayerType,
 		private readonly playerElementRef: React.MutableRefObject<TElement>,
+		private readonly videoId: string,
 		private readonly options: PlayerOptions | undefined,
 		private readonly loadScript: (() => Promise<void>) | undefined,
 		private readonly playerApiFactory: new (
 			logger: Logger,
 			playerElementRef: React.MutableRefObject<TElement>,
+			videoId: string,
 			options: PlayerOptions | undefined,
 		) => TPlayer,
 	) {
@@ -91,6 +93,7 @@ export class PlayerApi<
 		this.impl = new this.playerApiFactory(
 			this,
 			this.playerElementRef,
+			this.videoId,
 			this.options,
 		);
 

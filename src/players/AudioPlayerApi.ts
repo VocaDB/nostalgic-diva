@@ -10,9 +10,10 @@ export class AudioPlayerApi extends PlayerApiImpl<HTMLAudioElement> {
 	constructor(
 		logger: Logger,
 		playerElementRef: React.MutableRefObject<HTMLAudioElement>,
+		videoId: string,
 		options: PlayerOptions | undefined,
 	) {
-		super(logger, playerElementRef, options);
+		super(logger, playerElementRef, videoId, options);
 
 		this.player = playerElementRef.current;
 	}

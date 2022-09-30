@@ -13,6 +13,7 @@ import { PlayerConsole } from '../players/PlayerConsole';
 export interface PlayerProps {
 	type: PlayerType;
 	playerApiRef: React.MutableRefObject<IPlayerApi | undefined> | undefined;
+	videoId: string;
 	options: PlayerOptions | undefined;
 	onPlayerApiChange:
 		| ((playerApi: IPlayerApi | undefined) => void)
@@ -27,10 +28,12 @@ interface PlayerContainerProps<
 	playerApiFactory: new (
 		logger: Logger,
 		playerElementRef: React.MutableRefObject<TElement>,
+		videoId: string,
 		options: PlayerOptions | undefined,
 	) => TPlayer;
 	children: (
 		playerElementRef: React.MutableRefObject<TElement>,
+		videoId: string,
 	) => React.ReactNode;
 }
 
@@ -40,6 +43,7 @@ export const PlayerContainer = <
 >({
 	type,
 	playerApiRef,
+	videoId,
 	options,
 	onPlayerApiChange,
 	loadScript,
@@ -60,6 +64,7 @@ export const PlayerContainer = <
 		const playerApi = new PlayerApi(
 			type,
 			playerElementRef,
+			videoId,
 			options,
 			loadScript,
 			playerApiFactory,
@@ -81,12 +86,12 @@ export const PlayerContainer = <
 
 			playerApi.detach().then(() => setPlayerApi(undefined));
 		};
-	}, [type, options, loadScript, playerApiFactory, playerApiRef]);
+	}, [type, videoId, options, loadScript, playerApiFactory, playerApiRef]);
 
 	// Call onPlayerApiChange in a separate useEffect to prevent the playerApi from being created multiple times.
 	React.useEffect(() => {
 		onPlayerApiChange?.(playerApi);
 	}, [playerApi, onPlayerApiChange]);
 
-	return <>{children(playerElementRef)}</>;
+	return <>{children(playerElementRef, videoId)}</>;
 };

@@ -10,18 +10,13 @@ export class SoundCloudPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 	constructor(
 		logger: Logger,
 		playerElementRef: React.MutableRefObject<HTMLIFrameElement>,
+		videoId: string,
 		options: PlayerOptions | undefined,
 	) {
-		super(logger, playerElementRef, options);
+		super(logger, playerElementRef, videoId, options);
 
 		this.player = SC.Widget(this.playerElementRef.current);
 	}
-
-	private getUrlFromId = (id: string): string => {
-		const parts = id.split(' ');
-		const url = `https://api.soundcloud.com/tracks/${parts[0]}`;
-		return url;
-	};
 
 	private static playerGetDurationAsync = (
 		player: SC.SoundCloudWidget,
@@ -86,13 +81,9 @@ export class SoundCloudPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 	};
 
 	loadVideo = async (id: string): Promise<void> => {
-		await SoundCloudPlayerApi.playerLoadAsync(
-			this.player,
-			this.getUrlFromId(id),
-			{
-				auto_play: true,
-			},
-		);
+		await SoundCloudPlayerApi.playerLoadAsync(this.player, id, {
+			auto_play: true,
+		});
 	};
 
 	play = async (): Promise<void> => {

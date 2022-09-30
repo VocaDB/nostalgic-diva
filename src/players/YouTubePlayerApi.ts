@@ -25,11 +25,13 @@ export class YouTubePlayerApi extends PlayerApiImpl<HTMLDivElement> {
 	constructor(
 		logger: Logger,
 		playerElementRef: React.MutableRefObject<HTMLDivElement>,
+		videoId: string,
 		options: PlayerOptions | undefined,
 	) {
-		super(logger, playerElementRef, options);
+		super(logger, playerElementRef, videoId, options);
 
 		this.player = new YT.Player(this.playerElementRef.current, {
+			videoId: this.videoId,
 			host: 'https://www.youtube-nocookie.com',
 			width: '100%',
 			height: '100%',
