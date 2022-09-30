@@ -17,7 +17,7 @@ export const SoundCloudPlayer = React.memo(
 			<Player
 				{...props}
 				loadScript={loadScript}
-				playerApi={SoundCloudPlayerApi}
+				playerApiFactory={SoundCloudPlayerApi}
 			>
 				{(playerElementRef): React.ReactElement => (
 					// eslint-disable-next-line jsx-a11y/iframe-has-title

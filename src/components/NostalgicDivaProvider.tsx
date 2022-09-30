@@ -3,7 +3,7 @@ import React from 'react';
 import { IPlayerApi } from '../players';
 
 interface NostalgicDivaContextProps extends IPlayerApi {
-	playerRef: React.MutableRefObject<IPlayerApi | undefined>;
+	playerApiRef: React.MutableRefObject<IPlayerApi | undefined>;
 }
 
 const NostalgicDivaContext = React.createContext<NostalgicDivaContextProps>(
@@ -18,47 +18,47 @@ interface NostalgicDivaProviderProps {
 export const NostalgicDivaProvider = ({
 	children,
 }: NostalgicDivaProviderProps): React.ReactElement => {
-	const playerRef = React.useRef<IPlayerApi>();
+	const playerApiRef = React.useRef<IPlayerApi>();
 
 	const loadVideo = React.useCallback(async (id: string) => {
-		await playerRef.current?.loadVideo(id);
+		await playerApiRef.current?.loadVideo(id);
 	}, []);
 
 	const play = React.useCallback(async () => {
-		await playerRef.current?.play();
+		await playerApiRef.current?.play();
 	}, []);
 
 	const pause = React.useCallback(async () => {
-		await playerRef.current?.pause();
+		await playerApiRef.current?.pause();
 	}, []);
 
 	const setCurrentTime = React.useCallback(async (seconds: number) => {
-		const player = playerRef.current;
-		if (!player) return;
+		const playerApi = playerApiRef.current;
+		if (!playerApi) return;
 
-		await player.setCurrentTime(seconds);
-		await player.play();
+		await playerApi.setCurrentTime(seconds);
+		await playerApi.play();
 	}, []);
 
 	const setVolume = React.useCallback(async (volume: number) => {
-		await playerRef.current?.setVolume(volume);
+		await playerApiRef.current?.setVolume(volume);
 	}, []);
 
 	const setMuted = React.useCallback(async (muted: boolean) => {
-		await playerRef.current?.setMuted(muted);
+		await playerApiRef.current?.setMuted(muted);
 	}, []);
 
 	const getDuration = React.useCallback(async () => {
-		return await playerRef.current?.getDuration();
+		return await playerApiRef.current?.getDuration();
 	}, []);
 
 	const getCurrentTime = React.useCallback(async () => {
-		return await playerRef.current?.getCurrentTime();
+		return await playerApiRef.current?.getCurrentTime();
 	}, []);
 
 	const value = React.useMemo(
 		(): NostalgicDivaContextProps => ({
-			playerRef,
+			playerApiRef,
 			loadVideo,
 			play,
 			pause,

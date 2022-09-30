@@ -17,7 +17,7 @@ export const VimeoPlayer = React.memo(
 			<Player
 				{...props}
 				loadScript={loadScript}
-				playerApi={VimeoPlayerApi}
+				playerApiFactory={VimeoPlayerApi}
 			>
 				{(playerElementRef): React.ReactElement => (
 					// eslint-disable-next-line jsx-a11y/iframe-has-title

@@ -51,11 +51,11 @@ export class PlayerApi<
 	private impl?: TPlayer;
 
 	constructor(
-		private readonly playerType: PlayerType,
+		private readonly type: PlayerType,
 		private readonly playerElementRef: React.MutableRefObject<TElement>,
 		private readonly options: PlayerOptions | undefined,
 		private readonly loadScript: (() => Promise<void>) | undefined,
-		private readonly playerApi: new (
+		private readonly playerApiFactory: new (
 			logger: Logger,
 			playerElementRef: React.MutableRefObject<TElement>,
 			options: PlayerOptions | undefined,
@@ -65,7 +65,7 @@ export class PlayerApi<
 	}
 
 	private createMessage = (message: any): string => {
-		return `${this.playerType}#${this.id} ${message}`;
+		return `${this.type}#${this.id} ${message}`;
 	};
 
 	public debug = (message?: any, ...optionalParams: any): void => {
@@ -88,7 +88,7 @@ export class PlayerApi<
 
 		this.debug('Attaching player...');
 
-		this.impl = new this.playerApi(
+		this.impl = new this.playerApiFactory(
 			this,
 			this.playerElementRef,
 			this.options,

@@ -12,7 +12,7 @@ export const NiconicoPlayer = React.memo(
 			<Player
 				{...props}
 				loadScript={undefined}
-				playerApi={NiconicoPlayerApi}
+				playerApiFactory={NiconicoPlayerApi}
 			>
 				{(playerElementRef): React.ReactElement => (
 					<div style={{ width: '100%', height: '100%' }}>

@@ -21,14 +21,14 @@ const players: Record<PlayerType, React.ElementType<PlayerPropsBase>> = {
 interface NostalgicDivaProps {
 	type: PlayerType;
 	options?: PlayerOptions;
-	onPlayerChange?: (player: IPlayerApi | undefined) => void;
+	onPlayerApiChange?: (playerApi: IPlayerApi | undefined) => void;
 }
 
 export const NostalgicDiva = React.memo(
 	({
 		type,
 		options,
-		onPlayerChange,
+		onPlayerApiChange,
 	}: NostalgicDivaProps): React.ReactElement => {
 		PlayerConsole.debug('NostalgicDiva');
 
@@ -37,10 +37,10 @@ export const NostalgicDiva = React.memo(
 		const Player = players[type];
 		return (
 			<Player
-				playerType={type}
-				playerRef={diva.playerRef}
+				type={type}
+				playerApiRef={diva.playerApiRef}
 				options={options}
-				onPlayerChange={onPlayerChange}
+				onPlayerApiChange={onPlayerApiChange}
 			/>
 		);
 	},

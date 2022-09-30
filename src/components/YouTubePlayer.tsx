@@ -31,7 +31,7 @@ export const YouTubePlayer = React.memo(
 			<Player
 				{...props}
 				loadScript={loadScript}
-				playerApi={YouTubePlayerApi}
+				playerApiFactory={YouTubePlayerApi}
 			>
 				{(playerElementRef): React.ReactElement => (
 					<div style={{ width: '100%', height: '100%' }}>

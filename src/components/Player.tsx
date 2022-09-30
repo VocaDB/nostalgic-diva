@@ -11,10 +11,12 @@ import { PlayerApiImpl } from '../players/PlayerApiImpl';
 import { PlayerConsole } from '../players/PlayerConsole';
 
 export interface PlayerPropsBase {
-	playerType: PlayerType;
-	playerRef: React.MutableRefObject<IPlayerApi | undefined> | undefined;
+	type: PlayerType;
+	playerApiRef: React.MutableRefObject<IPlayerApi | undefined> | undefined;
 	options: PlayerOptions | undefined;
-	onPlayerChange: ((player: IPlayerApi | undefined) => void) | undefined;
+	onPlayerApiChange:
+		| ((playerApi: IPlayerApi | undefined) => void)
+		| undefined;
 }
 
 interface PlayerProps<
@@ -22,7 +24,7 @@ interface PlayerProps<
 	TPlayer extends PlayerApiImpl<TElement>,
 > extends PlayerPropsBase {
 	loadScript: (() => Promise<void>) | undefined;
-	playerApi: new (
+	playerApiFactory: new (
 		logger: Logger,
 		playerElementRef: React.MutableRefObject<TElement>,
 		options: PlayerOptions | undefined,
@@ -36,12 +38,12 @@ export const Player = <
 	TElement extends HTMLElement,
 	TPlayer extends PlayerApiImpl<TElement>,
 >({
-	playerType,
-	playerRef,
+	type,
+	playerApiRef,
 	options,
-	onPlayerChange,
+	onPlayerApiChange,
 	loadScript,
-	playerApi,
+	playerApiFactory,
 	children,
 }: PlayerProps<TElement, TPlayer>): React.ReactElement<
 	PlayerProps<TElement, TPlayer>
@@ -51,40 +53,40 @@ export const Player = <
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	const playerElementRef = React.useRef<TElement>(undefined!);
 
-	const [player, setPlayer] = React.useState<IPlayerApi>();
+	const [playerApi, setPlayerApi] = React.useState<IPlayerApi>();
 
 	// Make sure that `options` do not change between re-rendering.
 	React.useEffect(() => {
-		const player = new PlayerApi(
-			playerType,
+		const playerApi = new PlayerApi(
+			type,
 			playerElementRef,
 			options,
 			loadScript,
-			playerApi,
+			playerApiFactory,
 		);
 
-		if (playerRef) playerRef.current = player;
+		if (playerApiRef) playerApiRef.current = playerApi;
 
-		player.attach().then(() => setPlayer(player));
+		playerApi.attach().then(() => setPlayerApi(playerApi));
 
 		return (): void => {
-			if (playerRef) {
+			if (playerApiRef) {
 				PlayerConsole.assert(
-					player === playerRef.current,
-					'player differs',
-					player,
-					playerRef.current,
+					playerApi === playerApiRef.current,
+					'playerApi differs',
+					playerApi,
+					playerApiRef.current,
 				);
 			}
 
-			player.detach().then(() => setPlayer(undefined));
+			playerApi.detach().then(() => setPlayerApi(undefined));
 		};
-	}, [playerType, options, loadScript, playerApi, playerRef]);
+	}, [type, options, loadScript, playerApiFactory, playerApiRef]);
 
-	// Call onPlayerChange in a separate useEffect to prevent the player from being created multiple times.
+	// Call onPlayerApiChange in a separate useEffect to prevent the playerApi from being created multiple times.
 	React.useEffect(() => {
-		onPlayerChange?.(player);
-	}, [player, onPlayerChange]);
+		onPlayerApiChange?.(playerApi);
+	}, [playerApi, onPlayerApiChange]);
 
 	return <>{children(playerElementRef)}</>;
 };
