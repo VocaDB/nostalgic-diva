@@ -10,6 +10,16 @@ import {
 import { PlayerApiImpl } from '../players/PlayerApiImpl';
 import { PlayerConsole } from '../players/PlayerConsole';
 
+const usePrevious = <T,>(value: T): T | undefined => {
+	const ref = React.useRef<T>();
+
+	React.useEffect(() => {
+		ref.current = value;
+	}, [value]);
+
+	return ref.current;
+};
+
 export interface PlayerProps {
 	type: PlayerType;
 	playerApiRef: React.MutableRefObject<IPlayerApi | undefined> | undefined;
@@ -94,6 +104,14 @@ export const PlayerContainer = <
 	React.useEffect(() => {
 		onPlayerApiChange?.(playerApi);
 	}, [playerApi, onPlayerApiChange]);
+
+	const previousVideoId = usePrevious(videoId);
+	React.useEffect(() => {
+		if (previousVideoId === undefined || previousVideoId === videoId)
+			return;
+
+		playerApi?.loadVideo(videoId);
+	}, [previousVideoId, videoId, playerApi]);
 
 	// Make sure that `videoId` does not change between re-rendering.
 	return <>{children(playerElementRef, defaultVideoIdRef.current)}</>;
