@@ -9,16 +9,7 @@ import {
 } from '../players/PlayerApi';
 import { PlayerApiImpl } from '../players/PlayerApiImpl';
 import { PlayerConsole } from '../players/PlayerConsole';
-
-const usePrevious = <T,>(value: T): T | undefined => {
-	const ref = React.useRef<T>();
-
-	React.useEffect(() => {
-		ref.current = value;
-	}, [value]);
-
-	return ref.current;
-};
+import usePreviousDistinct from './usePreviousDistinct';
 
 export interface PlayerProps {
 	type: PlayerType;
@@ -96,10 +87,9 @@ export const PlayerContainer = <
 		};
 	}, [type, options, loadScript, playerApiFactory, playerApiRef]);
 
-	const previousVideoId = usePrevious(videoId);
+	const previousVideoId = usePreviousDistinct(videoId);
 	React.useEffect(() => {
-		if (previousVideoId === undefined || previousVideoId === videoId)
-			return;
+		if (previousVideoId === undefined) return;
 
 		playerApi?.loadVideo(videoId);
 	}, [previousVideoId, videoId, playerApi]);
