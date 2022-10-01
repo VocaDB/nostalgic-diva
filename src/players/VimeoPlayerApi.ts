@@ -38,6 +38,7 @@ export class VimeoPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 
 	detach = async (): Promise<void> => {
 		this.player.off('error');
+		this.player.off('loaded');
 		this.player.off('play');
 		this.player.off('pause');
 		this.player.off('ended');

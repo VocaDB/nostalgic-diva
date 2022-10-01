@@ -35,6 +35,7 @@ export class AudioPlayerApi extends PlayerApiImpl<HTMLAudioElement> {
 
 	detach = async (): Promise<void> => {
 		this.player.onerror = null;
+		this.player.onloadeddata = null;
 		this.player.onplay = null;
 		this.player.onpause = null;
 		this.player.onended = null;
