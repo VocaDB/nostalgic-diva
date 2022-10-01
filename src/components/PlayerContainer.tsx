@@ -95,5 +95,6 @@ export const PlayerContainer = <
 		onPlayerApiChange?.(playerApi);
 	}, [playerApi, onPlayerApiChange]);
 
+	// Make sure that `videoId` does not change between re-rendering.
 	return <>{children(playerElementRef, defaultVideoIdRef.current)}</>;
 };
