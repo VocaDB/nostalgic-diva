@@ -10,7 +10,7 @@ export abstract class PlayerApiImpl<TElement extends HTMLElement>
 		protected readonly playerElementRef: React.MutableRefObject<TElement>,
 		protected readonly options: PlayerOptions | undefined,
 	) {
-		this.logger.debug('ctor', playerElementRef.current);
+		this.logger.debug('ctor');
 	}
 
 	abstract attach(id: string): Promise<void>;

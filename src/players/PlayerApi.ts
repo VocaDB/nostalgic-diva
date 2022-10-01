@@ -82,7 +82,7 @@ export class PlayerApi<
 	};
 
 	attach = async (id: string): Promise<void> => {
-		this.debug('attach');
+		this.debug('attach', id);
 
 		if (this.impl) {
 			this.debug('player is already attached');
