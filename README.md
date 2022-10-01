@@ -18,7 +18,6 @@ For more information, see [VdbPlayer.tsx](https://github.com/VocaDB/vocadb/blob/
 
 ```tsx
 import {
-    IPlayerApi,
     NostalgicDiva,
     NostalgicDivaProvider,
     PlayerOptions,
@@ -49,10 +48,6 @@ const options = React.useMemo(
     ],
 );
 
-const handlePlayerApiChange = React.useCallback((playerApi?: IPlayerApi) => {
-    // ...
-}, [])
-
 <NostalgicDivaProvider>
     <NostalgicDiva
         // Supported media types:
@@ -63,7 +58,6 @@ const handlePlayerApiChange = React.useCallback((playerApi?: IPlayerApi) => {
         // - "YouTube"
         type="Audio"
         options={options}
-        onPlayerApiChange={handlePlayerApiChange}
     />;
 </NostalgicDivaProvider>
 ```
@@ -120,7 +114,6 @@ await diva.setCurrentTime(seconds);
 ## Lifecycle
 
 1. [PlayerApi.attach](https://github.com/VocaDB/nostalgic-diva/blob/2cb564805bd1e0c9a1ce6b2e0a0e0300c8442f27/src/players/PlayerApi.ts#L23)
-1. [PlayerProps.onPlayerApiChange](https://github.com/VocaDB/nostalgic-diva/blob/2cb564805bd1e0c9a1ce6b2e0a0e0300c8442f27/src/components/Player.tsx#L9)
 1. [PlayerApi.loadVideo](https://github.com/VocaDB/nostalgic-diva/blob/2cb564805bd1e0c9a1ce6b2e0a0e0300c8442f27/src/players/PlayerApi.ts#L25)
 1. [PlayerApi.play](https://github.com/VocaDB/nostalgic-diva/blob/2cb564805bd1e0c9a1ce6b2e0a0e0300c8442f27/src/players/PlayerApi.ts#L26)
 1. [PlayerOptions.onPlay](https://github.com/VocaDB/nostalgic-diva/blob/2cb564805bd1e0c9a1ce6b2e0a0e0300c8442f27/src/players/PlayerApi.ts#L16)

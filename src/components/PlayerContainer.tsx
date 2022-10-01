@@ -25,9 +25,6 @@ export interface PlayerProps {
 	playerApiRef: React.MutableRefObject<IPlayerApi | undefined> | undefined;
 	videoId: string;
 	options: PlayerOptions | undefined;
-	onPlayerApiChange:
-		| ((playerApi: IPlayerApi | undefined) => void)
-		| undefined;
 }
 
 interface PlayerContainerProps<
@@ -54,7 +51,6 @@ export const PlayerContainer = <
 	playerApiRef,
 	videoId,
 	options,
-	onPlayerApiChange,
 	loadScript,
 	playerApiFactory,
 	children,
@@ -99,11 +95,6 @@ export const PlayerContainer = <
 			playerApi.detach().then(() => setPlayerApi(undefined));
 		};
 	}, [type, options, loadScript, playerApiFactory, playerApiRef]);
-
-	// Call onPlayerApiChange in a separate useEffect to prevent the playerApi from being created multiple times.
-	React.useEffect(() => {
-		onPlayerApiChange?.(playerApi);
-	}, [playerApi, onPlayerApiChange]);
 
 	const previousVideoId = usePrevious(videoId);
 	React.useEffect(() => {

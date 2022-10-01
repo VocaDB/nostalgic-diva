@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { IPlayerApi, PlayerOptions, PlayerType } from '../players/PlayerApi';
+import { PlayerOptions, PlayerType } from '../players/PlayerApi';
 import { PlayerConsole } from '../players/PlayerConsole';
 import { AudioPlayer } from './AudioPlayer';
 import { NiconicoPlayer } from './NiconicoPlayer';
@@ -22,16 +22,10 @@ interface NostalgicDivaProps {
 	type: PlayerType;
 	videoId: string;
 	options?: PlayerOptions;
-	onPlayerApiChange?: (playerApi: IPlayerApi | undefined) => void;
 }
 
 export const NostalgicDiva = React.memo(
-	({
-		type,
-		videoId,
-		options,
-		onPlayerApiChange,
-	}: NostalgicDivaProps): React.ReactElement => {
+	({ type, videoId, options }: NostalgicDivaProps): React.ReactElement => {
 		PlayerConsole.debug('NostalgicDiva');
 
 		const diva = useNostalgicDiva();
@@ -43,7 +37,6 @@ export const NostalgicDiva = React.memo(
 				playerApiRef={diva.playerApiRef}
 				videoId={videoId}
 				options={options}
-				onPlayerApiChange={onPlayerApiChange}
 			/>
 		);
 	},
