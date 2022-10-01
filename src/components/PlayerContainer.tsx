@@ -50,7 +50,7 @@ export const PlayerContainer = <
 > => {
 	PlayerConsole.debug('PlayerContainer');
 
-	const defaultVideoIdRef = React.useRef(videoId);
+	const videoIdRef = React.useRef(videoId);
 
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	const playerElementRef = React.useRef<TElement>(undefined!);
@@ -70,7 +70,7 @@ export const PlayerContainer = <
 		if (playerApiRef) playerApiRef.current = playerApi;
 
 		playerApi
-			.attach(defaultVideoIdRef.current)
+			.attach(videoIdRef.current)
 			.then(() => setPlayerApi(playerApi));
 
 		return (): void => {
@@ -95,5 +95,5 @@ export const PlayerContainer = <
 	}, [previousVideoId, videoId, playerApi]);
 
 	// Make sure that `videoId` does not change between re-rendering.
-	return <>{children(playerElementRef, defaultVideoIdRef.current)}</>;
+	return <>{children(playerElementRef, videoIdRef.current)}</>;
 };
