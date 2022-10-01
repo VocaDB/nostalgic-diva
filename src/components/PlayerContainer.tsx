@@ -95,12 +95,5 @@ export const PlayerContainer = <
 		onPlayerApiChange?.(playerApi);
 	}, [playerApi, onPlayerApiChange]);
 
-	React.useEffect(() => {
-		if (!playerApi) return;
-		if (videoId === defaultVideoIdRef.current) return;
-
-		playerApi.loadVideo(videoId);
-	}, [playerApi, videoId]);
-
 	return <>{children(playerElementRef, defaultVideoIdRef.current)}</>;
 };
