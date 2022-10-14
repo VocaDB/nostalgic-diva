@@ -125,28 +125,9 @@ export class YouTubePlayerApi extends PlayerApiImpl<HTMLDivElement> {
 	};
 
 	loadVideo = async (id: string): Promise<void> => {
-		return new Promise((resolve, reject /* TODO: Reject. */) => {
-			this.previousTime = undefined;
+		this.previousTime = undefined;
 
-			const handleMessage = (event: MessageEvent): void => {
-				if (event.origin !== YouTubePlayerApi.origin) return;
-
-				const data = JSON.parse(event.data);
-
-				if (
-					data.event === 'onStateChange' &&
-					data.info === PlayerState.UNSTARTED
-				) {
-					window.removeEventListener('message', handleMessage);
-
-					this.options?.onLoaded?.({ id: id });
-					resolve();
-				}
-			};
-			window.addEventListener('message', handleMessage);
-
-			this.player.loadVideoById(id);
-		});
+		this.player.loadVideoById(id);
 	};
 
 	play = async (): Promise<void> => {
