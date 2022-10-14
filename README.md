@@ -14,7 +14,7 @@ See [VocaDB](https://vocadb.net/) and [its playlist page](https://vocadb.net/pla
 
 ## Usage
 
-For more information, see [VdbPlayer.tsx](https://github.com/VocaDB/vocadb/blob/97f689d95c98fe73a7ba01ffd141b1ee840b4d17/VocaDbWeb/Scripts/Components/VdbPlayer/VdbPlayer.tsx) and [PlaylistIndex.tsx](https://github.com/VocaDB/vocadb/blob/97f689d95c98fe73a7ba01ffd141b1ee840b4d17/VocaDbWeb/Scripts/Pages/Playlist/PlaylistIndex.tsx).
+For more information, see [VdbPlayer.tsx](https://github.com/VocaDB/vocadb/blob/dfcb56868a529ea2af508a75a837589caa7cb87f/VocaDbWeb/Scripts/Components/VdbPlayer/VdbPlayer.tsx) and [PlaylistIndex.tsx](https://github.com/VocaDB/vocadb/blob/f84859d9e558341de3b16677adf1699d757fc9a0/VocaDbWeb/Scripts/Pages/Playlist/PlaylistIndex.tsx).
 
 ```tsx
 import {
@@ -57,6 +57,7 @@ const options = React.useMemo(
         // - "Vimeo"
         // - "YouTube"
         type="Audio"
+		videoId={videoId}
         options={options}
     />;
 </NostalgicDivaProvider>
@@ -68,9 +69,6 @@ import {
 } from '@vocadb/nostalgic-diva';
 
 const diva = useNostalgicDiva();
-
-// Load
-await diva.loadVideo(id);
 
 // Play
 await diva.play();
@@ -113,15 +111,16 @@ await diva.setCurrentTime(seconds);
 
 ## Lifecycle
 
-1. [PlayerApi.attach](https://github.com/VocaDB/nostalgic-diva/blob/2cb564805bd1e0c9a1ce6b2e0a0e0300c8442f27/src/players/PlayerApi.ts#L23)
-1. [PlayerApi.loadVideo](https://github.com/VocaDB/nostalgic-diva/blob/2cb564805bd1e0c9a1ce6b2e0a0e0300c8442f27/src/players/PlayerApi.ts#L25)
-1. [PlayerApi.play](https://github.com/VocaDB/nostalgic-diva/blob/2cb564805bd1e0c9a1ce6b2e0a0e0300c8442f27/src/players/PlayerApi.ts#L26)
-1. [PlayerOptions.onPlay](https://github.com/VocaDB/nostalgic-diva/blob/2cb564805bd1e0c9a1ce6b2e0a0e0300c8442f27/src/players/PlayerApi.ts#L16)
-1. [PlayerOptions.onTimeUpdate](https://github.com/VocaDB/nostalgic-diva/blob/2cb564805bd1e0c9a1ce6b2e0a0e0300c8442f27/src/players/PlayerApi.ts#L19)
-1. [PlayerApi.pause](https://github.com/VocaDB/nostalgic-diva/blob/2cb564805bd1e0c9a1ce6b2e0a0e0300c8442f27/src/players/PlayerApi.ts#L27)
-1. [PlayerOptions.onPause](https://github.com/VocaDB/nostalgic-diva/blob/2cb564805bd1e0c9a1ce6b2e0a0e0300c8442f27/src/players/PlayerApi.ts#L17)
-1. [PlayerOptions.onEnded](https://github.com/VocaDB/nostalgic-diva/blob/2cb564805bd1e0c9a1ce6b2e0a0e0300c8442f27/src/players/PlayerApi.ts#L18)
-1. [PlayerApi.detach](https://github.com/VocaDB/nostalgic-diva/blob/2cb564805bd1e0c9a1ce6b2e0a0e0300c8442f27/src/players/PlayerApi.ts#L24)
+1. [PlayerApi.attach](https://github.com/VocaDB/nostalgic-diva/blob/5cc35c68cf71230f9459804a9dd9e9265cfa2297/src/players/PlayerApi.ts#L84)
+1. [IPlayerApi.loadVideo](https://github.com/VocaDB/nostalgic-diva/blob/5cc35c68cf71230f9459804a9dd9e9265cfa2297/src/players/PlayerApi.ts#L33)
+1. [PlayerOptions.onLoaded](https://github.com/VocaDB/nostalgic-diva/blob/5cc35c68cf71230f9459804a9dd9e9265cfa2297/src/players/PlayerApi.ts#L25)
+1. [IPlayerApi.play](https://github.com/VocaDB/nostalgic-diva/blob/5cc35c68cf71230f9459804a9dd9e9265cfa2297/src/players/PlayerApi.ts#L34)
+1. [PlayerOptions.onPlay](https://github.com/VocaDB/nostalgic-diva/blob/5cc35c68cf71230f9459804a9dd9e9265cfa2297/src/players/PlayerApi.ts#L26)
+1. [PlayerOptions.onTimeUpdate](https://github.com/VocaDB/nostalgic-diva/blob/5cc35c68cf71230f9459804a9dd9e9265cfa2297/src/players/PlayerApi.ts#L29)
+1. [IPlayerApi.pause](https://github.com/VocaDB/nostalgic-diva/blob/5cc35c68cf71230f9459804a9dd9e9265cfa2297/src/players/PlayerApi.ts#L35)
+1. [PlayerOptions.onPause](https://github.com/VocaDB/nostalgic-diva/blob/5cc35c68cf71230f9459804a9dd9e9265cfa2297/src/players/PlayerApi.ts#L27)
+1. [PlayerOptions.onEnded](https://github.com/VocaDB/nostalgic-diva/blob/5cc35c68cf71230f9459804a9dd9e9265cfa2297/src/players/PlayerApi.ts#L28)
+1. [PlayerApi.detach](https://github.com/VocaDB/nostalgic-diva/blob/5cc35c68cf71230f9459804a9dd9e9265cfa2297/src/players/PlayerApi.ts#L111)
 
 The `attach` function is called when switching from another player (Audio, Niconico, SoundCloud and YouTube), and the `detach` function is called when switching to another player. After the `detach` function is called, you cannot use any imperative functions like `loadVideo`, `play`, `pause` and etc.
 
