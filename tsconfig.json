@@ -1,11 +1,7 @@
 {
 	"compilerOptions": {
-		"target": "es5",
-		"lib": [
-			"dom",
-			"dom.iterable",
-			"esnext"
-		],
+		"target": "es2020",
+		"lib": ["dom", "dom.iterable", "esnext"],
 		"allowJs": true,
 		"skipLibCheck": true,
 		"esModuleInterop": true,
@@ -23,7 +19,5 @@
 		"useDefineForClassFields": true,
 		"declaration": true
 	},
-	"include": [
-		"src"
-	]
+	"include": ["src"]
 }
