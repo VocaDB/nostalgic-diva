@@ -94,9 +94,6 @@ export class YouTubePlayerApi extends PlayerApiImpl<HTMLDivElement> {
 
 						switch (event.data) {
 							case YT.PlayerState.PLAYING:
-								if (this.previousTime === undefined)
-									this.options?.onLoaded?.({ id: id });
-
 								this.options?.onPlay?.();
 								this.setTimeUpdateInterval();
 								break;
@@ -127,6 +124,7 @@ export class YouTubePlayerApi extends PlayerApiImpl<HTMLDivElement> {
 	loadVideo = async (id: string): Promise<void> => {
 		this.previousTime = undefined;
 		this.player.loadVideoById(id);
+		this.options?.onLoaded?.({ id: id });
 	};
 
 	play = async (): Promise<void> => {
