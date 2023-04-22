@@ -5,7 +5,7 @@
 	"scripts": {
 		"clean": "rimraf ./dist",
 		"dev": "vite",
-		"build": "yarn clean && tsc && vite build",
+		"build": "npm run clean && tsc && vite build",
 		"preview": "vite preview"
 	},
 	"devDependencies": {
