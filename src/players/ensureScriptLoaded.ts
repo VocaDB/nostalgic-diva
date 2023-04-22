@@ -3,7 +3,7 @@ import { getScript } from './getScript';
 
 const urls: string[] = [];
 
-export const ensureScriptLoaded = async (url: string): Promise<boolean> => {
+export async function ensureScriptLoaded(url: string): Promise<boolean> {
 	if (urls.includes(url)) {
 		PlayerConsole.debug(url, 'script is already loaded');
 		return false;
@@ -26,4 +26,4 @@ export const ensureScriptLoaded = async (url: string): Promise<boolean> => {
 		PlayerConsole.error(url, 'Failed to load script');
 		throw error;
 	}
-};
+}

@@ -15,7 +15,7 @@ enum PlayerStatus {
 	End = 4,
 }
 
-// Code from: https://github.com/VocaDB/vocadb/blob/a4b5f9d8186772d7e6f58f997bbcbb51509d2539/VocaDbWeb/Scripts/ViewModels/PVs/PVPlayerNico.ts.
+// https://github.com/VocaDB/vocadb/blob/a4b5f9d8186772d7e6f58f997bbcbb51509d2539/VocaDbWeb/Scripts/ViewModels/PVs/PVPlayerNico.ts.
 export class NiconicoPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 	private static readonly origin = 'https://embed.nicovideo.jp';
 
@@ -34,7 +34,7 @@ export class NiconicoPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 		this.player = playerElementRef.current;
 	}
 
-	private handleMessage = (e: nico.PlayerEvent): void => {
+	private handleMessage(e: nico.PlayerEvent): void {
 		if (e.origin !== NiconicoPlayerApi.origin) return;
 
 		const data = e.data;
@@ -119,17 +119,17 @@ export class NiconicoPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 				);
 				break;
 		}
-	};
+	}
 
-	attach = async (): Promise<void> => {
+	async attach(): Promise<void> {
 		window.addEventListener('message', this.handleMessage);
-	};
+	}
 
-	detach = async (): Promise<void> => {
+	async detach(): Promise<void> {
 		window.removeEventListener('message', this.handleMessage);
-	};
+	}
 
-	loadVideo = async (id: string): Promise<void> => {
+	async loadVideo(id: string): Promise<void> {
 		return new Promise((resolve, reject /* TODO: Reject. */) => {
 			this.duration = undefined;
 			this.currentTime = undefined;
@@ -142,10 +142,10 @@ export class NiconicoPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 
 			this.player.src = `https://embed.nicovideo.jp/watch/${id}?jsapi=1&playerId=1`;
 		});
-	};
+	}
 
-	// Code from: https://blog.hayu.io/web/create/nicovideo-embed-player-api/.
-	private postMessage = (message: any): void => {
+	// https://blog.hayu.io/web/create/nicovideo-embed-player-api/.
+	private postMessage(message: any): void {
 		this.player.contentWindow?.postMessage(
 			{
 				...message,
@@ -154,39 +154,39 @@ export class NiconicoPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 			},
 			NiconicoPlayerApi.origin,
 		);
-	};
+	}
 
-	play = async (): Promise<void> => {
+	async play(): Promise<void> {
 		this.postMessage({ eventName: 'play' });
-	};
+	}
 
-	pause = async (): Promise<void> => {
+	async pause(): Promise<void> {
 		this.postMessage({ eventName: 'pause' });
-	};
+	}
 
-	setCurrentTime = async (seconds: number): Promise<void> => {
+	async setCurrentTime(seconds: number): Promise<void> {
 		this.postMessage({ eventName: 'seek', data: { time: seconds * 1000 } });
-	};
+	}
 
-	setVolume = async (volume: number): Promise<void> => {
+	async setVolume(volume: number): Promise<void> {
 		this.postMessage({
 			eventName: 'volumeChange',
 			data: { volume: volume },
 		});
-	};
+	}
 
-	setMuted = async (muted: boolean): Promise<void> => {
+	async setMuted(muted: boolean): Promise<void> {
 		this.postMessage({
 			eventName: 'mute',
 			data: { mute: muted },
 		});
-	};
+	}
 
-	getDuration = async (): Promise<number | undefined> => {
+	async getDuration(): Promise<number | undefined> {
 		return this.duration;
-	};
+	}
 
-	getCurrentTime = async (): Promise<number | undefined> => {
+	async getCurrentTime(): Promise<number | undefined> {
 		return this.currentTime;
-	};
+	}
 }

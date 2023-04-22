@@ -1,6 +1,6 @@
-// Code from: https://stackoverflow.com/a/61903296.
-export const getScript = (url: string): Promise<void> =>
-	new Promise((resolve, reject) => {
+// https://stackoverflow.com/a/61903296.
+export function getScript(url: string): Promise<void> {
+	return new Promise((resolve, reject) => {
 		const script = document.createElement('script') as any; /* TODO */
 		script.src = url;
 		script.async = true;
@@ -20,3 +20,4 @@ export const getScript = (url: string): Promise<void> =>
 
 		document.head.appendChild(script);
 	});
+}

@@ -17,7 +17,7 @@ export class VimeoPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 		this.player = new Vimeo.Player(this.playerElementRef.current);
 	}
 
-	attach = async (): Promise<void> => {
+	async attach(): Promise<void> {
 		await this.player.ready();
 
 		this.player.on('error', (data) => this.options?.onError?.(data));
@@ -34,46 +34,46 @@ export class VimeoPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 				seconds: data.seconds,
 			});
 		});
-	};
+	}
 
-	detach = async (): Promise<void> => {
+	async detach(): Promise<void> {
 		this.player.off('error');
 		this.player.off('loaded');
 		this.player.off('play');
 		this.player.off('pause');
 		this.player.off('ended');
 		this.player.off('timeupdate');
-	};
+	}
 
-	loadVideo = async (id: string): Promise<void> => {
+	async loadVideo(id: string): Promise<void> {
 		await this.player.loadVideo(id);
-	};
+	}
 
-	play = async (): Promise<void> => {
+	async play(): Promise<void> {
 		await this.player.play();
-	};
+	}
 
-	pause = async (): Promise<void> => {
+	async pause(): Promise<void> {
 		await this.player.pause();
-	};
+	}
 
-	setCurrentTime = async (seconds: number): Promise<void> => {
+	async setCurrentTime(seconds: number): Promise<void> {
 		await this.player.setCurrentTime(seconds);
-	};
+	}
 
-	setVolume = async (fraction: number): Promise<void> => {
+	async setVolume(fraction: number): Promise<void> {
 		await this.player.setVolume(fraction);
-	};
+	}
 
-	setMuted = async (muted: boolean): Promise<void> => {
+	async setMuted(muted: boolean): Promise<void> {
 		await this.player.setMuted(muted);
-	};
+	}
 
-	getDuration = async (): Promise<number | undefined> => {
+	async getDuration(): Promise<number | undefined> {
 		return await this.player.getDuration();
-	};
+	}
 
-	getCurrentTime = async (): Promise<number | undefined> => {
+	async getCurrentTime(): Promise<number | undefined> {
 		return await this.player.getCurrentTime();
-	};
+	}
 }

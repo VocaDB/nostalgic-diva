@@ -3,7 +3,7 @@ import React from 'react';
 import { Logger, PlayerOptions } from './PlayerApi';
 import { PlayerApiImpl } from './PlayerApiImpl';
 
-// Code from: https://github.com/VocaDB/vocadb/blob/61b8c54f3eca906a477101dab4fdd9b154be310e/VocaDbWeb/Scripts/ViewModels/PVs/PVPlayerFile.ts.
+// https://github.com/VocaDB/vocadb/blob/61b8c54f3eca906a477101dab4fdd9b154be310e/VocaDbWeb/Scripts/ViewModels/PVs/PVPlayerFile.ts.
 export class AudioPlayerApi extends PlayerApiImpl<HTMLAudioElement> {
 	private readonly player: HTMLAudioElement;
 
@@ -17,7 +17,7 @@ export class AudioPlayerApi extends PlayerApiImpl<HTMLAudioElement> {
 		this.player = playerElementRef.current;
 	}
 
-	attach = async (): Promise<void> => {
+	async attach(): Promise<void> {
 		this.player.onerror = (event): void => this.options?.onError?.(event);
 		this.player.onloadeddata = (): void =>
 			this.options?.onLoaded?.({ id: this.player.src });
@@ -31,46 +31,46 @@ export class AudioPlayerApi extends PlayerApiImpl<HTMLAudioElement> {
 				seconds: this.player.currentTime,
 			});
 		};
-	};
+	}
 
-	detach = async (): Promise<void> => {
+	async detach(): Promise<void> {
 		this.player.onerror = null;
 		this.player.onloadeddata = null;
 		this.player.onplay = null;
 		this.player.onpause = null;
 		this.player.onended = null;
 		this.player.ontimeupdate = null;
-	};
+	}
 
-	loadVideo = async (id: string): Promise<void> => {
+	async loadVideo(id: string): Promise<void> {
 		this.player.src = id;
-	};
+	}
 
-	play = async (): Promise<void> => {
+	async play(): Promise<void> {
 		this.player.play();
-	};
+	}
 
-	pause = async (): Promise<void> => {
+	async pause(): Promise<void> {
 		this.player.pause();
-	};
+	}
 
-	setCurrentTime = async (seconds: number): Promise<void> => {
+	async setCurrentTime(seconds: number): Promise<void> {
 		this.player.currentTime = seconds;
-	};
+	}
 
-	setVolume = async (volume: number): Promise<void> => {
+	async setVolume(volume: number): Promise<void> {
 		this.player.volume = volume;
-	};
+	}
 
-	setMuted = async (muted: boolean): Promise<void> => {
+	async setMuted(muted: boolean): Promise<void> {
 		this.player.muted = muted;
-	};
+	}
 
-	getDuration = async (): Promise<number | undefined> => {
+	async getDuration(): Promise<number | undefined> {
 		return this.player.duration;
-	};
+	}
 
-	getCurrentTime = async (): Promise<number | undefined> => {
+	async getCurrentTime(): Promise<number | undefined> {
 		return this.player.currentTime;
-	};
+	}
 }

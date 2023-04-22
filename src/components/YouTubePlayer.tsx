@@ -16,7 +16,7 @@ export const YouTubePlayer = React.memo(
 				);
 
 				if (first) {
-					// Code from: https://stackoverflow.com/a/18154942.
+					// https://stackoverflow.com/a/18154942.
 					window.onYouTubeIframeAPIReady = (): void => {
 						PlayerConsole.debug('YouTube iframe API ready');
 						resolve();

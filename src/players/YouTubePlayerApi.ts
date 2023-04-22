@@ -18,7 +18,7 @@ enum PlayerState {
 	CUED = 5,
 }
 
-// Code from: https://github.com/VocaDB/vocadb/blob/076dac9f0808aba5da7332209fdfd2ff4e12c235/VocaDbWeb/Scripts/ViewModels/PVs/PVPlayerYoutube.ts.
+// https://github.com/VocaDB/vocadb/blob/076dac9f0808aba5da7332209fdfd2ff4e12c235/VocaDbWeb/Scripts/ViewModels/PVs/PVPlayerYoutube.ts.
 export class YouTubePlayerApi extends PlayerApiImpl<HTMLDivElement> {
 	private static readonly origin = 'https://www.youtube-nocookie.com';
 
@@ -42,15 +42,15 @@ export class YouTubePlayerApi extends PlayerApiImpl<HTMLDivElement> {
 
 	private timeUpdateIntervalId?: number;
 
-	private clearTimeUpdateInterval = (): void => {
+	private clearTimeUpdateInterval(): void {
 		this.logger.debug('clearTimeUpdateInterval', this.timeUpdateIntervalId);
 
 		window.clearInterval(this.timeUpdateIntervalId);
 
 		this.timeUpdateIntervalId = undefined;
-	};
+	}
 
-	private invokeTimeUpdate = (player: YT.Player): void => {
+	private invokeTimeUpdate(player: YT.Player): void {
 		const currentTime = player.getCurrentTime();
 		if (currentTime === this.previousTime) return;
 
@@ -62,9 +62,9 @@ export class YouTubePlayerApi extends PlayerApiImpl<HTMLDivElement> {
 		});
 
 		this.previousTime = currentTime;
-	};
+	}
 
-	private setTimeUpdateInterval = (): void => {
+	private setTimeUpdateInterval(): void {
 		this.logger.debug('setTimeUpdateInterval');
 
 		this.clearTimeUpdateInterval();
@@ -77,9 +77,9 @@ export class YouTubePlayerApi extends PlayerApiImpl<HTMLDivElement> {
 		this.logger.debug('timeUpdateIntervalId', this.timeUpdateIntervalId);
 
 		this.invokeTimeUpdate(this.player);
-	};
+	}
 
-	attach = (id: string): Promise<void> => {
+	attach(id: string): Promise<void> {
 		return new Promise((resolve, reject /* TODO: reject */) => {
 			this.player.addEventListener('onReady', async () => {
 				this.player.addEventListener('onError', (event) =>
@@ -119,48 +119,48 @@ export class YouTubePlayerApi extends PlayerApiImpl<HTMLDivElement> {
 				resolve();
 			});
 		});
-	};
+	}
 
-	detach = async (): Promise<void> => {
+	async detach(): Promise<void> {
 		this.clearTimeUpdateInterval();
-	};
+	}
 
-	loadVideo = async (id: string): Promise<void> => {
+	async loadVideo(id: string): Promise<void> {
 		this.previousTime = undefined;
 		this.player.cueVideoById(id);
-	};
+	}
 
-	play = async (): Promise<void> => {
+	async play(): Promise<void> {
 		this.player.playVideo();
-	};
+	}
 
-	pause = async (): Promise<void> => {
+	async pause(): Promise<void> {
 		this.player.pauseVideo();
-	};
+	}
 
-	setCurrentTime = async (seconds: number): Promise<void> => {
+	async setCurrentTime(seconds: number): Promise<void> {
 		this.player.seekTo(seconds);
 
 		this.invokeTimeUpdate(this.player);
-	};
+	}
 
-	setVolume = async (volume: number): Promise<void> => {
+	async setVolume(volume: number): Promise<void> {
 		this.player.setVolume(volume * 100);
-	};
+	}
 
-	setMuted = async (muted: boolean): Promise<void> => {
+	async setMuted(muted: boolean): Promise<void> {
 		if (muted) {
 			this.player.mute();
 		} else {
 			this.player.unMute();
 		}
-	};
+	}
 
-	getDuration = async (): Promise<number | undefined> => {
+	async getDuration(): Promise<number | undefined> {
 		return this.player.getDuration();
-	};
+	}
 
-	getCurrentTime = async (): Promise<number | undefined> => {
+	async getCurrentTime(): Promise<number | undefined> {
 		return this.player.getCurrentTime();
-	};
+	}
 }
