@@ -4,7 +4,7 @@ React function components for imperatively controlling embedded players (audio, 
 
 This was originally developed in [VocaDB/vocadb#1101](https://github.com/VocaDB/vocadb/pull/1101) as a part of VocaDB.
 
-NOTE: This is an independent fork of VocaDB/route-sphere.
+NOTE: This is an independent fork of VocaDB/nostalgic-diva.
 
 ## Installation
 
