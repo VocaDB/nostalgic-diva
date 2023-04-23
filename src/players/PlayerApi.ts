@@ -104,76 +104,103 @@ export class PlayerApi<
 		this.debug('player attached');
 	}
 
-	private assertPlayerAttached(): void {
-		PlayerConsole.assert(!!this.impl, 'player is not attached');
+	private createPlayerNotAttachedError(): Error {
+		return new Error('player is not attached');
 	}
 
 	async detach(): Promise<void> {
 		this.debug('detach');
-		this.assertPlayerAttached();
 
-		await this.impl?.detach();
+		if (this.impl === undefined) {
+			throw this.createPlayerNotAttachedError();
+		}
+
+		await this.impl.detach();
 
 		this.impl = undefined;
 	}
 
 	async loadVideo(id: string): Promise<void> {
 		this.debug('loadVideo', id);
-		this.assertPlayerAttached();
+
+		if (this.impl === undefined) {
+			throw this.createPlayerNotAttachedError();
+		}
 
 		this.debug('Loading video...');
 
-		await this.impl?.loadVideo(id);
+		await this.impl.loadVideo(id);
 
 		this.debug('video loaded', id);
 	}
 
-	async play(): Promise<void> {
+	play(): Promise<void> {
 		this.debug('play');
-		this.assertPlayerAttached();
 
-		await this.impl?.play();
+		if (this.impl === undefined) {
+			throw this.createPlayerNotAttachedError();
+		}
+
+		return this.impl.play();
 	}
 
-	async pause(): Promise<void> {
+	pause(): Promise<void> {
 		this.debug('pause');
-		this.assertPlayerAttached();
 
-		await this.impl?.pause();
+		if (this.impl === undefined) {
+			throw this.createPlayerNotAttachedError();
+		}
+
+		return this.impl.pause();
 	}
 
-	async setCurrentTime(seconds: number): Promise<void> {
+	setCurrentTime(seconds: number): Promise<void> {
 		this.debug('setCurrentTime', seconds);
-		this.assertPlayerAttached();
 
-		await this.impl?.setCurrentTime(seconds);
+		if (this.impl === undefined) {
+			throw this.createPlayerNotAttachedError();
+		}
+
+		return this.impl.setCurrentTime(seconds);
 	}
 
-	async setVolume(volume: number): Promise<void> {
+	setVolume(volume: number): Promise<void> {
 		this.debug('setVolume', volume);
-		this.assertPlayerAttached();
 
-		await this.impl?.setVolume(volume);
+		if (this.impl === undefined) {
+			throw this.createPlayerNotAttachedError();
+		}
+
+		return this.impl.setVolume(volume);
 	}
 
-	async setMuted(muted: boolean): Promise<void> {
+	setMuted(muted: boolean): Promise<void> {
 		this.debug('setMuted', muted);
-		this.assertPlayerAttached();
 
-		await this.impl?.setMuted(muted);
+		if (this.impl === undefined) {
+			throw this.createPlayerNotAttachedError();
+		}
+
+		return this.impl.setMuted(muted);
 	}
 
-	async getDuration(): Promise<number | undefined> {
+	getDuration(): Promise<number | undefined> {
 		this.debug('getDuration');
-		this.assertPlayerAttached();
 
-		return await this.impl?.getDuration();
+		if (this.impl === undefined) {
+			throw this.createPlayerNotAttachedError();
+		}
+
+		return this.impl.getDuration();
 	}
 
-	async getCurrentTime(): Promise<number | undefined> {
+	getCurrentTime(): Promise<number | undefined> {
 		this.debug('getCurrentTime');
-		this.assertPlayerAttached();
 
-		return await this.impl?.getCurrentTime();
+		if (this.impl === undefined) {
+			throw this.createPlayerNotAttachedError();
+		}
+
+		return this.impl.getCurrentTime();
 	}
 }
