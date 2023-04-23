@@ -1,8 +1,10 @@
 import React from 'react';
 
 import { IPlayerApi } from '../players';
+import { ILogger, LogLevel } from '../players/ILogger';
 
 interface NostalgicDivaContextProps extends IPlayerApi {
+	logger: ILogger;
 	playerApiRef: React.MutableRefObject<IPlayerApi | undefined>;
 }
 
@@ -12,10 +14,50 @@ const NostalgicDivaContext = React.createContext<NostalgicDivaContextProps>(
 );
 
 interface NostalgicDivaProviderProps {
+	logger?: ILogger;
 	children?: React.ReactNode;
 }
 
+const defaultLogger = new (class implements ILogger {
+	private readonly title = 'nostalgic-diva';
+
+	private createMessage(message: any): string {
+		return `[${this.title}] ${message}`;
+	}
+
+	private debug(message?: any, ...optionalParams: any): void {
+		console.debug(this.createMessage(message), ...optionalParams);
+	}
+
+	private error(message?: any, ...optionalParams: any): void {
+		console.error(this.createMessage(message), ...optionalParams);
+	}
+
+	private warn(message?: any, ...optionalParams: any): void {
+		console.warn(this.createMessage(message), ...optionalParams);
+	}
+
+	isEnabled(): boolean {
+		return true;
+	}
+
+	log(logLevel: LogLevel, message?: any, ...optionalParams: any[]): void {
+		switch (logLevel) {
+			case LogLevel.Debug:
+				this.debug(message, ...optionalParams);
+				break;
+			case LogLevel.Warning:
+				this.warn(message, ...optionalParams);
+				break;
+			case LogLevel.Error:
+				this.error(message, ...optionalParams);
+				break;
+		}
+	}
+})();
+
 export const NostalgicDivaProvider = ({
+	logger = defaultLogger,
 	children,
 }: NostalgicDivaProviderProps): React.ReactElement => {
 	const playerApiRef = React.useRef<IPlayerApi>();
@@ -58,6 +100,7 @@ export const NostalgicDivaProvider = ({
 
 	const value = React.useMemo(
 		(): NostalgicDivaContextProps => ({
+			logger,
 			playerApiRef,
 			loadVideo,
 			play,
@@ -69,6 +112,7 @@ export const NostalgicDivaProvider = ({
 			getCurrentTime,
 		}),
 		[
+			logger,
 			loadVideo,
 			play,
 			pause,

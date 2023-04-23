@@ -1,12 +1,14 @@
 import React from 'react';
 
+import { LogLevel } from '../players/ILogger';
 import { NiconicoPlayerApi } from '../players/NiconicoPlayerApi';
-import { PlayerConsole } from '../players/PlayerConsole';
 import { PlayerContainer, PlayerProps } from './PlayerContainer';
 
 export const NiconicoPlayer = React.memo(
 	({ ...props }: PlayerProps): React.ReactElement => {
-		PlayerConsole.debug('NiconicoPlayer');
+		const { logger } = props;
+
+		logger.log(LogLevel.Debug, 'NiconicoPlayer');
 
 		return (
 			<PlayerContainer

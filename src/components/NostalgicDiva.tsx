@@ -1,7 +1,7 @@
 import React from 'react';
 
+import { LogLevel } from '../players/ILogger';
 import { PlayerOptions, PlayerType } from '../players/PlayerApi';
-import { PlayerConsole } from '../players/PlayerConsole';
 import { AudioPlayer } from './AudioPlayer';
 import { NiconicoPlayer } from './NiconicoPlayer';
 import { useNostalgicDiva } from './NostalgicDivaProvider';
@@ -26,15 +26,16 @@ interface NostalgicDivaProps {
 
 export const NostalgicDiva = React.memo(
 	({ type, videoId, options }: NostalgicDivaProps): React.ReactElement => {
-		PlayerConsole.debug('NostalgicDiva');
+		const { logger, playerApiRef } = useNostalgicDiva();
 
-		const diva = useNostalgicDiva();
+		logger.log(LogLevel.Debug, 'NostalgicDiva');
 
 		const Player = players[type];
 		return (
 			<Player
+				logger={logger}
 				type={type}
-				playerApiRef={diva.playerApiRef}
+				playerApiRef={playerApiRef}
 				videoId={videoId}
 				options={options}
 			/>

@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { Logger, PlayerOptions } from './PlayerApi';
+import { ILogger, LogLevel } from './ILogger';
+import { PlayerOptions } from './PlayerApi';
 import { PlayerApiImpl } from './PlayerApiImpl';
 
 declare global {
@@ -25,7 +26,7 @@ export class NiconicoPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 	private currentTime?: number;
 
 	constructor(
-		logger: Logger,
+		logger: ILogger,
 		playerElementRef: React.MutableRefObject<HTMLIFrameElement>,
 		options: PlayerOptions | undefined,
 	) {
@@ -41,7 +42,8 @@ export class NiconicoPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 
 		switch (data.eventName) {
 			case 'playerStatusChange':
-				this.logger.debug(
+				this.logger.log(
+					LogLevel.Debug,
 					`player status changed: ${
 						PlayerStatus[data.data.playerStatus] ??
 						data.data.playerStatus
@@ -50,7 +52,8 @@ export class NiconicoPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 				break;
 
 			case 'statusChange':
-				this.logger.debug(
+				this.logger.log(
+					LogLevel.Debug,
 					`status changed: ${
 						PlayerStatus[data.data.playerStatus] ??
 						data.data.playerStatus
@@ -93,7 +96,7 @@ export class NiconicoPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 				break;
 
 			case 'loadComplete':
-				this.logger.debug('load completed');
+				this.logger.log(LogLevel.Debug, 'load completed');
 
 				this.duration = data.data.videoInfo.lengthInSeconds;
 
@@ -112,7 +115,8 @@ export class NiconicoPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 				break;
 
 			default:
-				this.logger.debug(
+				this.logger.log(
+					LogLevel.Debug,
 					'message',
 					(data as any).eventName,
 					(data as any).data,

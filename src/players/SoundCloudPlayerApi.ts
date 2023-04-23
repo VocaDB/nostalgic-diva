@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { Logger, PlayerOptions } from './PlayerApi';
+import { ILogger } from './ILogger';
+import { PlayerOptions } from './PlayerApi';
 import { PlayerApiImpl } from './PlayerApiImpl';
 
 // https://github.com/VocaDB/vocadb/blob/e147650a8f1f85c8fa865d0ab562126c278527ec/VocaDbWeb/Scripts/ViewModels/PVs/PVPlayerSoundCloud.ts.
@@ -8,7 +9,7 @@ export class SoundCloudPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 	private readonly player: SC.SoundCloudWidget;
 
 	constructor(
-		logger: Logger,
+		logger: ILogger,
 		playerElementRef: React.MutableRefObject<HTMLIFrameElement>,
 		options: PlayerOptions | undefined,
 	) {

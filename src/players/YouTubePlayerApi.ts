@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { Logger, PlayerOptions } from './PlayerApi';
+import { ILogger, LogLevel } from './ILogger';
+import { PlayerOptions } from './PlayerApi';
 import { PlayerApiImpl } from './PlayerApiImpl';
 
 declare global {
@@ -25,7 +26,7 @@ export class YouTubePlayerApi extends PlayerApiImpl<HTMLDivElement> {
 	private readonly player: YT.Player;
 
 	constructor(
-		logger: Logger,
+		logger: ILogger,
 		playerElementRef: React.MutableRefObject<HTMLDivElement>,
 		options: PlayerOptions | undefined,
 	) {
@@ -43,7 +44,11 @@ export class YouTubePlayerApi extends PlayerApiImpl<HTMLDivElement> {
 	private timeUpdateIntervalId?: number;
 
 	private clearTimeUpdateInterval(): void {
-		this.logger.debug('clearTimeUpdateInterval', this.timeUpdateIntervalId);
+		this.logger.log(
+			LogLevel.Debug,
+			'clearTimeUpdateInterval',
+			this.timeUpdateIntervalId,
+		);
 
 		window.clearInterval(this.timeUpdateIntervalId);
 
@@ -65,7 +70,7 @@ export class YouTubePlayerApi extends PlayerApiImpl<HTMLDivElement> {
 	}
 
 	private setTimeUpdateInterval(): void {
-		this.logger.debug('setTimeUpdateInterval');
+		this.logger.log(LogLevel.Debug, 'setTimeUpdateInterval');
 
 		this.clearTimeUpdateInterval();
 
@@ -74,7 +79,11 @@ export class YouTubePlayerApi extends PlayerApiImpl<HTMLDivElement> {
 			250,
 		);
 
-		this.logger.debug('timeUpdateIntervalId', this.timeUpdateIntervalId);
+		this.logger.log(
+			LogLevel.Debug,
+			'timeUpdateIntervalId',
+			this.timeUpdateIntervalId,
+		);
 
 		this.invokeTimeUpdate(this.player);
 	}
@@ -88,7 +97,8 @@ export class YouTubePlayerApi extends PlayerApiImpl<HTMLDivElement> {
 				this.player.addEventListener(
 					'onStateChange',
 					(event: YT.EventArgs): void => {
-						this.logger.debug(
+						this.logger.log(
+							LogLevel.Debug,
 							`state changed: ${PlayerState[event.data]}`,
 						);
 

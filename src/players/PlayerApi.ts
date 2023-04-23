@@ -1,7 +1,7 @@
 import React from 'react';
 
+import { ILogger, LogLevel } from './ILogger';
 import { PlayerApiImpl } from './PlayerApiImpl';
-import { PlayerConsole } from './PlayerConsole';
 
 export type PlayerType =
 	| 'Audio'
@@ -40,15 +40,10 @@ export interface IPlayerApi {
 	getCurrentTime(): Promise<number | undefined>;
 }
 
-export interface Logger {
-	debug(message?: any, ...optionalParams: any): void;
-	error(message?: any, ...optionalParams: any): void;
-}
-
 export class PlayerApi<
 	TElement extends HTMLElement,
 	TPlayer extends PlayerApiImpl<TElement>,
-> implements IPlayerApi, Logger
+> implements IPlayerApi
 {
 	private static nextId = 1;
 
@@ -56,12 +51,13 @@ export class PlayerApi<
 	private impl?: TPlayer;
 
 	constructor(
+		private readonly logger: ILogger,
 		private readonly type: PlayerType,
 		private readonly playerElementRef: React.MutableRefObject<TElement>,
 		private readonly options: PlayerOptions | undefined,
 		private readonly loadScript: (() => Promise<void>) | undefined,
 		private readonly playerApiFactory: new (
-			logger: Logger,
+			logger: ILogger,
 			playerElementRef: React.MutableRefObject<TElement>,
 			options: PlayerOptions | undefined,
 		) => TPlayer,
@@ -74,11 +70,19 @@ export class PlayerApi<
 	}
 
 	public debug(message?: any, ...optionalParams: any): void {
-		PlayerConsole.debug(this.createMessage(message), ...optionalParams);
+		this.logger.log(
+			LogLevel.Debug,
+			this.createMessage(message),
+			...optionalParams,
+		);
 	}
 
 	public error(message?: any, ...optionalParams: any): void {
-		PlayerConsole.error(this.createMessage(message), ...optionalParams);
+		this.logger.log(
+			LogLevel.Error,
+			this.createMessage(message),
+			...optionalParams,
+		);
 	}
 
 	async attach(id: string): Promise<void> {
@@ -94,7 +98,7 @@ export class PlayerApi<
 		this.debug('Attaching player...');
 
 		this.impl = new this.playerApiFactory(
-			this,
+			this.logger,
 			this.playerElementRef,
 			this.options,
 		);

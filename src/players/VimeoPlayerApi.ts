@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { Logger, PlayerOptions } from './PlayerApi';
+import { ILogger } from './ILogger';
+import { PlayerOptions } from './PlayerApi';
 import { PlayerApiImpl } from './PlayerApiImpl';
 
 // https://github.com/cookpete/react-player/blob/e3c324bc6845698179d065fa408db515c2296b4b/src/players/Vimeo.js
@@ -8,7 +9,7 @@ export class VimeoPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 	private readonly player: Vimeo.Player;
 
 	constructor(
-		logger: Logger,
+		logger: ILogger,
 		playerElementRef: React.MutableRefObject<HTMLIFrameElement>,
 		options: PlayerOptions | undefined,
 	) {

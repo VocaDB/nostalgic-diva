@@ -1,17 +1,22 @@
 import React from 'react';
 
-import { PlayerConsole } from '../players/PlayerConsole';
+import { LogLevel } from '../players/ILogger';
 import { VimeoPlayerApi } from '../players/VimeoPlayerApi';
 import { ensureScriptLoaded } from '../players/ensureScriptLoaded';
 import { PlayerContainer, PlayerProps } from './PlayerContainer';
 
 export const VimeoPlayer = React.memo(
 	({ ...props }: PlayerProps): React.ReactElement => {
-		PlayerConsole.debug('VimeoPlayer');
+		const { logger } = props;
+
+		logger.log(LogLevel.Debug, 'VimeoPlayer');
 
 		const loadScript = React.useCallback(async () => {
-			await ensureScriptLoaded('https://player.vimeo.com/api/player.js');
-		}, []);
+			await ensureScriptLoaded(
+				'https://player.vimeo.com/api/player.js',
+				logger,
+			);
+		}, [logger]);
 
 		return (
 			<PlayerContainer

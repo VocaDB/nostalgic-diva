@@ -1,17 +1,17 @@
 import React from 'react';
 
+import { ILogger, LogLevel } from '../players/ILogger';
 import {
 	IPlayerApi,
-	Logger,
 	PlayerApi,
 	PlayerOptions,
 	PlayerType,
 } from '../players/PlayerApi';
 import { PlayerApiImpl } from '../players/PlayerApiImpl';
-import { PlayerConsole } from '../players/PlayerConsole';
 import usePreviousDistinct from './usePreviousDistinct';
 
 export interface PlayerProps {
+	logger: ILogger;
 	type: PlayerType;
 	playerApiRef: React.MutableRefObject<IPlayerApi | undefined> | undefined;
 	videoId: string;
@@ -24,7 +24,7 @@ interface PlayerContainerProps<
 > extends PlayerProps {
 	loadScript: (() => Promise<void>) | undefined;
 	playerApiFactory: new (
-		logger: Logger,
+		logger: ILogger,
 		playerElementRef: React.MutableRefObject<TElement>,
 		options: PlayerOptions | undefined,
 	) => TPlayer;
@@ -38,6 +38,7 @@ export const PlayerContainer = <
 	TElement extends HTMLElement,
 	TPlayer extends PlayerApiImpl<TElement>,
 >({
+	logger,
 	type,
 	playerApiRef,
 	videoId,
@@ -48,7 +49,7 @@ export const PlayerContainer = <
 }: PlayerContainerProps<TElement, TPlayer>): React.ReactElement<
 	PlayerContainerProps<TElement, TPlayer>
 > => {
-	PlayerConsole.debug('PlayerContainer');
+	logger.log(LogLevel.Debug, 'PlayerContainer');
 
 	const videoIdRef = React.useRef(videoId);
 
@@ -60,6 +61,7 @@ export const PlayerContainer = <
 	// Make sure that `options` do not change between re-rendering.
 	React.useEffect(() => {
 		const playerApi = new PlayerApi(
+			logger,
 			type,
 			playerElementRef,
 			options,
@@ -75,17 +77,14 @@ export const PlayerContainer = <
 
 		return (): void => {
 			if (playerApiRef) {
-				PlayerConsole.assert(
-					playerApi === playerApiRef.current,
-					'playerApi differs',
-					playerApi,
-					playerApiRef.current,
-				);
+				if (playerApi !== playerApiRef.current) {
+					throw new Error('playerApi differs');
+				}
 			}
 
 			playerApi.detach().then(() => setPlayerApi(undefined));
 		};
-	}, [type, options, loadScript, playerApiFactory, playerApiRef]);
+	}, [logger, type, options, loadScript, playerApiFactory, playerApiRef]);
 
 	const previousVideoId = usePreviousDistinct(videoId);
 	React.useEffect(() => {

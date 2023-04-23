@@ -1,16 +1,17 @@
 import React from 'react';
 
-import { IPlayerApi, Logger, PlayerOptions } from './PlayerApi';
+import { ILogger, LogLevel } from './ILogger';
+import { IPlayerApi, PlayerOptions } from './PlayerApi';
 
 export abstract class PlayerApiImpl<TElement extends HTMLElement>
 	implements IPlayerApi
 {
 	protected constructor(
-		protected readonly logger: Logger,
+		protected readonly logger: ILogger,
 		protected readonly playerElementRef: React.MutableRefObject<TElement>,
 		protected readonly options: PlayerOptions | undefined,
 	) {
-		this.logger.debug('ctor');
+		this.logger.log(LogLevel.Debug, 'ctor');
 	}
 
 	abstract attach(id: string): Promise<void>;

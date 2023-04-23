@@ -1,12 +1,14 @@
 import React from 'react';
 
 import { AudioPlayerApi } from '../players/AudioPlayerApi';
-import { PlayerConsole } from '../players/PlayerConsole';
+import { LogLevel } from '../players/ILogger';
 import { PlayerContainer, PlayerProps } from './PlayerContainer';
 
 export const AudioPlayer = React.memo(
 	({ ...props }: PlayerProps): React.ReactElement => {
-		PlayerConsole.debug('AudioPlayer');
+		const { logger } = props;
+
+		logger.log(LogLevel.Debug, 'AudioPlayer');
 
 		return (
 			<PlayerContainer
