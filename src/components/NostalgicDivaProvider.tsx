@@ -98,6 +98,10 @@ export const NostalgicDivaProvider = ({
 		return await playerApiRef.current?.getCurrentTime();
 	}, []);
 
+	const getVolume = React.useCallback(async () => {
+		return await playerApiRef.current?.getVolume();
+	}, []);
+
 	const value = React.useMemo(
 		(): NostalgicDivaContextProps => ({
 			logger,
@@ -110,6 +114,7 @@ export const NostalgicDivaProvider = ({
 			setMuted,
 			getDuration,
 			getCurrentTime,
+			getVolume,
 		}),
 		[
 			logger,
@@ -121,6 +126,7 @@ export const NostalgicDivaProvider = ({
 			setMuted,
 			getDuration,
 			getCurrentTime,
+			getVolume,
 		],
 	);
 

@@ -18,11 +18,9 @@ export class SoundCloudPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 		this.player = SC.Widget(this.playerElementRef.current);
 	}
 
-	private static playerGetDurationAsync(
-		player: SC.SoundCloudWidget,
-	): Promise<number> {
+	private getDurationCore(): Promise<number> {
 		return new Promise((resolve, reject /* TODO: Reject. */) => {
-			player.getDuration(resolve);
+			this.player.getDuration(resolve);
 		});
 	}
 
@@ -32,10 +30,7 @@ export class SoundCloudPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 				this.player.bind(
 					SC.Widget.Events.PLAY_PROGRESS,
 					async (event) => {
-						const duration =
-							await SoundCloudPlayerApi.playerGetDurationAsync(
-								this.player,
-							);
+						const duration = await this.getDurationCore();
 
 						this.options?.onTimeUpdate?.({
 							duration: duration / 1000,
@@ -111,26 +106,29 @@ export class SoundCloudPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 	}
 
 	async getDuration(): Promise<number | undefined> {
-		const duration = await SoundCloudPlayerApi.playerGetDurationAsync(
-			this.player,
-		);
-
+		const duration = await this.getDurationCore();
 		return duration / 1000;
 	}
 
-	private static playerGetPositionAsync(
-		player: SC.SoundCloudWidget,
-	): Promise<number> {
+	private getCurrentTimeCore(): Promise<number> {
 		return new Promise((resolve, reject /* TODO: Reject. */) => {
-			player.getPosition(resolve);
+			this.player.getPosition(resolve);
 		});
 	}
 
 	async getCurrentTime(): Promise<number | undefined> {
-		const position = await SoundCloudPlayerApi.playerGetPositionAsync(
-			this.player,
-		);
-
+		const position = await this.getCurrentTimeCore();
 		return position / 1000;
+	}
+
+	private getVolumeCore(): Promise<number> {
+		return new Promise((resolve, reject /* TODO: Reject. */) => {
+			this.player.getVolume(resolve);
+		});
+	}
+
+	async getVolume(): Promise<number | undefined> {
+		const volume = await this.getVolumeCore();
+		return volume / 100;
 	}
 }

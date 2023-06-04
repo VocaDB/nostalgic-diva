@@ -71,10 +71,14 @@ export class VimeoPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 	}
 
 	async getDuration(): Promise<number | undefined> {
-		return await this.player.getDuration();
+		return this.player.getDuration();
 	}
 
 	async getCurrentTime(): Promise<number | undefined> {
 		return await this.player.getCurrentTime();
+	}
+
+	async getVolume(): Promise<number | undefined> {
+		return await this.player.getVolume();
 	}
 }

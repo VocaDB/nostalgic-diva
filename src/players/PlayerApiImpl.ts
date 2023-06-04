@@ -24,4 +24,5 @@ export abstract class PlayerApiImpl<TElement extends HTMLElement>
 	abstract setMuted(muted: boolean): Promise<void>;
 	abstract getDuration(): Promise<number | undefined>;
 	abstract getCurrentTime(): Promise<number | undefined>;
+	abstract getVolume(): Promise<number | undefined>;
 }

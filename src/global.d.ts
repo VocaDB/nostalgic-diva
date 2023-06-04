@@ -29,6 +29,7 @@ declare namespace nico {
 		data: {
 			currentTime: number;
 			duration: number;
+			volume: number;
 		};
 	}
 
@@ -86,6 +87,7 @@ declare namespace SC {
 		unbind(eventName: string);
 		getDuration(callback: (duration: number) => void): void;
 		getPosition(callback: (position: number) => void): void;
+		getVolume(callback: (volume: number) => void): void;
 	}
 
 	interface SoundCloudLoadOptions {

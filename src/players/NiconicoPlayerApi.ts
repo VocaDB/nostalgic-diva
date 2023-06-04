@@ -24,6 +24,7 @@ export class NiconicoPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 
 	private duration?: number;
 	private currentTime?: number;
+	private volume?: number;
 
 	constructor(
 		logger: ILogger,
@@ -83,6 +84,8 @@ export class NiconicoPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 					data.data.currentTime === undefined
 						? undefined
 						: data.data.currentTime / 1000;
+
+				this.volume = data.data.volume;
 
 				this.options?.onTimeUpdate?.({
 					duration: this.duration,
@@ -192,5 +195,9 @@ export class NiconicoPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 
 	async getCurrentTime(): Promise<number | undefined> {
 		return this.currentTime;
+	}
+
+	async getVolume(): Promise<number | undefined> {
+		return this.volume;
 	}
 }

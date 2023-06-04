@@ -38,6 +38,7 @@ export interface IPlayerApi {
 	setMuted(muted: boolean): Promise<void>;
 	getDuration(): Promise<number | undefined>;
 	getCurrentTime(): Promise<number | undefined>;
+	getVolume(): Promise<number | undefined>;
 }
 
 export class PlayerApi<
@@ -206,5 +207,15 @@ export class PlayerApi<
 		}
 
 		return this.impl.getCurrentTime();
+	}
+
+	getVolume(): Promise<number | undefined> {
+		this.debug('getVolume');
+
+		if (this.impl === undefined) {
+			throw this.createPlayerNotAttachedError();
+		}
+
+		return this.impl.getVolume();
 	}
 }

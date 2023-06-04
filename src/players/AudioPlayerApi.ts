@@ -74,4 +74,8 @@ export class AudioPlayerApi extends PlayerApiImpl<HTMLAudioElement> {
 	async getCurrentTime(): Promise<number | undefined> {
 		return this.player.currentTime;
 	}
+
+	async getVolume(): Promise<number | undefined> {
+		return this.player.volume;
+	}
 }

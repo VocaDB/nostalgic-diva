@@ -173,4 +173,8 @@ export class YouTubePlayerApi extends PlayerApiImpl<HTMLDivElement> {
 	async getCurrentTime(): Promise<number | undefined> {
 		return this.player.getCurrentTime();
 	}
+
+	async getVolume(): Promise<number | undefined> {
+		return this.player.getVolume();
+	}
 }
