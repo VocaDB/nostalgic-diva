@@ -35,7 +35,7 @@ export class NiconicoPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 		this.player = playerElementRef.current;
 	}
 
-	private handleMessage(e: nico.PlayerEvent): void {
+	private handleMessage = (e: nico.PlayerEvent): void => {
 		if (e.origin !== NiconicoPlayerApi.origin) return;
 
 		const data = e.data;
@@ -123,7 +123,7 @@ export class NiconicoPlayerApi extends PlayerApiImpl<HTMLIFrameElement> {
 				);
 				break;
 		}
-	}
+	};
 
 	async attach(): Promise<void> {
 		window.addEventListener('message', this.handleMessage);
