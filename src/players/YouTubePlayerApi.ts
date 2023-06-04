@@ -175,6 +175,6 @@ export class YouTubePlayerApi extends PlayerApiImpl<HTMLDivElement> {
 	}
 
 	async getVolume(): Promise<number | undefined> {
-		return this.player.getVolume();
+		return this.player.getVolume() / 100;
 	}
 }
