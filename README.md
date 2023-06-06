@@ -4,13 +4,15 @@ React function components for imperatively controlling embedded players (audio, 
 
 This was originally developed in [VocaDB/vocadb#1101](https://github.com/VocaDB/vocadb/pull/1101) as a part of VocaDB.
 
-NOTE: This is an independent fork of VocaDB/nostalgic-diva.
+See [VocaDB](https://vocadb.net/) and [its playlist page](https://vocadb.net/playlist).
 
 ## Installation
 
-`yarn add @aigamo/nostalgic-diva` or `npm i @aigamo/nostalgic-diva`
+`yarn add @vocadb/nostalgic-diva` or `npm i @vocadb/nostalgic-diva`
 
 ## Usage
+
+For more information, see [VdbPlayer.tsx](https://github.com/VocaDB/vocadb/blob/dfcb56868a529ea2af508a75a837589caa7cb87f/VocaDbWeb/Scripts/Components/VdbPlayer/VdbPlayer.tsx) and [PlaylistIndex.tsx](https://github.com/VocaDB/vocadb/blob/f84859d9e558341de3b16677adf1699d757fc9a0/VocaDbWeb/Scripts/Pages/Playlist/PlaylistIndex.tsx).
 
 ```tsx
 import {
@@ -100,16 +102,16 @@ await diva.setCurrentTime(seconds);
 
 ## Lifecycle
 
-1. [PlayerApi.attach](https://github.com/ycanardeau/nostalgic-diva/blob/5cc35c68cf71230f9459804a9dd9e9265cfa2297/src/players/PlayerApi.ts#L84)
-1. [IPlayerApi.loadVideo](https://github.com/ycanardeau/nostalgic-diva/blob/5cc35c68cf71230f9459804a9dd9e9265cfa2297/src/players/PlayerApi.ts#L33)
-1. [PlayerOptions.onLoaded](https://github.com/ycanardeau/nostalgic-diva/blob/5cc35c68cf71230f9459804a9dd9e9265cfa2297/src/players/PlayerApi.ts#L25)
-1. [IPlayerApi.play](https://github.com/ycanardeau/nostalgic-diva/blob/5cc35c68cf71230f9459804a9dd9e9265cfa2297/src/players/PlayerApi.ts#L34)
-1. [PlayerOptions.onPlay](https://github.com/ycanardeau/nostalgic-diva/blob/5cc35c68cf71230f9459804a9dd9e9265cfa2297/src/players/PlayerApi.ts#L26)
-1. [PlayerOptions.onTimeUpdate](https://github.com/ycanardeau/nostalgic-diva/blob/5cc35c68cf71230f9459804a9dd9e9265cfa2297/src/players/PlayerApi.ts#L29)
-1. [IPlayerApi.pause](https://github.com/ycanardeau/nostalgic-diva/blob/5cc35c68cf71230f9459804a9dd9e9265cfa2297/src/players/PlayerApi.ts#L35)
-1. [PlayerOptions.onPause](https://github.com/ycanardeau/nostalgic-diva/blob/5cc35c68cf71230f9459804a9dd9e9265cfa2297/src/players/PlayerApi.ts#L27)
-1. [PlayerOptions.onEnded](https://github.com/ycanardeau/nostalgic-diva/blob/5cc35c68cf71230f9459804a9dd9e9265cfa2297/src/players/PlayerApi.ts#L28)
-1. [PlayerApi.detach](https://github.com/ycanardeau/nostalgic-diva/blob/5cc35c68cf71230f9459804a9dd9e9265cfa2297/src/players/PlayerApi.ts#L111)
+1. [PlayerApi.attach](https://github.com/VocaDB/nostalgic-diva/blob/5cc35c68cf71230f9459804a9dd9e9265cfa2297/src/players/PlayerApi.ts#L84)
+1. [IPlayerApi.loadVideo](https://github.com/VocaDB/nostalgic-diva/blob/5cc35c68cf71230f9459804a9dd9e9265cfa2297/src/players/PlayerApi.ts#L33)
+1. [PlayerOptions.onLoaded](https://github.com/VocaDB/nostalgic-diva/blob/5cc35c68cf71230f9459804a9dd9e9265cfa2297/src/players/PlayerApi.ts#L25)
+1. [IPlayerApi.play](https://github.com/VocaDB/nostalgic-diva/blob/5cc35c68cf71230f9459804a9dd9e9265cfa2297/src/players/PlayerApi.ts#L34)
+1. [PlayerOptions.onPlay](https://github.com/VocaDB/nostalgic-diva/blob/5cc35c68cf71230f9459804a9dd9e9265cfa2297/src/players/PlayerApi.ts#L26)
+1. [PlayerOptions.onTimeUpdate](https://github.com/VocaDB/nostalgic-diva/blob/5cc35c68cf71230f9459804a9dd9e9265cfa2297/src/players/PlayerApi.ts#L29)
+1. [IPlayerApi.pause](https://github.com/VocaDB/nostalgic-diva/blob/5cc35c68cf71230f9459804a9dd9e9265cfa2297/src/players/PlayerApi.ts#L35)
+1. [PlayerOptions.onPause](https://github.com/VocaDB/nostalgic-diva/blob/5cc35c68cf71230f9459804a9dd9e9265cfa2297/src/players/PlayerApi.ts#L27)
+1. [PlayerOptions.onEnded](https://github.com/VocaDB/nostalgic-diva/blob/5cc35c68cf71230f9459804a9dd9e9265cfa2297/src/players/PlayerApi.ts#L28)
+1. [PlayerApi.detach](https://github.com/VocaDB/nostalgic-diva/blob/5cc35c68cf71230f9459804a9dd9e9265cfa2297/src/players/PlayerApi.ts#L111)
 
 The `attach` function is called when switching from another player (Audio, Niconico, SoundCloud and YouTube), and the `detach` function is called when switching to another player. After the `detach` function is called, you cannot use any imperative functions like `loadVideo`, `play`, `pause` and etc.
 

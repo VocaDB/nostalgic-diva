@@ -1,5 +1,5 @@
 {
-	"name": "@aigamo/nostalgic-diva",
+	"name": "@vocadb/nostalgic-diva",
 	"version": "1.5.1",
 	"type": "module",
 	"scripts": {
@@ -52,7 +52,7 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/ycanardeau/nostalgic-diva.git"
+		"url": "git+https://github.com/VocaDB/nostalgic-diva.git"
 	},
 	"keywords": [
 		"react",
@@ -64,6 +64,7 @@
 	],
 	"author": "Aigamo <51428094+ycanardeau@users.noreply.github.com>",
 	"bugs": {
-		"url": "https://github.com/ycanardeau/nostalgic-diva/issues"
-	}
+		"url": "https://github.com/VocaDB/nostalgic-diva/issues"
+	},
+	"homepage": "https://vocadb.net/Al/12800"
 }
